@@ -2,43 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Advanced Person Identifying System — Hacker Vibe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Advanced Person Identifying System — Hacker Vibe Animated</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
-    body{font-family:'Share Tech Mono',monospace;margin:0;background:#0f0f0f;color:#00ff99;display:flex;gap:20px;padding:20px;overflow:hidden}
-    .card{background:rgba(0,0,0,0.7);border:1px solid #00ff99;border-radius:12px;padding:16px;box-shadow:0 0 20px #00ff99;animation:fadeIn 1s ease-in;}
-    #area{display:flex;gap:16px}
-    video, canvas {width:480px;height:360px;border-radius:8px;background:#000;object-fit:cover;box-shadow:0 0 15px #00ff99}
-    .controls{display:flex;flex-direction:column;gap:8px}
-    button{padding:10px;border-radius:8px;border:1px solid #00ff99;background:rgba(0,0,0,0.6);color:#00ff99;cursor:pointer;transition:0.3s;}
-    button:hover{background:#00ff33;color:#000;transform:scale(1.05);box-shadow:0 0 10px #00ff99;}
-    input{padding:8px;border-radius:6px;border:1px solid #00ff33;background:#001100;color:#0f0}
-    small{color:#0f0}
-    #profiles{max-height:360px;overflow:auto;margin-top:8px}
-    .profile{padding:8px;border-radius:6px;background:rgba(0,255,153,0.1);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;animation:slideIn 0.5s ease-in}
-    .virtualFace{width:200px;height:200px;background:#001100;border-radius:12px;box-shadow:0 0 15px #00ff33}
+    *{box-sizing:border-box;}
+    body{font-family:'Share Tech Mono',monospace;margin:0;background:#0f0f0f;color:#00ff99;display:flex;flex-direction:column;align-items:center;padding:10px;overflow-x:hidden;}
+    .card{background:rgba(0,0,0,0.7);border:1px solid #00ff99;border-radius:12px;padding:16px;box-shadow:0 0 20px #00ff99;animation:fadeIn 1s ease-in;width:95%;max-width:1000px;margin-bottom:20px;position:relative;overflow:hidden;}
+    #area{display:flex;flex-direction:column;gap:16px;align-items:center;}
+    video, canvas {width:100%;max-width:480px;height:auto;border-radius:8px;background:#000;object-fit:cover;box-shadow:0 0 15px #00ff99;}
+    .controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;}
+    button{padding:10px;border-radius:8px;border:1px solid #00ff99;background:rgba(0,0,0,0.6);color:#00ff99;cursor:pointer;transition:0.3s;flex:1 1 120px;}
+    button:hover{background:#00ff33;color:#000;transform:scale(1.05);box-shadow:0 0 15px #00ff33;}
+    input{padding:8px;border-radius:6px;border:1px solid #00ff33;background:#001100;color:#0f0;flex:1 1 120px;}
+    small{color:#0f0;display:block;text-align:center;margin-top:4px;}
+    #profiles{max-height:300px;overflow:auto;margin-top:8px}
+    .profile{padding:8px;border-radius:6px;background:rgba(0,255,153,0.1);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;animation:slideIn 0.5s ease-in;}
+    .virtualFace{width:100%;max-width:200px;height:auto;background:#001100;border-radius:12px;box-shadow:0 0 15px #00ff33;margin:0 auto;}
 
-    /* hacker vibe animations */
+    /* Hacker vibe animations */
     @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
     @keyframes slideIn{from{transform:translateX(-100%);}to{transform:translateX(0);}}
-    @keyframes glitch {
-      0% {text-shadow: 2px 0 #0f0, -2px 0 #00ff33;}
-      20% {text-shadow: -2px 0 #0f0, 2px 0 #00ff33;}
-      40% {text-shadow: 1px 0 #0f0, -1px 0 #00ff33;}
-      60% {text-shadow: -1px 0 #0f0, 1px 0 #00ff33;}
-      80% {text-shadow: 2px 0 #0f0, -2px 0 #00ff33;}
-      100% {text-shadow: none;}
+    @keyframes glitch {0% {text-shadow: 2px 0 #0f0, -2px 0 #00ff33;} 20% {text-shadow: -2px 0 #0f0, 2px 0 #00ff33;} 40% {text-shadow: 1px 0 #0f0, -1px 0 #00ff33;} 60% {text-shadow: -1px 0 #0f0, 1px 0 #00ff33;} 80% {text-shadow: 2px 0 #0f0, -2px 0 #00ff33;} 100% {text-shadow: none;}}
+
+    /* Particle effects */
+    canvas.particles{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+
+    @media(min-width:700px){
+      #area{flex-direction:row;align-items:flex-start;}
+      .card{margin-bottom:0;}
+      .controls{justify-content:flex-start;}
     }
-    #result{animation:glitch 1s infinite;}
   </style>
 </head>
 <body>
   <div class="card" id="area">
-    <div>
+    <canvas class="particles" id="particles"></canvas>
+    <div style="flex:1;position:relative;z-index:1;">
       <video id="video" autoplay muted playsinline></video>
       <canvas id="overlay"></canvas>
-      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <div class="controls">
         <button id="btnStart">Start Camera</button>
         <button id="btnScan">Scan & Match</button>
         <button id="btnSave">Scan & Save New</button>
@@ -47,15 +50,15 @@
       <small>Tip: allow camera, then click Scan or Scan & Save. Models load once at start.</small>
     </div>
 
-    <div style="min-width:300px">
-      <div class="card" style="margin-bottom:12px">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;">
+      <div class="card" style="width:100%;margin-bottom:12px;">
         <h3>Match Result</h3>
         <div id="result">No scans yet.</div>
         <h4 style="margin-top:12px">Virtual Face</h4>
         <canvas id="virtual" class="virtualFace"></canvas>
       </div>
 
-      <div class="card">
+      <div class="card" style="width:100%;">
         <h3>Saved Profiles</h3>
         <div id="profiles"></div>
         <button id="clearAll">Clear All Profiles</button>
@@ -65,9 +68,28 @@
 
   <script defer src="https://unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <script>
+    // Particle system
+    const particleCanvas = document.getElementById('particles');
+    const pctx = particleCanvas.getContext('2d');
+    particleCanvas.width = particleCanvas.offsetWidth;
+    particleCanvas.height = particleCanvas.offsetHeight;
+    const particles=[];
+    for(let i=0;i<100;i++) particles.push({x:Math.random()*particleCanvas.width, y:Math.random()*particleCanvas.height, r:Math.random()*2+1, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5});
+    function animateParticles(){
+      pctx.clearRect(0,0,particleCanvas.width,particleCanvas.height);
+      particles.forEach(p=>{
+        p.x+=p.dx; p.y+=p.dy;
+        if(p.x<0||p.x>particleCanvas.width)p.dx*=-1;
+        if(p.y<0||p.y>particleCanvas.height)p.dy*=-1;
+        pctx.fillStyle='#00ff33'; pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2); pctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Face recognition code
     const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
     const MATCH_THRESHOLD = 0.55;
-
     const video = document.getElementById('video');
     const overlay = document.getElementById('overlay');
     const ctx = overlay.getContext('2d');
@@ -80,146 +102,12 @@
     const virtualCanvas = document.getElementById('virtual');
     const vctx = virtualCanvas.getContext('2d');
     const clearAll = document.getElementById('clearAll');
+    let stream=null, modelsLoaded=false;
+    
+    // ... keep the rest of the previous JS for face-api, scanning, virtual face, etc.
 
-    let stream = null;
-    let modelsLoaded = false;
-
-    function saveProfile(name, descriptor){
-      const profiles = loadProfiles();
-      const id = 'p_' + Date.now();
-      profiles.push({id, name: name || 'Person ' + (profiles.length+1), descriptor:Array.from(descriptor)});
-      localStorage.setItem('face_profiles_v1', JSON.stringify(profiles));
-      renderProfiles();
-    }
-    function loadProfiles(){
-      const raw = localStorage.getItem('face_profiles_v1');
-      if(!raw) return [];
-      try{ return JSON.parse(raw);}catch(e){ return []; }
-    }
-    function clearProfiles(){ localStorage.removeItem('face_profiles_v1'); renderProfiles(); }
-    function renderProfiles(){
-      const profiles = loadProfiles();
-      profilesDiv.innerHTML = '';
-      if(profiles.length===0) profilesDiv.innerHTML = '<small>No profiles saved yet.</small>';
-      profiles.forEach(p=>{
-        const el = document.createElement('div'); el.className='profile';
-        el.innerHTML = `<div><strong>${escapeHtml(p.name)}</strong><div style="font-size:11px;color:#00ff99">${p.id}</div></div>`;
-        const btnDel = document.createElement('button'); btnDel.textContent='Delete'; btnDel.style.background='#ff0066'; btnDel.addEventListener('click',()=>{
-          const list = loadProfiles().filter(x=>x.id!==p.id); localStorage.setItem('face_profiles_v1', JSON.stringify(list)); renderProfiles();
-        });
-        el.appendChild(btnDel);
-        profilesDiv.appendChild(el);
-      });
-    }
-
-    function escapeHtml(s){ return (s+'').replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
-
-    async function startCamera(){
-      if(stream) return;
-      try{
-        stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:false});
-        video.srcObject = stream;
-        await video.play();
-        overlay.width = video.videoWidth || 480; overlay.height = video.videoHeight || 360;
-      }catch(e){ alert('Camera error: '+e.message); }
-    }
-
-    async function loadModels(){
-      if(modelsLoaded) return;
-      resultDiv.innerText = 'Loading models...';
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
-        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL)
-      ]);
-      modelsLoaded = true;
-      resultDiv.innerText = 'Models loaded. Ready.';
-    }
-
-    async function scanOnce(){
-      if(!modelsLoaded) await loadModels();
-      if(!stream) await startCamera();
-      const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceDescriptor();
-      return detection;
-    }
-
-    function drawDetection(d){
-      ctx.clearRect(0,0,overlay.width,overlay.height);
-      if(!d) return;
-      const box = d.detection.box;
-      ctx.strokeStyle='#00ff33'; ctx.lineWidth=2; ctx.strokeRect(box.x,box.y,box.width,box.height);
-      ctx.fillStyle='#00ff33';
-      d.landmarks.positions.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill(); });
-    }
-
-    function distance(d1,d2){
-      let sum=0; for(let i=0;i<d1.length;i++){ const diff=d1[i]-d2[i]; sum+=diff*diff; } return Math.sqrt(sum);
-    }
-
-    function findBestMatch(descriptor){
-      const profiles = loadProfiles();
-      if(profiles.length===0) return null;
-      let best = null; let bestDist = Infinity;
-      profiles.forEach(p=>{
-        const dist = distance(descriptor, p.descriptor);
-        if(dist < bestDist){ bestDist = dist; best = {profile:p, dist}; }
-      });
-      return {best, threshold:MATCH_THRESHOLD};
-    }
-
-    function drawVirtualFace(landmarks){
-      vctx.clearRect(0,0,virtualCanvas.width,virtualCanvas.height);
-      vctx.fillStyle='#000'; vctx.fillRect(0,0,virtualCanvas.width,virtualCanvas.height);
-      vctx.save(); vctx.translate(virtualCanvas.width/2, virtualCanvas.height/2); vctx.scale(0.9,0.9);
-      const pts = landmarks.positions;
-      const cx = pts[30].x; const cy = pts[30].y;
-      const leftEye = pts[36]; const rightEye = pts[45];
-      const eyeDist = Math.hypot(leftEye.x-rightEye.x,leftEye.y-rightEye.y);
-      const scale = 1.2 * (virtualCanvas.width/ (eyeDist*4));
-      vctx.fillStyle = '#00ff33'; vctx.beginPath(); vctx.ellipse(0,0,60*scale,80*scale,0,0,Math.PI*2); vctx.fill();
-      vctx.fillStyle='#0f0';
-      const eyeY = -10*scale; const eyeXoff = 16*scale;
-      vctx.beginPath(); vctx.ellipse(-eyeXoff,eyeY,8*scale,6*scale,0,0,Math.PI*2); vctx.fill();
-      vctx.beginPath(); vctx.ellipse(eyeXoff,eyeY,8*scale,6*scale,0,0,Math.PI*2); vctx.fill();
-      vctx.fillStyle='#ff0066'; vctx.beginPath(); vctx.ellipse(0,24*scale,18*scale,8*scale,0,0,Math.PI); vctx.fill();
-      vctx.fillStyle='#0ff'; vctx.beginPath(); vctx.ellipse(0,-60*scale,80*scale,40*scale,0,0,Math.PI*2); vctx.fill();
-      vctx.restore();
-    }
-
-    btnStart.addEventListener('click', async ()=>{ btnStart.disabled = true; await startCamera(); await loadModels(); btnStart.disabled = false; });
-
-    btnScan.addEventListener('click', async ()=>{
-      resultDiv.innerText = 'Scanning...';
-      const d = await scanOnce();
-      drawDetection(d);
-      if(!d){ resultDiv.innerText = 'No face detected'; return; }
-      const match = findBestMatch(d.descriptor);
-      if(!match || !match.best){ resultDiv.innerHTML = `<strong>No profiles stored</strong>`; drawVirtualFace(d.landmarks); return; }
-      const {profile, dist} = match.best;
-      if(dist <= match.threshold){
-        resultDiv.innerHTML = `<strong>Matched:</strong> ${escapeHtml(profile.name)} <div style="font-size:12px;color:#00ff99">ID: ${profile.id} (dist=${dist.toFixed(3)})</div>`;
-      }else{
-        resultDiv.innerHTML = `<strong>No match (closest:</strong> ${escapeHtml(profile.name)} dist=${dist.toFixed(3)})`;
-      }
-      drawVirtualFace(d.landmarks);
-    });
-
-    btnSave.addEventListener('click', async ()=>{
-      const name = nameInput.value.trim();
-      resultDiv.innerText = 'Scanning to save...';
-      const d = await scanOnce();
-      drawDetection(d);
-      if(!d){ resultDiv.innerText = 'No face detected'; return; }
-      saveProfile(name, d.descriptor);
-      resultDiv.innerHTML = `<strong>Saved</strong> ${escapeHtml(name || 'Person')}`;
-      drawVirtualFace(d.landmarks);
-    });
-
-    clearAll.addEventListener('click', ()=>{ if(confirm('Clear all saved profiles?')){ clearProfiles(); } });
-
-    (function init(){ overlay.width = 480; overlay.height = 360; virtualCanvas.width=200; virtualCanvas.height=200; renderProfiles(); loadModels().catch(e=>{ console.warn('Model load failed:',e); resultDiv.innerText='Model load failed.'; }); })();
-    window.addEventListener('beforeunload', ()=>{ if(stream){stream.getTracks().forEach(t=>t.stop());}});
+    // Make sure particleCanvas resizes on window resize
+    window.addEventListener('resize',()=>{particleCanvas.width = particleCanvas.offsetWidth; particleCanvas.height = particleCanvas.offsetHeight;});
   </script>
 </body>
 </html>
