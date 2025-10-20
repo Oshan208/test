@@ -2,78 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Advanced Person Identifying System — Robust Hacker Vibe</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Advanced Person Identifying System — Hacker Vibe</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;}
-    body{font-family:'Share Tech Mono',monospace;margin:0;background:#020202;color:#00ff99;display:flex;flex-direction:column;align-items:center;padding:10px;overflow-x:hidden}
-    .card{background:linear-gradient(180deg, rgba(0,0,0,0.65), rgba(0,0,0,0.55));border:1px solid rgba(0,255,153,0.12);border-radius:12px;padding:16px;box-shadow:0 0 30px rgba(0,255,153,0.04);animation:fadeIn 700ms ease-in;width:95%;max-width:1100px;margin-bottom:18px;position:relative;overflow:hidden}
-    #area{display:flex;flex-direction:column;gap:16px;align-items:center}
-    video, canvas {width:100%;max-width:520px;height:auto;border-radius:8px;background:#000;object-fit:cover;box-shadow:0 0 14px #00ff33}
-    .controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
-    button{padding:10px;border-radius:8px;border:1px solid #00ff99;background:rgba(0,0,0,0.6);color:#00ff99;cursor:pointer;transition:0.22s;flex:1 1 120px}
-    button:hover{background:#00ff33;color:#001;transform:scale(1.03);box-shadow:0 0 12px #00ff33}
-    input{padding:8px;border-radius:6px;border:1px solid #00ff33;background:#001100;color:#0f0;flex:1 1 120px}
-    small{color:#0f0;display:block;text-align:center;margin-top:6px}
-    #profiles{max-height:320px;overflow:auto;margin-top:8px;width:100%}
-    .profile{padding:8px;border-radius:6px;background:rgba(0,255,153,0.04);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-    .virtualFace{width:100%;max-width:220px;height:auto;background:#001100;border-radius:12px;box-shadow:0 0 15px #00ff33;margin:0 auto}
-    @keyframes fadeIn{from{opacity:0;}to{opacity:1}}
+    body{font-family:'Share Tech Mono',monospace;margin:0;background:#0f0f0f;color:#00ff99;display:flex;gap:20px;padding:20px;overflow:hidden}
+    .card{background:rgba(0,0,0,0.7);border:1px solid #00ff99;border-radius:12px;padding:16px;box-shadow:0 0 20px #00ff99;animation:fadeIn 1s ease-in;}
+    #area{display:flex;gap:16px}
+    video, canvas {width:480px;height:360px;border-radius:8px;background:#000;object-fit:cover;box-shadow:0 0 15px #00ff99}
+    .controls{display:flex;flex-direction:column;gap:8px}
+    button{padding:10px;border-radius:8px;border:1px solid #00ff99;background:rgba(0,0,0,0.6);color:#00ff99;cursor:pointer;transition:0.3s;}
+    button:hover{background:#00ff33;color:#000;transform:scale(1.05);box-shadow:0 0 10px #00ff99;}
+    input{padding:8px;border-radius:6px;border:1px solid #00ff33;background:#001100;color:#0f0}
+    small{color:#0f0}
+    #profiles{max-height:360px;overflow:auto;margin-top:8px}
+    .profile{padding:8px;border-radius:6px;background:rgba(0,255,153,0.1);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;animation:slideIn 0.5s ease-in}
+    .virtualFace{width:200px;height:200px;background:#001100;border-radius:12px;box-shadow:0 0 15px #00ff33}
 
-    /* particles */
-    canvas.particles{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-
-    @media(min-width:820px){ #area{flex-direction:row;align-items:flex-start} .card{margin-bottom:0} .controls{justify-content:flex-start} }
+    /* hacker vibe animations */
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    @keyframes slideIn{from{transform:translateX(-100%);}to{transform:translateX(0);}}
+    @keyframes glitch {
+      0% {text-shadow: 2px 0 #0f0, -2px 0 #00ff33;}
+      20% {text-shadow: -2px 0 #0f0, 2px 0 #00ff33;}
+      40% {text-shadow: 1px 0 #0f0, -1px 0 #00ff33;}
+      60% {text-shadow: -1px 0 #0f0, 1px 0 #00ff33;}
+      80% {text-shadow: 2px 0 #0f0, -2px 0 #00ff33;}
+      100% {text-shadow: none;}
+    }
+    #result{animation:glitch 1s infinite;}
   </style>
 </head>
 <body>
   <div class="card" id="area">
-    <canvas class="particles" id="particles"></canvas>
-
-    <div style="flex:1;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center">
+    <div>
       <video id="video" autoplay muted playsinline></video>
       <canvas id="overlay"></canvas>
-
-      <div class="controls">
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
         <button id="btnStart">Start Camera</button>
         <button id="btnScan">Scan & Match</button>
         <button id="btnSave">Scan & Save New</button>
         <input id="nameInput" placeholder="name (optional)" />
       </div>
-      <small>Tip: allow camera, then click Scan or Scan & Save. Models load once. Works better when camera permission is allowed and device has decent CPU/GPU.</small>
+      <small>Tip: allow camera, then click Scan or Scan & Save. Models load once at start.</small>
     </div>
 
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2">
-      <div class="card" style="width:100%;margin-bottom:12px">
-        <h3 style="margin:0 0 8px 0">Match Result</h3>
+    <div style="min-width:300px">
+      <div class="card" style="margin-bottom:12px">
+        <h3>Match Result</h3>
         <div id="result">No scans yet.</div>
         <h4 style="margin-top:12px">Virtual Face</h4>
         <canvas id="virtual" class="virtualFace"></canvas>
       </div>
 
-      <div class="card" style="width:100%">
-        <h3 style="margin:0 0 8px 0">Saved Profiles</h3>
-        <div id="profiles"><small>Loading profiles...</small></div>
-        <div style="display:flex;gap:8px;margin-top:8px"><button id="clearAll" style="flex:1">Clear All Profiles</button><button id="exportBtn" style="flex:1">Export</button></div>
+      <div class="card">
+        <h3>Saved Profiles</h3>
+        <div id="profiles"></div>
+        <button id="clearAll">Clear All Profiles</button>
       </div>
     </div>
   </div>
 
   <script defer src="https://unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <script>
-    // --------------------- Particles (responsive) ---------------------
-    const particleCanvas = document.getElementById('particles');
-    const pctx = particleCanvas.getContext('2d');
-    function resizeParticles(){ particleCanvas.width = particleCanvas.offsetWidth; particleCanvas.height = particleCanvas.offsetHeight; }
-    window.addEventListener('resize', resizeParticles); resizeParticles();
-    const particles = [];
-    for(let i=0;i<120;i++) particles.push({x:Math.random()*particleCanvas.width, y:Math.random()*particleCanvas.height, r:Math.random()*1.5+0.5, dx:(Math.random()-0.5)*0.6, dy:(Math.random()-0.5)*0.6});
-    function animateParticles(){ pctx.clearRect(0,0,particleCanvas.width,particleCanvas.height); particles.forEach(p=>{ p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>particleCanvas.width) p.dx*=-1; if(p.y<0||p.y>particleCanvas.height) p.dy*=-1; pctx.fillStyle='rgba(0,255,153,0.14)'; pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2); pctx.fill(); }); requestAnimationFrame(animateParticles); }
-    animateParticles();
+    const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+    const MATCH_THRESHOLD = 0.55;
 
-    // --------------------- Core face recognition ---------------------
-    const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models'; // demo host
     const video = document.getElementById('video');
     const overlay = document.getElementById('overlay');
     const ctx = overlay.getContext('2d');
@@ -85,95 +79,147 @@
     const profilesDiv = document.getElementById('profiles');
     const virtualCanvas = document.getElementById('virtual');
     const vctx = virtualCanvas.getContext('2d');
-    const clearAllBtn = document.getElementById('clearAll');
-    const exportBtn = document.getElementById('exportBtn');
+    const clearAll = document.getElementById('clearAll');
 
-    let stream=null; let modelsLoaded=false;
+    let stream = null;
+    let modelsLoaded = false;
 
-    // storage helpers
-    function loadProfiles(){ try{ const raw = localStorage.getItem('face_profiles_v2'); return raw?JSON.parse(raw):[]; }catch(e){return[]} }
-    function saveProfiles(list){ localStorage.setItem('face_profiles_v2', JSON.stringify(list)); }
-    function addProfile(name, descriptor){ const profiles = loadProfiles(); const id = 'p_'+Date.now(); profiles.push({id, name: name||('Person '+(profiles.length+1)), descriptor:Array.from(descriptor)}); saveProfiles(profiles); renderProfiles(); }
-    function deleteProfile(id){ const list = loadProfiles().filter(p=>p.id!==id); saveProfiles(list); renderProfiles(); }
-    function clearProfiles(){ if(confirm('Clear all profiles?')){ localStorage.removeItem('face_profiles_v2'); renderProfiles(); }}
-    function exportProfiles(){ const data = loadProfiles(); const blob = new Blob([JSON.stringify(data)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='face_profiles.json'; a.click(); URL.revokeObjectURL(url); }
-
-    function renderProfiles(){ const list = loadProfiles(); profilesDiv.innerHTML=''; if(list.length===0){ profilesDiv.innerHTML='<small>No profiles saved yet.</small>'; return; } list.forEach(p=>{ const el=document.createElement('div'); el.className='profile'; el.innerHTML=`<div><strong>${escapeHtml(p.name)}</strong><div style="font-size:11px;color:#00ff99">${p.id}</div></div>`; const del=document.createElement('button'); del.textContent='Delete'; del.style.background='#ff4466'; del.addEventListener('click',()=>deleteProfile(p.id)); el.appendChild(del); profilesDiv.appendChild(el); }); }
-
-    function escapeHtml(s){ return (s+'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-    // start camera (prefers front camera) with constraints suitable for mobile/pc
-    async function startCamera(){ if(stream) return; try{ stream = await navigator.mediaDevices.getUserMedia({ video:{ width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, audio:false }); video.srcObject = stream; await video.play(); overlay.width = video.videoWidth || 480; overlay.height = video.videoHeight || 360; virtualCanvas.width = 240; virtualCanvas.height = 240; }catch(e){ alert('Camera error: '+e.message); }}
-
-    // load models
-    async function loadModels(){ if(modelsLoaded) return; resultDiv.innerText='Loading ML models...'; await Promise.all([ faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL), faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL), faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL), faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL) ]); modelsLoaded=true; resultDiv.innerText='Models loaded — ready.'; }
-
-    // small image preprocessing to help low-light: simple contrast stretch
-    function enhanceImage(canvasIn, canvasOut){ const w=canvasIn.width,h=canvasIn.height; const ctxIn=canvasIn.getContext('2d'); const ctxOut=canvasOut.getContext('2d'); const img=ctxIn.getImageData(0,0,w,h); const data=img.data; let min=255,max=0; for(let i=0;i<data.length;i+=4){ const lum = 0.2126*data[i]+0.7152*data[i+1]+0.0722*data[i+2]; if(lum<min)min=lum; if(lum>max)max=lum; } const scale = 255/(Math.max(1,(max-min))); for(let i=0;i<data.length;i+=4){ data[i] = Math.min(255,Math.max(0,(data[i]-min)*scale)); data[i+1] = Math.min(255,Math.max(0,(data[i+1]-min)*scale)); data[i+2] = Math.min(255,Math.max(0,(data[i+2]-min)*scale)); } ctxOut.putImageData(img,0,0); }
-
-    // attempt detection with fallback strategies to handle varied lighting/backgrounds
-    async function detectWithFallback(){
-      // options tuned: inputSize larger gives better accuracy but slower; scoreThreshold small to catch weak faces
-      const optionsTiny = new faceapi.TinyFaceDetectorOptions({ inputSize: 512, scoreThreshold: 0.35 });
-      const optionsTinyFast = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
-      // try direct on video
-      let detection = await faceapi.detectSingleFace(video, optionsTiny).withFaceLandmarks(true).withFaceDescriptor();
-      if(detection) return detection;
-      // fallback: try faster tiny
-      detection = await faceapi.detectSingleFace(video, optionsTinyFast).withFaceLandmarks(true).withFaceDescriptor();
-      if(detection) return detection;
-      // fallback: preprocess (contrast stretch) then try detecting on processed frame
-      const tmpIn = document.createElement('canvas'); tmpIn.width = video.videoWidth; tmpIn.height = video.videoHeight; const tinCtx = tmpIn.getContext('2d'); tinCtx.drawImage(video,0,0,tmpIn.width,tmpIn.height);
-      const tmpOut = document.createElement('canvas'); tmpOut.width = tmpIn.width; tmpOut.height = tmpIn.height;
-      enhanceImage(tmpIn, tmpOut);
-      // try detect on canvas image
-      detection = await faceapi.detectSingleFace(tmpOut, optionsTiny).withFaceLandmarks(true).withFaceDescriptor();
-      if(detection) return detection;
-      // final fallback: try SSD Mobilenet detector on original video
-      try{ detection = await faceapi.detectSingleFace(video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3 })).withFaceLandmarks(true).withFaceDescriptor(); if(detection) return detection; }catch(e){}
-      return null;
+    function saveProfile(name, descriptor){
+      const profiles = loadProfiles();
+      const id = 'p_' + Date.now();
+      profiles.push({id, name: name || 'Person ' + (profiles.length+1), descriptor:Array.from(descriptor)});
+      localStorage.setItem('face_profiles_v1', JSON.stringify(profiles));
+      renderProfiles();
+    }
+    function loadProfiles(){
+      const raw = localStorage.getItem('face_profiles_v1');
+      if(!raw) return [];
+      try{ return JSON.parse(raw);}catch(e){ return []; }
+    }
+    function clearProfiles(){ localStorage.removeItem('face_profiles_v1'); renderProfiles(); }
+    function renderProfiles(){
+      const profiles = loadProfiles();
+      profilesDiv.innerHTML = '';
+      if(profiles.length===0) profilesDiv.innerHTML = '<small>No profiles saved yet.</small>';
+      profiles.forEach(p=>{
+        const el = document.createElement('div'); el.className='profile';
+        el.innerHTML = `<div><strong>${escapeHtml(p.name)}</strong><div style="font-size:11px;color:#00ff99">${p.id}</div></div>`;
+        const btnDel = document.createElement('button'); btnDel.textContent='Delete'; btnDel.style.background='#ff0066'; btnDel.addEventListener('click',()=>{
+          const list = loadProfiles().filter(x=>x.id!==p.id); localStorage.setItem('face_profiles_v1', JSON.stringify(list)); renderProfiles();
+        });
+        el.appendChild(btnDel);
+        profilesDiv.appendChild(el);
+      });
     }
 
-    function drawDetection(d){ ctx.clearRect(0,0,overlay.width,overlay.height); if(!d) return; const box = d.detection.box; ctx.strokeStyle='#00ff33'; ctx.lineWidth=2; ctx.strokeRect(box.x,box.y,box.width,box.height); ctx.fillStyle='rgba(0,255,153,0.9)'; d.landmarks.positions.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill(); }); }
+    function escapeHtml(s){ return (s+'').replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
 
-    function distance(a,b){ let s=0; for(let i=0;i<a.length;i++){ const diff=a[i]-b[i]; s+=diff*diff; } return Math.sqrt(s); }
+    async function startCamera(){
+      if(stream) return;
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:false});
+        video.srcObject = stream;
+        await video.play();
+        overlay.width = video.videoWidth || 480; overlay.height = video.videoHeight || 360;
+      }catch(e){ alert('Camera error: '+e.message); }
+    }
 
-    function findBestMatch(descriptor){ const profiles = loadProfiles(); if(profiles.length===0) return null; let best=null; let bestDist=Infinity; profiles.forEach(p=>{ const dist = distance(descriptor, p.descriptor); if(dist<bestDist){ bestDist=dist; best={profile:p,dist}; } }); return {best,threshold:0.55}; }
+    async function loadModels(){
+      if(modelsLoaded) return;
+      resultDiv.innerText = 'Loading models...';
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL)
+      ]);
+      modelsLoaded = true;
+      resultDiv.innerText = 'Models loaded. Ready.';
+    }
 
-    function drawVirtualFace(landmarks){ vctx.clearRect(0,0,virtualCanvas.width,virtualCanvas.height); vctx.fillStyle='#000'; vctx.fillRect(0,0,virtualCanvas.width,virtualCanvas.height); vctx.save(); vctx.translate(virtualCanvas.width/2, virtualCanvas.height/2); vctx.scale(0.9,0.9); const pts = landmarks.positions; const leftEye = pts[36]; const rightEye = pts[45]; const eyeDist = Math.hypot(leftEye.x-rightEye.x,leftEye.y-rightEye.y)||30; const scale = 1.2*(virtualCanvas.width/(eyeDist*4)); vctx.fillStyle='#00ff33'; vctx.beginPath(); vctx.ellipse(0,0,60*scale,80*scale,0,0,Math.PI*2); vctx.fill(); vctx.fillStyle='#001'; vctx.beginPath(); vctx.ellipse(-16*scale,-10*scale,8*scale,6*scale,0,0,Math.PI*2); vctx.fill(); vctx.beginPath(); vctx.ellipse(16*scale,-10*scale,8*scale,6*scale,0,0,Math.PI*2); vctx.fill(); vctx.fillStyle='#ff4466'; vctx.beginPath(); vctx.ellipse(0,22*scale,18*scale,8*scale,0,0,Math.PI); vctx.fill(); vctx.fillStyle='#003'; vctx.beginPath(); vctx.ellipse(0,-60*scale,80*scale,40*scale,0,0,Math.PI*2); vctx.fill(); vctx.restore(); }
+    async function scanOnce(){
+      if(!modelsLoaded) await loadModels();
+      if(!stream) await startCamera();
+      const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceDescriptor();
+      return detection;
+    }
 
-    // main actions
-    btnStart.addEventListener('click', async ()=>{ btnStart.disabled=true; await startCamera(); await loadModels(); btnStart.disabled=false; });
+    function drawDetection(d){
+      ctx.clearRect(0,0,overlay.width,overlay.height);
+      if(!d) return;
+      const box = d.detection.box;
+      ctx.strokeStyle='#00ff33'; ctx.lineWidth=2; ctx.strokeRect(box.x,box.y,box.width,box.height);
+      ctx.fillStyle='#00ff33';
+      d.landmarks.positions.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill(); });
+    }
+
+    function distance(d1,d2){
+      let sum=0; for(let i=0;i<d1.length;i++){ const diff=d1[i]-d2[i]; sum+=diff*diff; } return Math.sqrt(sum);
+    }
+
+    function findBestMatch(descriptor){
+      const profiles = loadProfiles();
+      if(profiles.length===0) return null;
+      let best = null; let bestDist = Infinity;
+      profiles.forEach(p=>{
+        const dist = distance(descriptor, p.descriptor);
+        if(dist < bestDist){ bestDist = dist; best = {profile:p, dist}; }
+      });
+      return {best, threshold:MATCH_THRESHOLD};
+    }
+
+    function drawVirtualFace(landmarks){
+      vctx.clearRect(0,0,virtualCanvas.width,virtualCanvas.height);
+      vctx.fillStyle='#000'; vctx.fillRect(0,0,virtualCanvas.width,virtualCanvas.height);
+      vctx.save(); vctx.translate(virtualCanvas.width/2, virtualCanvas.height/2); vctx.scale(0.9,0.9);
+      const pts = landmarks.positions;
+      const cx = pts[30].x; const cy = pts[30].y;
+      const leftEye = pts[36]; const rightEye = pts[45];
+      const eyeDist = Math.hypot(leftEye.x-rightEye.x,leftEye.y-rightEye.y);
+      const scale = 1.2 * (virtualCanvas.width/ (eyeDist*4));
+      vctx.fillStyle = '#00ff33'; vctx.beginPath(); vctx.ellipse(0,0,60*scale,80*scale,0,0,Math.PI*2); vctx.fill();
+      vctx.fillStyle='#0f0';
+      const eyeY = -10*scale; const eyeXoff = 16*scale;
+      vctx.beginPath(); vctx.ellipse(-eyeXoff,eyeY,8*scale,6*scale,0,0,Math.PI*2); vctx.fill();
+      vctx.beginPath(); vctx.ellipse(eyeXoff,eyeY,8*scale,6*scale,0,0,Math.PI*2); vctx.fill();
+      vctx.fillStyle='#ff0066'; vctx.beginPath(); vctx.ellipse(0,24*scale,18*scale,8*scale,0,0,Math.PI); vctx.fill();
+      vctx.fillStyle='#0ff'; vctx.beginPath(); vctx.ellipse(0,-60*scale,80*scale,40*scale,0,0,Math.PI*2); vctx.fill();
+      vctx.restore();
+    }
+
+    btnStart.addEventListener('click', async ()=>{ btnStart.disabled = true; await startCamera(); await loadModels(); btnStart.disabled = false; });
 
     btnScan.addEventListener('click', async ()=>{
-      resultDiv.innerText='Scanning...';
-      const d = await detectWithFallback();
+      resultDiv.innerText = 'Scanning...';
+      const d = await scanOnce();
       drawDetection(d);
-      if(!d){ resultDiv.innerText='No face detected (try brighter light or move camera)'; return; }
-      // matching
+      if(!d){ resultDiv.innerText = 'No face detected'; return; }
       const match = findBestMatch(d.descriptor);
-      if(!match || !match.best){ resultDiv.innerHTML='<strong>No profiles stored</strong>'; drawVirtualFace(d.landmarks); return; }
-      const {profile,dist} = match.best;
-      if(dist <= match.threshold){ resultDiv.innerHTML=`<strong>Matched:</strong> ${escapeHtml(profile.name)} <div style="font-size:12px;color:#00ff99">ID: ${profile.id} (dist=${dist.toFixed(3)})</div>`; }
-      else{ resultDiv.innerHTML=`<strong>No match</strong> — closest: ${escapeHtml(profile.name)} (dist=${dist.toFixed(3)})`; }
+      if(!match || !match.best){ resultDiv.innerHTML = `<strong>No profiles stored</strong>`; drawVirtualFace(d.landmarks); return; }
+      const {profile, dist} = match.best;
+      if(dist <= match.threshold){
+        resultDiv.innerHTML = `<strong>Matched:</strong> ${escapeHtml(profile.name)} <div style="font-size:12px;color:#00ff99">ID: ${profile.id} (dist=${dist.toFixed(3)})</div>`;
+      }else{
+        resultDiv.innerHTML = `<strong>No match (closest:</strong> ${escapeHtml(profile.name)} dist=${dist.toFixed(3)})`;
+      }
       drawVirtualFace(d.landmarks);
     });
 
     btnSave.addEventListener('click', async ()=>{
-      const name = nameInput.value.trim(); resultDiv.innerText='Scanning to save...';
-      const d = await detectWithFallback(); drawDetection(d);
-      if(!d){ resultDiv.innerText='No face detected'; return; }
-      addProfile(name, d.descriptor); resultDiv.innerHTML=`<strong>Saved</strong> ${escapeHtml(name||'Person')}`; drawVirtualFace(d.landmarks);
+      const name = nameInput.value.trim();
+      resultDiv.innerText = 'Scanning to save...';
+      const d = await scanOnce();
+      drawDetection(d);
+      if(!d){ resultDiv.innerText = 'No face detected'; return; }
+      saveProfile(name, d.descriptor);
+      resultDiv.innerHTML = `<strong>Saved</strong> ${escapeHtml(name || 'Person')}`;
+      drawVirtualFace(d.landmarks);
     });
 
-    clearAllBtn.addEventListener('click', clearProfiles);
-    exportBtn.addEventListener('click', exportProfiles);
+    clearAll.addEventListener('click', ()=>{ if(confirm('Clear all saved profiles?')){ clearProfiles(); } });
 
-    // initialize UI
-    (function init(){ renderProfiles(); overlay.width=480; overlay.height=360; virtualCanvas.width=240; virtualCanvas.height=240; loadModels().catch(e=>{ console.warn(e); resultDiv.innerText='Model load failed — check network.'; }); })();
-
-    // stop camera on exit
-    window.addEventListener('beforeunload', ()=>{ if(stream){ stream.getTracks().forEach(t=>t.stop()); }});
+    (function init(){ overlay.width = 480; overlay.height = 360; virtualCanvas.width=200; virtualCanvas.height=200; renderProfiles(); loadModels().catch(e=>{ console.warn('Model load failed:',e); resultDiv.innerText='Model load failed.'; }); })();
+    window.addEventListener('beforeunload', ()=>{ if(stream){stream.getTracks().forEach(t=>t.stop());}});
   </script>
 </body>
 </html>
