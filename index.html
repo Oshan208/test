@@ -278,11 +278,37 @@
       justify-content: space-between;
       align-items: center;
     }
+    .qr-code {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      margin: 10px auto;
+      display: inline-block;
+    }
+    #cameraContainer {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #00b4d8;
+    }
+    #cameraContainer video {
+      width: 100%;
+      display: block;
+    }
+    .scan-status {
+      text-align: center;
+      padding: 10px;
+      color: #ffa502;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 <div class="app-container">
-  <h1>MATA<span>BANK</span> <small style="font-size:0.5rem;display:block;">Firebase Edition</small></h1>
+  <h1>MATA<span>BANK</span> <small style="font-size:0.5rem;display:block;">Firebase Edition v2.0</small></h1>
 
   <!-- Auth Panel -->
   <div id="authPanel" class="panel">
@@ -292,20 +318,20 @@
       <button id="showAdminLoginBtn" class="btn btn-secondary">ADMIN</button>
     </div>
     <div id="loginForm">
-      <div class="input-group"><label>12-Digit Account Number</label><input type="text" id="loginAccNum" maxlength="12"></div>
-      <div class="input-group"><label>Password</label><input type="password" id="loginPassword"></div>
+      <div class="input-group"><label>12-Digit Account Number</label><input type="text" id="loginAccNum" maxlength="12" placeholder="100000000001"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="pass1001"></div>
       <button id="loginSubmitBtn" class="btn">🔐 LOGIN</button>
       <div id="loginError" class="error-message"></div>
     </div>
     <div id="registerForm" class="hidden">
-      <div class="input-group"><label>Full Name</label><input type="text" id="regName"></div>
-      <div class="input-group"><label>Password</label><input type="password" id="regPassword"></div>
+      <div class="input-group"><label>Full Name</label><input type="text" id="regName" placeholder="Your name"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="regPassword" placeholder="Create password"></div>
       <button id="registerSubmitBtn" class="btn">✨ CREATE ACCOUNT</button>
       <div id="regError" class="error-message"></div>
     </div>
     <div id="adminLoginForm" class="hidden">
       <div class="input-group"><label>Admin Username</label><input type="text" id="adminUsername" value="admin"></div>
-      <div class="input-group"><label>Admin Password</label><input type="password" id="adminPassword"></div>
+      <div class="input-group"><label>Admin Password</label><input type="password" id="adminPassword" placeholder="admin123"></div>
       <button id="adminLoginSubmitBtn" class="btn">👑 ADMIN LOGIN</button>
       <div id="adminLoginError" class="error-message"></div>
     </div>
@@ -328,25 +354,27 @@
     <div id="userNotifications" style="margin:10px 0;"></div>
 
     <!-- QR Section -->
-    <div class="flex-row" style="margin:10px 0;">
+    <div class="flex-row" style="margin:10px 0; flex-wrap:wrap;">
       <button id="showMyQrBtn" class="btn btn-secondary btn-small">📱 My QR</button>
       <button id="requestMoneyBtn" class="btn btn-secondary btn-small">💰 Request</button>
-      <button id="scanQrBtn" class="btn btn-secondary btn-small">📷 Scan</button>
+      <button id="scanQrBtn" class="btn btn-secondary btn-small">📷 Scan QR</button>
     </div>
     <div id="myQrDisplay" class="hidden" style="text-align:center;"></div>
     <div id="requestMoneyForm" class="hidden">
-      <input type="number" id="requestAmount" placeholder="Amount" step="0.01">
-      <button id="generateRequestQrBtn" class="btn btn-small">Generate QR</button>
+      <div class="input-group"><label>Request Amount (LKR)</label><input type="number" id="requestAmount" placeholder="Amount" step="0.01"></div>
+      <button id="generateRequestQrBtn" class="btn btn-small">🎯 Generate Request QR</button>
       <div id="requestQrDisplay" style="text-align:center;margin-top:10px;"></div>
     </div>
     <div id="scannerSection" class="hidden">
+      <div class="scan-status" id="scanStatus">📷 Opening camera...</div>
       <div id="cameraContainer"></div>
-      <button id="stopCameraBtn" class="btn btn-danger btn-small">Stop Camera</button>
+      <button id="stopCameraBtn" class="btn btn-danger btn-small" style="margin-top:10px;">❌ Stop Camera</button>
+      <div id="scanResult" class="success-message"></div>
     </div>
 
     <!-- Coupon -->
     <div class="flex-row">
-      <input type="text" id="couponInput" placeholder="Coupon code">
+      <input type="text" id="couponInput" placeholder="Coupon code (äddon)">
       <button id="applyCouponBtn" class="btn btn-success btn-small">➕ ADDON</button>
     </div>
     <div id="couponMessage" class="success-message"></div>
@@ -354,15 +382,15 @@
 
     <hr>
     <h3 style="color:#cfe4ff;">💸 Send Money</h3>
-    <div class="input-group"><label>Recipient Account</label><input type="text" id="recipientAccNum" maxlength="12"></div>
-    <div class="input-group"><label>Amount (LKR)</label><input type="number" id="transferAmount" step="0.01"></div>
+    <div class="input-group"><label>Recipient Account</label><input type="text" id="recipientAccNum" maxlength="12" placeholder="100000000002"></div>
+    <div class="input-group"><label>Amount (LKR)</label><input type="number" id="transferAmount" step="0.01" placeholder="100"></div>
     <div style="font-size:0.8rem;color:#9cc9f0;">⚡ Fee: 3% (goes to admin)</div>
-    <button id="sendMoneyBtn" class="btn">📤 SEND</button>
+    <button id="sendMoneyBtn" class="btn">📤 SEND MONEY</button>
     <div id="transferError" class="error-message"></div>
     <div id="transferSuccess" class="success-message"></div>
 
     <hr>
-    <h3 style="color:#cfe4ff;">📋 History</h3>
+    <h3 style="color:#cfe4ff;">📋 Transaction History</h3>
     <div class="transaction-list" id="transactionHistory"></div>
   </div>
 
@@ -407,7 +435,7 @@
       <div class="grid-2">
         <div>
           <h3 style="color:white;">Create Coupon</h3>
-          <div class="input-group"><label>Coupon Code</label><input type="text" id="newCouponCode"></div>
+          <div class="input-group"><label>Coupon Code</label><input type="text" id="newCouponCode" placeholder="SUMMER2024"></div>
           <div class="input-group"><label>Amount (LKR)</label><input type="number" id="newCouponAmount" value="10000"></div>
           <div class="input-group"><label>Max Uses (0=unlimited)</label><input type="number" id="newCouponMaxUses" value="1"></div>
           <button id="createCouponBtn" class="btn btn-success">Create Coupon</button>
@@ -422,8 +450,8 @@
     <!-- Notifications Tab -->
     <div id="adminTab-notifications" class="admin-tab-content hidden">
       <h3 style="color:white;">Send Announcement</h3>
-      <div class="input-group"><label>Title</label><input type="text" id="notifTitle"></div>
-      <div class="input-group"><label>Message</label><textarea id="notifMessage"></textarea></div>
+      <div class="input-group"><label>Title</label><input type="text" id="notifTitle" placeholder="Important Update"></div>
+      <div class="input-group"><label>Message</label><textarea id="notifMessage" placeholder="Your message here..."></textarea></div>
       <div class="input-group"><label>Target</label>
         <select id="notifTarget">
           <option value="all">All Users</option>
@@ -432,7 +460,7 @@
       </div>
       <div id="notifSpecificUser" class="input-group hidden">
         <label>User Account Number</label>
-        <input type="text" id="notifUserAcc">
+        <input type="text" id="notifUserAcc" placeholder="100000000001">
       </div>
       <button id="sendNotificationBtn" class="btn btn-warning">📢 Send Announcement</button>
       <hr>
@@ -443,22 +471,10 @@
     <!-- Analytics Tab -->
     <div id="adminTab-analytics" class="admin-tab-content hidden">
       <div class="grid-2">
-        <div class="stat-card">
-          <div class="stat-label">Today's Transactions</div>
-          <div class="stat-value" id="todayTxns">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Today's Volume (LKR)</div>
-          <div class="stat-value" id="todayVolume">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Active Users (24h)</div>
-          <div class="stat-value" id="activeUsers24h">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Banned Users</div>
-          <div class="stat-value" id="bannedUsersCount">0</div>
-        </div>
+        <div class="stat-card"><div class="stat-label">Today's Transactions</div><div class="stat-value" id="todayTxns">0</div></div>
+        <div class="stat-card"><div class="stat-label">Today's Volume (LKR)</div><div class="stat-value" id="todayVolume">0</div></div>
+        <div class="stat-card"><div class="stat-label">Active Users (24h)</div><div class="stat-value" id="activeUsers24h">0</div></div>
+        <div class="stat-card"><div class="stat-label">Banned Users</div><div class="stat-value" id="bannedUsersCount">0</div></div>
       </div>
     </div>
   </div>
@@ -466,7 +482,7 @@
   <!-- User Edit Modal -->
   <div id="userEditModal" class="modal-overlay hidden">
     <div class="modal-content">
-      <h3 style="color:white;">Edit User</h3>
+      <h3 style="color:white;">✏️ Edit User</h3>
       <div class="input-group"><label>Name</label><input type="text" id="editUserName"></div>
       <div class="input-group"><label>Account Number</label><input type="text" id="editUserAcc" disabled></div>
       <div class="input-group"><label>Balance (LKR)</label><input type="number" id="editUserBalance" step="0.01"></div>
@@ -483,24 +499,30 @@
     </div>
   </div>
 
-  <!-- Confirm Modal -->
+  <!-- QR Confirm Modal -->
   <div id="confirmModal" class="modal-overlay hidden">
     <div class="modal-content">
-      <h3>🔍 QR Payment Details</h3>
-      <div id="modalDetails"></div>
-      <div class="flex-row">
-        <button id="confirmTransactionBtn" class="btn btn-success">✅ Confirm</button>
-        <button id="cancelTransactionBtn" class="btn btn-danger">Cancel</button>
+      <h3 style="color:white;">🔍 QR Payment Confirmation</h3>
+      <div id="modalDetails" style="color:#d0e0ff; line-height:2;"></div>
+      <div class="flex-row" style="margin-top:15px;">
+        <button id="confirmTransactionBtn" class="btn btn-success">✅ CONFIRM PAYMENT</button>
+        <button id="cancelTransactionBtn" class="btn btn-danger">❌ CANCEL</button>
       </div>
       <div id="modalError" class="error-message"></div>
     </div>
   </div>
 </div>
 
-<!-- Scripts -->
+<!-- External Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js">
+</script>
+
+<!-- Firebase Module Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, set, get, update, push, onValue, off, query, orderByChild, equalTo, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, set, get, update, push, onValue, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDLSnWPSjF8Qf2mQ9zc2HfvpTH8dPzIrL8",
@@ -515,14 +537,14 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // State
+  // Global State
   let currentUser = null;
   let isAdmin = false;
-  let adminListeners = [];
   let videoStream = null;
+  let scanInterval = null;
   let pendingQRData = null;
 
-  // Initialize Database Structure
+  // Initialize Database
   async function initializeDB() {
     const adminRef = ref(db, 'admin');
     const adminSnap = await get(adminRef);
@@ -533,8 +555,48 @@
         credentials: { username: 'admin', password: 'admin123' }
       });
     }
+    
+    // Create sample users if not exist
+    const usersSnap = await get(ref(db, 'users'));
+    if (!usersSnap.exists()) {
+      const usersRef = ref(db, 'users');
+      await set(usersRef, {
+        'user1': {
+          accountNumber: '100000000001',
+          name: 'User One',
+          password: 'pass1001',
+          balance: 50000,
+          status: 'active',
+          createdAt: Date.now(),
+          lastActive: Date.now()
+        },
+        'user2': {
+          accountNumber: '100000000002',
+          name: 'User Two',
+          password: 'pass1002',
+          balance: 25000,
+          status: 'active',
+          createdAt: Date.now(),
+          lastActive: Date.now()
+        }
+      });
+    }
+    
+    // Create sample coupon
+    const couponsSnap = await get(ref(db, 'coupons'));
+    if (!couponsSnap.exists()) {
+      const couponRef = push(ref(db, 'coupons'));
+      await set(couponRef, {
+        code: 'äddon',
+        amount: 10000,
+        maxUses: 1,
+        active: true,
+        usedBy: {},
+        createdAt: Date.now()
+      });
+    }
   }
-  initializeDB();
+  await initializeDB();
 
   // Helper Functions
   function generateAccountNumber() {
@@ -542,10 +604,9 @@
   }
 
   async function getUserByAccount(accNum) {
-    const usersRef = ref(db, 'users');
-    const snap = await get(usersRef);
-    if (snap.exists()) {
-      const users = snap.val();
+    const usersSnap = await get(ref(db, 'users'));
+    if (usersSnap.exists()) {
+      const users = usersSnap.val();
       return Object.entries(users).find(([key, u]) => u.accountNumber === accNum);
     }
     return null;
@@ -561,16 +622,31 @@
     const acc = document.getElementById('loginAccNum').value.trim();
     const pwd = document.getElementById('loginPassword').value.trim();
     document.getElementById('loginError').textContent = '';
-    if (acc.length !== 12) { document.getElementById('loginError').textContent = 'Invalid account number.'; return; }
+    
+    if (acc.length !== 12) {
+      document.getElementById('loginError').textContent = 'Enter valid 12-digit account number.';
+      return;
+    }
     
     const userEntry = await getUserByAccount(acc);
-    if (!userEntry) { document.getElementById('loginError').textContent = 'Account not found.'; return; }
+    if (!userEntry) {
+      document.getElementById('loginError').textContent = 'Account not found.';
+      return;
+    }
+    
     const [uid, userData] = userEntry;
-    if (userData.password !== pwd) { document.getElementById('loginError').textContent = 'Wrong password.'; return; }
-    if (userData.status === 'banned') { document.getElementById('loginError').textContent = 'Account is banned.'; return; }
+    if (userData.password !== pwd) {
+      document.getElementById('loginError').textContent = 'Wrong password.';
+      return;
+    }
+    if (userData.status === 'banned') {
+      document.getElementById('loginError').textContent = 'Account is banned. Contact admin.';
+      return;
+    }
     
     currentUser = { uid, ...userData };
     isAdmin = false;
+    await update(ref(db, `users/${uid}`), { lastActive: Date.now() });
     showDashboard();
   });
 
@@ -578,11 +654,20 @@
     const name = document.getElementById('regName').value.trim();
     const pwd = document.getElementById('regPassword').value.trim();
     document.getElementById('regError').textContent = '';
-    if (!name || !pwd) { document.getElementById('regError').textContent = 'All fields required.'; return; }
+    
+    if (!name || !pwd) {
+      document.getElementById('regError').textContent = 'All fields are required.';
+      return;
+    }
+    if (pwd.length < 4) {
+      document.getElementById('regError').textContent = 'Password must be at least 4 characters.';
+      return;
+    }
     
     let accNum;
-    do { accNum = generateAccountNumber(); }
-    while (await getUserByAccount(accNum));
+    do {
+      accNum = generateAccountNumber();
+    } while (await getUserByAccount(accNum));
     
     const newUserRef = push(ref(db, 'users'));
     const newUser = {
@@ -597,7 +682,7 @@
     await set(newUserRef, newUser);
     currentUser = { uid: newUserRef.key, ...newUser };
     isAdmin = false;
-    alert(`Account created! Number: ${accNum}`);
+    alert(`✅ Account created successfully!\nYour Account Number: ${accNum}\nPlease save this number for login.`);
     showDashboard();
   });
 
@@ -605,6 +690,7 @@
     const u = document.getElementById('adminUsername').value.trim();
     const p = document.getElementById('adminPassword').value.trim();
     document.getElementById('adminLoginError').textContent = '';
+    
     const adminSnap = await get(ref(db, 'admin/credentials'));
     const creds = adminSnap.val();
     if (u === creds.username && p === creds.password) {
@@ -612,28 +698,39 @@
       currentUser = null;
       showAdminDashboard();
     } else {
-      document.getElementById('adminLoginError').textContent = 'Invalid credentials.';
+      document.getElementById('adminLoginError').textContent = 'Invalid admin credentials.';
     }
   });
 
-  // Toggle Forms
+  // Form Toggle
   document.getElementById('showLoginBtn').addEventListener('click', () => {
     document.getElementById('loginForm').classList.remove('hidden');
     document.getElementById('registerForm').classList.add('hidden');
     document.getElementById('adminLoginForm').classList.add('hidden');
+    document.getElementById('showLoginBtn').style.background = '#00b4d8';
+    document.getElementById('showRegisterBtn').style.background = 'rgba(255,255,255,0.08)';
+    document.getElementById('showAdminLoginBtn').style.background = 'rgba(255,255,255,0.08)';
   });
+  
   document.getElementById('showRegisterBtn').addEventListener('click', () => {
     document.getElementById('registerForm').classList.remove('hidden');
     document.getElementById('loginForm').classList.add('hidden');
     document.getElementById('adminLoginForm').classList.add('hidden');
+    document.getElementById('showRegisterBtn').style.background = '#00b4d8';
+    document.getElementById('showLoginBtn').style.background = 'rgba(255,255,255,0.08)';
+    document.getElementById('showAdminLoginBtn').style.background = 'rgba(255,255,255,0.08)';
   });
+  
   document.getElementById('showAdminLoginBtn').addEventListener('click', () => {
     document.getElementById('adminLoginForm').classList.remove('hidden');
     document.getElementById('loginForm').classList.add('hidden');
     document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('showAdminLoginBtn').style.background = '#00b4d8';
+    document.getElementById('showLoginBtn').style.background = 'rgba(255,255,255,0.08)';
+    document.getElementById('showRegisterBtn').style.background = 'rgba(255,255,255,0.08)';
   });
 
-  // Dashboard Functions
+  // Dashboard
   function showDashboard() {
     document.getElementById('authPanel').classList.add('hidden');
     document.getElementById('dashboardPanel').classList.remove('hidden');
@@ -669,7 +766,7 @@
               <strong>📢 ${n.title}</strong>
               <p>${n.message}</p>
               <small>${new Date(n.timestamp).toLocaleString()}</small>
-              <button class="btn btn-small btn-secondary" onclick="markNotifRead('${key}')">✓ Read</button>
+              <button class="btn btn-small btn-secondary" onclick="window.markNotifRead('${key}')">✓ Mark Read</button>
             </div>`;
           }
         }
@@ -679,6 +776,7 @@
   }
 
   window.markNotifRead = async (notifId) => {
+    if (!currentUser) return;
     await update(ref(db, `notifications/${notifId}/readBy`), { [currentUser.uid]: true });
   };
 
@@ -686,7 +784,10 @@
     const txnsRef = ref(db, 'transactions');
     onValue(txnsRef, (snap) => {
       const container = document.getElementById('transactionHistory');
-      if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No transactions</div>'; return; }
+      if (!snap.exists()) {
+        container.innerHTML = '<div style="color:#aaa;text-align:center;">No transactions yet</div>';
+        return;
+      }
       const txns = snap.val();
       let html = '';
       Object.entries(txns).reverse().forEach(([key, t]) => {
@@ -694,13 +795,20 @@
           const isSent = t.sender === currentUser.accountNumber;
           const cls = isSent ? 'sent' : 'received';
           const sign = isSent ? '-' : '+';
+          const otherParty = isSent ? t.recipient : t.sender;
           html += `<div class="transaction-item ${cls}">
-            <div><strong>${sign}${t.amount.toFixed(2)} LKR</strong><br><small>${isSent?'To':'From'}: ${isSent?t.recipient:t.sender}</small></div>
-            <div style="text-align:right;"><small>${t.timestamp?new Date(t.timestamp).toLocaleString():''}<br>Fee: ${t.fee?.toFixed(2)||0}</small></div>
+            <div>
+              <strong>${sign}${t.amount.toFixed(2)} LKR</strong>
+              <div style="font-size:0.7rem;">${isSent ? 'To' : 'From'}: ${otherParty}</div>
+            </div>
+            <div style="text-align:right;font-size:0.7rem;">
+              ${new Date(t.timestamp).toLocaleString()}<br>
+              Fee: ${t.fee?.toFixed(2) || '0.00'}
+            </div>
           </div>`;
         }
       });
-      container.innerHTML = html || '<div style="color:#aaa;">No transactions</div>';
+      container.innerHTML = html || '<div style="color:#aaa;text-align:center;">No transactions yet</div>';
     });
   }
 
@@ -708,20 +816,34 @@
   document.getElementById('sendMoneyBtn').addEventListener('click', async () => {
     document.getElementById('transferError').textContent = '';
     document.getElementById('transferSuccess').textContent = '';
+    
     const recipientAcc = document.getElementById('recipientAccNum').value.trim();
     const amount = parseFloat(document.getElementById('transferAmount').value);
     
-    if (recipientAcc.length !== 12 || isNaN(amount) || amount <= 0) {
-      document.getElementById('transferError').textContent = 'Invalid details.'; return;
+    if (recipientAcc.length !== 12) {
+      document.getElementById('transferError').textContent = 'Enter valid 12-digit recipient account.';
+      return;
+    }
+    if (isNaN(amount) || amount <= 0) {
+      document.getElementById('transferError').textContent = 'Enter valid amount.';
+      return;
     }
     if (recipientAcc === currentUser.accountNumber) {
-      document.getElementById('transferError').textContent = 'Cannot send to self.'; return;
+      document.getElementById('transferError').textContent = 'Cannot send money to yourself.';
+      return;
     }
     
     const recipientEntry = await getUserByAccount(recipientAcc);
-    if (!recipientEntry) { document.getElementById('transferError').textContent = 'Recipient not found.'; return; }
+    if (!recipientEntry) {
+      document.getElementById('transferError').textContent = 'Recipient account not found.';
+      return;
+    }
+    
     const [recUid, recData] = recipientEntry;
-    if (recData.status === 'banned') { document.getElementById('transferError').textContent = 'Recipient is banned.'; return; }
+    if (recData.status === 'banned') {
+      document.getElementById('transferError').textContent = 'Recipient account is banned.';
+      return;
+    }
     
     const senderSnap = await get(ref(db, `users/${currentUser.uid}`));
     const senderData = senderSnap.val();
@@ -729,17 +851,27 @@
     const total = amount + fee;
     
     if (senderData.balance < total) {
-      document.getElementById('transferError').textContent = `Insufficient balance. Need ${total.toFixed(2)} LKR.`; return;
+      document.getElementById('transferError').textContent = `Insufficient balance. You need ${total.toFixed(2)} LKR (including 3% fee).`;
+      return;
+    }
+    
+    // Confirm with user
+    if (!confirm(`Send ${amount.toFixed(2)} LKR to ${recData.name}?\nFee: ${fee.toFixed(2)} LKR\nTotal: ${total.toFixed(2)} LKR`)) {
+      return;
     }
     
     // Perform transaction
-    await update(ref(db, `users/${currentUser.uid}`), { balance: senderData.balance - total, lastActive: Date.now() });
-    await update(ref(db, `users/${recUid}`), { balance: recData.balance + amount });
+    await update(ref(db, `users/${currentUser.uid}`), {
+      balance: senderData.balance - total,
+      lastActive: Date.now()
+    });
+    await update(ref(db, `users/${recUid}`), {
+      balance: recData.balance + amount
+    });
     
     const adminSnap = await get(ref(db, 'admin/balance'));
     await set(ref(db, 'admin/balance'), (adminSnap.val() || 0) + fee);
     
-    // Add transaction record
     const txnRef = push(ref(db, 'transactions'));
     await set(txnRef, {
       sender: currentUser.accountNumber,
@@ -750,7 +882,7 @@
       timestamp: Date.now()
     });
     
-    document.getElementById('transferSuccess').textContent = `Sent ${amount.toFixed(2)} LKR. Fee: ${fee.toFixed(2)}.`;
+    document.getElementById('transferSuccess').textContent = `✅ Sent ${amount.toFixed(2)} LKR to ${recData.name}. Fee: ${fee.toFixed(2)} LKR.`;
     document.getElementById('recipientAccNum').value = '';
     document.getElementById('transferAmount').value = '';
     updateDashboard();
@@ -762,132 +894,269 @@
     document.getElementById('couponError').textContent = '';
     document.getElementById('couponMessage').textContent = '';
     
+    if (!code) {
+      document.getElementById('couponError').textContent = 'Enter coupon code.';
+      return;
+    }
+    
     const couponsSnap = await get(ref(db, 'coupons'));
-    if (!couponsSnap.exists()) { document.getElementById('couponError').textContent = 'Invalid coupon.'; return; }
+    if (!couponsSnap.exists()) {
+      document.getElementById('couponError').textContent = 'No coupons available.';
+      return;
+    }
     
     const coupons = couponsSnap.val();
     const couponEntry = Object.entries(coupons).find(([key, c]) => c.code === code && c.active);
-    if (!couponEntry) { document.getElementById('couponError').textContent = 'Invalid or expired coupon.'; return; }
+    
+    if (!couponEntry) {
+      document.getElementById('couponError').textContent = 'Invalid or expired coupon code.';
+      return;
+    }
     
     const [couponId, couponData] = couponEntry;
     const usedBy = couponData.usedBy || {};
-    if (usedBy[currentUser.uid]) { document.getElementById('couponError').textContent = 'Already used this coupon.'; return; }
+    
+    if (usedBy[currentUser.uid]) {
+      document.getElementById('couponError').textContent = 'You have already used this coupon.';
+      return;
+    }
+    
     if (couponData.maxUses > 0 && Object.keys(usedBy).length >= couponData.maxUses) {
-      document.getElementById('couponError').textContent = 'Coupon limit reached.'; return;
+      document.getElementById('couponError').textContent = 'Coupon usage limit reached.';
+      return;
     }
     
     const userSnap = await get(ref(db, `users/${currentUser.uid}`));
     const userData = userSnap.val();
-    await update(ref(db, `users/${currentUser.uid}`), { balance: userData.balance + couponData.amount });
-    await update(ref(db, `coupons/${couponId}/usedBy`), { [currentUser.uid]: true });
     
-    document.getElementById('couponMessage').textContent = `✅ ${couponData.amount} LKR added!`;
+    await update(ref(db, `users/${currentUser.uid}`), {
+      balance: userData.balance + couponData.amount
+    });
+    await update(ref(db, `coupons/${couponId}/usedBy`), {
+      [currentUser.uid]: true
+    });
+    
+    document.getElementById('couponMessage').textContent = `✅ ${couponData.amount.toLocaleString()} LKR added successfully!`;
+    document.getElementById('couponInput').value = '';
     updateDashboard();
   });
 
-  // QR Functions (simplified for Firebase version)
+  // QR Code Functions
   document.getElementById('showMyQrBtn').addEventListener('click', () => {
     const display = document.getElementById('myQrDisplay');
+    const wasHidden = display.classList.contains('hidden');
+    
+    // Hide other sections
+    document.getElementById('requestMoneyForm').classList.add('hidden');
+    document.getElementById('scannerSection').classList.add('hidden');
+    stopCamera();
+    
     display.classList.toggle('hidden');
-    if (!display.classList.contains('hidden')) {
-      display.innerHTML = '<div class="qr-code"></div>';
-      new QRCode(display.querySelector('.qr-code'), {
-        text: JSON.stringify({type:'account', accountNumber: currentUser.accountNumber, name: currentUser.name}),
-        width: 150, height: 150
-      });
+    
+    if (!display.classList.contains('hidden') && wasHidden) {
+      display.innerHTML = '<div style="text-align:center;"><p style="color:white;margin-bottom:10px;">Scan to send me money</p><div class="qr-code" id="myQrCode"></div><p style="color:#00b4d8;margin-top:10px;">' + currentUser.accountNumber + '</p></div>';
+      
+      // Generate QR Code
+      setTimeout(() => {
+        const qrContainer = document.getElementById('myQrCode');
+        if (qrContainer && typeof QRCode !== 'undefined') {
+          new QRCode(qrContainer, {
+            text: JSON.stringify({
+              type: 'account',
+              accountNumber: currentUser.accountNumber,
+              name: currentUser.name
+            }),
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff"
+          });
+        }
+      }, 100);
     }
   });
 
   document.getElementById('requestMoneyBtn').addEventListener('click', () => {
-    document.getElementById('requestMoneyForm').classList.toggle('hidden');
+    const form = document.getElementById('requestMoneyForm');
+    const wasHidden = form.classList.contains('hidden');
+    
+    document.getElementById('myQrDisplay').classList.add('hidden');
+    document.getElementById('scannerSection').classList.add('hidden');
+    stopCamera();
+    
+    form.classList.toggle('hidden');
+    if (!form.classList.contains('hidden') && wasHidden) {
+      document.getElementById('requestAmount').value = '';
+      document.getElementById('requestQrDisplay').innerHTML = '';
+    }
   });
 
   document.getElementById('generateRequestQrBtn').addEventListener('click', () => {
     const amount = parseFloat(document.getElementById('requestAmount').value);
-    if (isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount.');
+      return;
+    }
+    
     const display = document.getElementById('requestQrDisplay');
-    display.innerHTML = '<div class="qr-code"></div>';
-    new QRCode(display.querySelector('.qr-code'), {
-      text: JSON.stringify({
-        type: 'payment_request',
-        requesterAccount: currentUser.accountNumber,
-        requesterName: currentUser.name,
-        amount
-      }),
-      width: 180, height: 180
-    });
+    display.innerHTML = '<div style="text-align:center;"><p style="color:#ffa502;margin-bottom:10px;">Request: ' + amount.toFixed(2) + ' LKR</p><div class="qr-code" id="requestQrCode"></div></div>';
+    
+    setTimeout(() => {
+      const qrContainer = document.getElementById('requestQrCode');
+      if (qrContainer && typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+          text: JSON.stringify({
+            type: 'payment_request',
+            requesterAccount: currentUser.accountNumber,
+            requesterName: currentUser.name,
+            amount: amount
+          }),
+          width: 200,
+          height: 200,
+          colorDark: "#000000",
+          colorLight: "#ffffff"
+        });
+      }
+    }, 100);
   });
 
-  // Scanner
+  // QR Scanner - FIXED
   document.getElementById('scanQrBtn').addEventListener('click', () => {
-    document.getElementById('scannerSection').classList.toggle('hidden');
-    if (!document.getElementById('scannerSection').classList.contains('hidden')) {
+    const scannerSection = document.getElementById('scannerSection');
+    const wasHidden = scannerSection.classList.contains('hidden');
+    
+    document.getElementById('myQrDisplay').classList.add('hidden');
+    document.getElementById('requestMoneyForm').classList.add('hidden');
+    
+    scannerSection.classList.toggle('hidden');
+    
+    if (!scannerSection.classList.contains('hidden') && wasHidden) {
+      document.getElementById('scanResult').textContent = '';
+      document.getElementById('scanStatus').textContent = '📷 Starting camera...';
       startCamera();
-    } else { stopCamera(); }
+    } else {
+      stopCamera();
+    }
   });
 
-  document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
+  document.getElementById('stopCameraBtn').addEventListener('click', () => {
+    stopCamera();
+    document.getElementById('scannerSection').classList.add('hidden');
+  });
 
   async function startCamera() {
     stopCamera();
+    
     try {
-      videoStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}});
+      videoStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+      });
+      
       const container = document.getElementById('cameraContainer');
-      container.innerHTML = '<video id="videoElement" autoplay playsinline></video>';
-      document.getElementById('videoElement').srcObject = videoStream;
-      scanLoop();
-    } catch(e) { console.error('Camera error:', e); }
+      container.innerHTML = '<video id="videoElement" autoplay playsinline muted></video>';
+      
+      const video = document.getElementById('videoElement');
+      video.srcObject = videoStream;
+      
+      video.onloadedmetadata = () => {
+        video.play();
+        document.getElementById('scanStatus').textContent = '📷 Scanning... Point camera at QR code';
+        startScanning(video);
+      };
+    } catch (error) {
+      console.error('Camera error:', error);
+      document.getElementById('scanStatus').textContent = '❌ Camera error: ' + error.message;
+      
+      // Fallback: show manual input
+      const manualInput = prompt('Camera not available. Paste QR code data manually:');
+      if (manualInput) {
+        processQRData(manualInput);
+      }
+      document.getElementById('scannerSection').classList.add('hidden');
+    }
   }
 
   function stopCamera() {
-    if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+    if (scanInterval) {
+      clearInterval(scanInterval);
+      scanInterval = null;
+    }
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
+    }
     document.getElementById('cameraContainer').innerHTML = '';
+    document.getElementById('scanStatus').textContent = '📷 Opening camera...';
   }
 
-  function scanLoop() {
-    if (!videoStream) return;
-    const video = document.getElementById('videoElement');
-    if (!video) return;
+  function startScanning(video) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const scan = () => {
-      if (!videoStream || video.readyState < 2) { requestAnimationFrame(scan); return; }
-      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, canvas.width, canvas.height);
-      if (code) {
-        processQRData(code.data);
-        stopCamera();
-        document.getElementById('scannerSection').classList.add('hidden');
-        return;
+    
+    scanInterval = setInterval(() => {
+      if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      if (canvas.width === 0 || canvas.height === 0) return;
+      
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      try {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, canvas.width, canvas.height, {
+          inversionAttempts: "dontInvert"
+        });
+        
+        if (code) {
+          console.log('QR Code detected:', code.data);
+          document.getElementById('scanStatus').textContent = '✅ QR Code detected!';
+          document.getElementById('scanResult').textContent = '✅ QR scanned successfully!';
+          
+          stopCamera();
+          document.getElementById('scannerSection').classList.add('hidden');
+          processQRData(code.data);
+        }
+      } catch (e) {
+        console.error('Scan error:', e);
       }
-      requestAnimationFrame(scan);
-    };
-    scan();
+    }, 100); // Scan every 100ms
   }
 
   function processQRData(data) {
     try {
       const parsed = JSON.parse(data);
+      console.log('Processing QR data:', parsed);
+      
       if (parsed.type === 'account') {
         document.getElementById('recipientAccNum').value = parsed.accountNumber;
-        alert(`QR: ${parsed.name} (${parsed.accountNumber})`);
+        alert(`✅ QR Code scanned!\n\nAccount: ${parsed.accountNumber}\nName: ${parsed.name}\n\nRecipient account number has been filled. Enter amount and send money.`);
       } else if (parsed.type === 'payment_request') {
         pendingQRData = parsed;
+        
+        const fee = parsed.amount * 0.03;
+        const total = parsed.amount + fee;
+        
         document.getElementById('modalDetails').innerHTML = `
-          <p><strong>From:</strong> ${currentUser.name}</p>
-          <p><strong>To:</strong> ${parsed.requesterName}</p>
-          <p><strong>Account:</strong> ${parsed.requesterAccount}</p>
-          <p><strong>Amount:</strong> ${parsed.amount.toFixed(2)} LKR</p>
-          <p><strong>Fee (3%):</strong> ${(parsed.amount*0.03).toFixed(2)} LKR</p>
-          <p><strong>Total:</strong> ${(parsed.amount*1.03).toFixed(2)} LKR</p>
+          <p><strong>📤 From (You):</strong> ${currentUser.name} (${currentUser.accountNumber})</p>
+          <p><strong>📥 To:</strong> ${parsed.requesterName}</p>
+          <p><strong>🏦 Account:</strong> ${parsed.requesterAccount}</p>
+          <p><strong>💰 Amount:</strong> <span style="color:#2ed573;font-size:1.2em;">${parsed.amount.toFixed(2)} LKR</span></p>
+          <p><strong>💸 Fee (3%):</strong> <span style="color:#ffa502;">${fee.toFixed(2)} LKR</span></p>
+          <p><strong>💳 Total Deduction:</strong> <span style="color:#ff4757;font-size:1.2em;">${total.toFixed(2)} LKR</span></p>
         `;
+        
         document.getElementById('confirmModal').classList.remove('hidden');
+        document.getElementById('modalError').textContent = '';
       }
-    } catch(e) { alert('Invalid QR code'); }
+    } catch (e) {
+      console.error('Invalid QR data:', e);
+      alert('❌ Invalid QR code format. Please try again.');
+    }
   }
 
+  // Modal Controls
   document.getElementById('cancelTransactionBtn').addEventListener('click', () => {
     document.getElementById('confirmModal').classList.add('hidden');
     pendingQRData = null;
@@ -895,10 +1164,21 @@
 
   document.getElementById('confirmTransactionBtn').addEventListener('click', async () => {
     if (!pendingQRData) return;
+    
     const data = pendingQRData;
+    document.getElementById('modalError').textContent = '';
+    
     const recipientEntry = await getUserByAccount(data.requesterAccount);
-    if (!recipientEntry) { document.getElementById('modalError').textContent = 'Recipient not found.'; return; }
+    if (!recipientEntry) {
+      document.getElementById('modalError').textContent = '❌ Recipient account not found.';
+      return;
+    }
+    
     const [recUid, recData] = recipientEntry;
+    if (recData.status === 'banned') {
+      document.getElementById('modalError').textContent = '❌ Recipient account is banned.';
+      return;
+    }
     
     const senderSnap = await get(ref(db, `users/${currentUser.uid}`));
     const senderData = senderSnap.val();
@@ -906,11 +1186,19 @@
     const total = data.amount + fee;
     
     if (senderData.balance < total) {
-      document.getElementById('modalError').textContent = 'Insufficient balance.'; return;
+      document.getElementById('modalError').textContent = `❌ Insufficient balance. You need ${total.toFixed(2)} LKR.`;
+      return;
     }
     
-    await update(ref(db, `users/${currentUser.uid}`), { balance: senderData.balance - total });
-    await update(ref(db, `users/${recUid}`), { balance: recData.balance + data.amount });
+    // Perform transaction
+    await update(ref(db, `users/${currentUser.uid}`), {
+      balance: senderData.balance - total,
+      lastActive: Date.now()
+    });
+    await update(ref(db, `users/${recUid}`), {
+      balance: recData.balance + data.amount
+    });
+    
     const adminSnap = await get(ref(db, 'admin/balance'));
     await set(ref(db, 'admin/balance'), (adminSnap.val() || 0) + fee);
     
@@ -927,16 +1215,34 @@
     document.getElementById('confirmModal').classList.add('hidden');
     pendingQRData = null;
     updateDashboard();
-    alert('Payment successful!');
+    alert(`✅ Payment successful!\n\nSent ${data.amount.toFixed(2)} LKR to ${data.requesterName}\nFee: ${fee.toFixed(2)} LKR`);
+  });
+
+  // Close modals on overlay click
+  document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.add('hidden');
+      pendingQRData = null;
+    }
+  });
+
+  document.getElementById('userEditModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.add('hidden');
+    }
   });
 
   // Logout
   document.getElementById('logoutBtn').addEventListener('click', () => {
     stopCamera();
     currentUser = null;
+    isAdmin = false;
     document.getElementById('authPanel').classList.remove('hidden');
     document.getElementById('dashboardPanel').classList.add('hidden');
     document.getElementById('adminPanel').classList.add('hidden');
+    // Clear forms
+    document.getElementById('loginAccNum').value = '';
+    document.getElementById('loginPassword').value = '';
   });
 
   // Admin Dashboard
@@ -944,6 +1250,8 @@
     document.getElementById('authPanel').classList.add('hidden');
     document.getElementById('dashboardPanel').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
+    
+    // Activate users tab by default
     document.querySelector('.admin-tab[data-tab="users"]').click();
     updateAdminStats();
   }
@@ -952,8 +1260,7 @@
     const adminSnap = await get(ref(db, 'admin/balance'));
     document.getElementById('adminBalance').textContent = (adminSnap.val() || 0).toFixed(2);
     
-    const usersSnap = await get(ref(db, 'users'));
-    const users = usersSnap.exists() ? usersSnap.val() : {};
+    const users = await getAllUsers();
     document.getElementById('totalUsers').textContent = Object.keys(users).length;
     
     const txnsSnap = await get(ref(db, 'transactions'));
@@ -963,18 +1270,23 @@
 
   // Admin Tabs
   document.querySelectorAll('.admin-tab').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+    btn.addEventListener('click', async function() {
+      document.querySelectorAll('.admin-tab').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = 'rgba(255,255,255,0.08)';
+      });
       document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+      
       this.classList.add('active');
+      this.style.background = '#00b4d8';
       document.getElementById(`adminTab-${this.dataset.tab}`).classList.remove('hidden');
       
       switch(this.dataset.tab) {
-        case 'users': loadUsersList(); break;
-        case 'transactions': loadAdminTransactions(); break;
-        case 'coupons': loadCoupons(); break;
-        case 'notifications': loadNotifications(); break;
-        case 'analytics': loadAnalytics(); break;
+        case 'users': await loadUsersList(); break;
+        case 'transactions': await loadAdminTransactions(); break;
+        case 'coupons': await loadCoupons(); break;
+        case 'notifications': await loadNotifications(); break;
+        case 'analytics': await loadAnalytics(); break;
       }
     });
   });
@@ -983,42 +1295,55 @@
     const users = await getAllUsers();
     const container = document.getElementById('allUsersList');
     let html = '';
+    
     Object.entries(users).forEach(([uid, user]) => {
-      html += `<div class="user-row ${user.status==='banned'?'banned':''}">
+      html += `<div class="user-row ${user.status === 'banned' ? 'banned' : ''}">
         <div>
           <strong>${user.name}</strong>
-          <div><small>${user.accountNumber}</small></div>
-          <span class="badge ${user.status==='banned'?'badge-banned':'badge-active'}">${user.status||'active'}</span>
+          <div style="font-size:0.8rem;">${user.accountNumber}</div>
+          <span class="badge ${user.status === 'banned' ? 'badge-banned' : 'badge-active'}">${user.status || 'active'}</span>
         </div>
         <div style="text-align:right;">
-          <div>${Number(user.balance).toFixed(2)} LKR</div>
+          <div style="font-size:1.1rem;font-weight:bold;">${Number(user.balance).toFixed(2)} LKR</div>
           <div class="flex-row" style="margin-top:5px;">
-            <button class="btn btn-small btn-secondary" onclick="editUser('${uid}')">✏️ Edit</button>
-            <button class="btn btn-small ${user.status==='banned'?'btn-success':'btn-danger'}" onclick="toggleBan('${uid}', '${user.status||'active'}')">${user.status==='banned'?'✅ Unban':'🚫 Ban'}</button>
+            <button class="btn btn-small btn-secondary" onclick="window.editUser('${uid}')">✏️ Edit</button>
+            <button class="btn btn-small ${user.status === 'banned' ? 'btn-success' : 'btn-danger'}" onclick="window.toggleBan('${uid}', '${user.status || 'active'}')">${user.status === 'banned' ? '✅ Unban' : '🚫 Ban'}</button>
           </div>
         </div>
       </div>`;
     });
-    container.innerHTML = html || '<div style="color:#aaa;">No users</div>';
+    
+    container.innerHTML = html || '<div style="color:#aaa;text-align:center;">No users found</div>';
   }
 
   window.editUser = async (uid) => {
     const snap = await get(ref(db, `users/${uid}`));
     const user = snap.val();
+    
     document.getElementById('editUserName').value = user.name;
     document.getElementById('editUserAcc').value = user.accountNumber;
     document.getElementById('editUserBalance').value = user.balance;
     document.getElementById('editUserStatus').value = user.status || 'active';
+    
     document.getElementById('userEditModal').classList.remove('hidden');
+    
     document.getElementById('saveUserBtn').onclick = async () => {
+      const newBalance = parseFloat(document.getElementById('editUserBalance').value);
+      if (isNaN(newBalance) || newBalance < 0) {
+        alert('Please enter a valid balance.');
+        return;
+      }
+      
       await update(ref(db, `users/${uid}`), {
         name: document.getElementById('editUserName').value,
-        balance: parseFloat(document.getElementById('editUserBalance').value) || 0,
+        balance: newBalance,
         status: document.getElementById('editUserStatus').value
       });
+      
       document.getElementById('userEditModal').classList.add('hidden');
-      loadUsersList();
-      updateAdminStats();
+      await loadUsersList();
+      await updateAdminStats();
+      alert('✅ User updated successfully!');
     };
   };
 
@@ -1028,56 +1353,83 @@
 
   window.toggleBan = async (uid, currentStatus) => {
     const newStatus = currentStatus === 'banned' ? 'active' : 'banned';
-    await update(ref(db, `users/${uid}`), { status: newStatus });
-    loadUsersList();
-    updateAdminStats();
+    const action = newStatus === 'banned' ? 'ban' : 'unban';
+    
+    if (confirm(`Are you sure you want to ${action} this user?`)) {
+      await update(ref(db, `users/${uid}`), { status: newStatus });
+      await loadUsersList();
+      await updateAdminStats();
+      alert(`✅ User ${action}ned successfully!`);
+    }
   };
 
-  // User Search
   document.getElementById('userSearch').addEventListener('input', async function() {
     const query = this.value.toLowerCase();
     const users = await getAllUsers();
     const container = document.getElementById('allUsersList');
     let html = '';
+    
     Object.entries(users).forEach(([uid, user]) => {
       if (user.name.toLowerCase().includes(query) || user.accountNumber.includes(query)) {
-        html += `<div class="user-row ${user.status==='banned'?'banned':''}">
-          <div><strong>${user.name}</strong><div><small>${user.accountNumber}</small></div></div>
-          <div>${Number(user.balance).toFixed(2)} LKR</div>
+        html += `<div class="user-row ${user.status === 'banned' ? 'banned' : ''}">
+          <div><strong>${user.name}</strong><div style="font-size:0.8rem;">${user.accountNumber}</div></div>
+          <div style="font-weight:bold;">${Number(user.balance).toFixed(2)} LKR</div>
         </div>`;
       }
     });
-    container.innerHTML = html || '<div style="color:#aaa;">No users found</div>';
+    
+    container.innerHTML = html || '<div style="color:#aaa;text-align:center;">No users found</div>';
   });
 
   async function loadAdminTransactions() {
     const snap = await get(ref(db, 'transactions'));
     const container = document.getElementById('adminTransactionList');
-    if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No transactions</div>'; return; }
+    
+    if (!snap.exists()) {
+      container.innerHTML = '<div style="color:#aaa;text-align:center;">No transactions yet</div>';
+      return;
+    }
+    
     const txns = snap.val();
     let html = '';
     Object.entries(txns).reverse().slice(0, 50).forEach(([key, t]) => {
       html += `<div class="transaction-item">
-        <div><strong>${t.amount?.toFixed(2)} LKR</strong><br><small>${t.sender} → ${t.recipient}</small></div>
-        <div style="text-align:right;"><small>Fee: ${t.fee?.toFixed(2)||0}<br>${t.timestamp?new Date(t.timestamp).toLocaleString():''}</small></div>
+        <div>
+          <strong>${t.amount?.toFixed(2)} LKR</strong>
+          <div style="font-size:0.75rem;">${t.sender} → ${t.recipient}</div>
+        </div>
+        <div style="text-align:right;font-size:0.75rem;">
+          Fee: ${t.fee?.toFixed(2) || '0.00'}<br>
+          ${new Date(t.timestamp).toLocaleString()}
+        </div>
       </div>`;
     });
-    container.innerHTML = html || '<div style="color:#aaa;">No transactions</div>';
+    
+    container.innerHTML = html || '<div style="color:#aaa;text-align:center;">No transactions</div>';
   }
 
-  // Coupons
   async function loadCoupons() {
     const snap = await get(ref(db, 'coupons'));
     const container = document.getElementById('couponsList');
-    if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No coupons</div>'; return; }
+    
+    if (!snap.exists()) {
+      container.innerHTML = '<div style="color:#aaa;text-align:center;">No coupons created</div>';
+      return;
+    }
+    
     const coupons = snap.val();
     let html = '';
     Object.entries(coupons).forEach(([key, c]) => {
+      const usedCount = Object.keys(c.usedBy || {}).length;
       html += `<div class="coupon-card">
-        <div><strong>${c.code}</strong><br><small>${c.amount} LKR | Uses: ${Object.keys(c.usedBy||{}).length}/${c.maxUses||'∞'}</small></div>
-        <button class="btn btn-small btn-danger" onclick="deleteCoupon('${key}')">🗑️</button>
+        <div>
+          <strong>${c.code}</strong>
+          <div style="font-size:0.8rem;">${c.amount.toLocaleString()} LKR | Used: ${usedCount}/${c.maxUses || '∞'}</div>
+        </div>
+        <button class="btn btn-small btn-danger" onclick="window.deleteCoupon('${key}')">🗑️ Delete</button>
       </div>`;
     });
+    
     container.innerHTML = html;
   }
 
@@ -1085,23 +1437,38 @@
     const code = document.getElementById('newCouponCode').value.trim();
     const amount = parseFloat(document.getElementById('newCouponAmount').value);
     const maxUses = parseInt(document.getElementById('newCouponMaxUses').value);
-    if (!code || isNaN(amount)) { alert('Invalid coupon details'); return; }
+    
+    if (!code || isNaN(amount) || amount <= 0) {
+      alert('Please fill all fields correctly.');
+      return;
+    }
     
     const couponRef = push(ref(db, 'coupons'));
     await set(couponRef, {
-      code, amount, maxUses, active: true, usedBy: {}, createdAt: Date.now()
+      code,
+      amount,
+      maxUses,
+      active: true,
+      usedBy: {},
+      createdAt: Date.now()
     });
+    
     document.getElementById('newCouponCode').value = '';
-    loadCoupons();
-    alert('Coupon created!');
+    document.getElementById('newCouponAmount').value = '10000';
+    document.getElementById('newCouponMaxUses').value = '1';
+    
+    await loadCoupons();
+    alert(`✅ Coupon "${code}" created successfully!`);
   });
 
   window.deleteCoupon = async (couponId) => {
-    await remove(ref(db, `coupons/${couponId}`));
-    loadCoupons();
+    if (confirm('Delete this coupon?')) {
+      await remove(ref(db, `coupons/${couponId}`));
+      await loadCoupons();
+      alert('✅ Coupon deleted!');
+    }
   };
 
-  // Notifications
   document.getElementById('notifTarget').addEventListener('change', function() {
     document.getElementById('notifSpecificUser').classList.toggle('hidden', this.value !== 'specific');
   });
@@ -1112,82 +1479,110 @@
     const target = document.getElementById('notifTarget').value;
     const targetUser = document.getElementById('notifUserAcc').value.trim();
     
-    if (!title || !message) { alert('Fill all fields'); return; }
+    if (!title || !message) {
+      alert('Please fill title and message.');
+      return;
+    }
+    
+    if (target === 'specific' && !targetUser) {
+      alert('Please enter target user account number.');
+      return;
+    }
     
     const notifRef = push(ref(db, 'notifications'));
-    const notifData = { title, message, target, timestamp: Date.now() };
+    const notifData = {
+      title,
+      message,
+      target,
+      timestamp: Date.now()
+    };
+    
     if (target === 'specific') {
-      if (!targetUser) { alert('Enter user account number'); return; }
       notifData.targetUser = targetUser;
     }
+    
     await set(notifRef, notifData);
+    
     document.getElementById('notifTitle').value = '';
     document.getElementById('notifMessage').value = '';
-    loadNotifications();
-    alert('Announcement sent!');
+    document.getElementById('notifUserAcc').value = '';
+    
+    await loadNotifications();
+    alert('📢 Announcement sent successfully!');
   });
 
   async function loadNotifications() {
     const snap = await get(ref(db, 'notifications'));
     const container = document.getElementById('notificationsList');
-    if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No announcements</div>'; return; }
+    
+    if (!snap.exists()) {
+      container.innerHTML = '<div style="color:#aaa;text-align:center;">No announcements sent</div>';
+      return;
+    }
+    
     const notifs = snap.val();
     let html = '';
     Object.entries(notifs).reverse().forEach(([key, n]) => {
       html += `<div class="notification-item">
         <strong>📢 ${n.title}</strong>
         <p>${n.message}</p>
-        <small>Target: ${n.target==='all'?'All Users':n.targetUser} | ${new Date(n.timestamp).toLocaleString()}</small>
+        <small>Target: ${n.target === 'all' ? 'All Users' : n.targetUser} | ${new Date(n.timestamp).toLocaleString()}</small>
+        <button class="btn btn-small btn-danger" onclick="window.deleteNotification('${key}')">🗑️</button>
       </div>`;
     });
+    
     container.innerHTML = html;
   }
 
-  // Analytics
+  window.deleteNotification = async (notifId) => {
+    if (confirm('Delete this announcement?')) {
+      await remove(ref(db, `notifications/${notifId}`));
+      await loadNotifications();
+    }
+  };
+
   async function loadAnalytics() {
     const txnsSnap = await get(ref(db, 'transactions'));
     const txns = txnsSnap.exists() ? txnsSnap.val() : {};
-    const today = new Date().setHours(0,0,0,0);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayTimestamp = todayStart.getTime();
     
-    let todayCount = 0, todayVol = 0;
-    const activeUsersSet = new Set();
+    let todayCount = 0;
+    let todayVol = 0;
+    const activeUsers = new Set();
     
     Object.values(txns).forEach(t => {
-      if (t.timestamp >= today) {
+      if (t.timestamp >= todayTimestamp) {
         todayCount++;
         todayVol += t.amount || 0;
-        activeUsersSet.add(t.sender);
+        activeUsers.add(t.sender);
       }
     });
     
     document.getElementById('todayTxns').textContent = todayCount;
     document.getElementById('todayVolume').textContent = todayVol.toFixed(2);
-    document.getElementById('activeUsers24h').textContent = activeUsersSet.size;
+    document.getElementById('activeUsers24h').textContent = activeUsers.size;
     
     const users = await getAllUsers();
-    const banned = Object.values(users).filter(u => u.status === 'banned').length;
-    document.getElementById('bannedUsersCount').textContent = banned;
+    const bannedCount = Object.values(users).filter(u => u.status === 'banned').length;
+    document.getElementById('bannedUsersCount').textContent = bannedCount;
   }
 
-  // Admin Logout
   document.getElementById('adminLogoutBtn').addEventListener('click', () => {
     isAdmin = false;
+    currentUser = null;
     document.getElementById('authPanel').classList.remove('hidden');
     document.getElementById('dashboardPanel').classList.add('hidden');
     document.getElementById('adminPanel').classList.add('hidden');
   });
 
-  // QR Code Library
-  const qrScript = document.createElement('script');
-  qrScript.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
-  document.head.appendChild(qrScript);
-  
-  const jsqrScript = document.createElement('script');
-  jsqrScript.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
-  document.head.appendChild(jsqrScript);
-
-  console.log('✅ Mata Bank Pro - Firebase Edition Ready');
-  console.log('Admin: username=admin, password=admin123');
+  console.log('✅ Mata Bank Pro v2.0 Ready');
+  console.log('📱 QR Scanner: Fixed and working');
+  console.log('👑 Admin: username=admin, password=admin123');
+  console.log('👤 Demo User 1: 100000000001 / pass1001');
+  console.log('👤 Demo User 2: 100000000002 / pass1002');
+  console.log('🎟️ Demo Coupon: äddon (10,000 LKR)');
 </script>
 </body>
 </html>
