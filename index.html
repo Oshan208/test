@@ -1,65 +1,875 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Call App</title>
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; }
-        .video-container { display: flex; gap: 20px; margin-top: 20px; }
-        video { width: 300px; height: 225px; background: #000; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .controls { background: white; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        #my-id { font-weight: bold; color: #d9534f; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Mata Bank | Complete Banking with QR Scanner</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #0b1a2f 0%, #1a2f40 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .app-container {
+      max-width: 600px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 36px;
+      padding: 24px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    h1 {
+      color: #e6f0fa;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2.2rem;
+      text-shadow: 0 4px 10px rgba(0,160,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    h1 span {
+      background: #00b4d8;
+      color: #030f1c;
+      font-size: 1rem;
+      padding: 4px 12px;
+      border-radius: 40px;
+      letter-spacing: 0.5px;
+    }
+    .panel {
+      background: rgba(10, 25, 45, 0.7);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 28px;
+      padding: 22px 20px;
+      border: 1px solid rgba(0, 180, 216, 0.25);
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      color: #b0d4f0;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #00b4d8;
+      box-shadow: 0 0 12px rgba(0, 180, 216, 0.5);
+      background: rgba(0, 20, 40, 0.7);
+    }
+    .btn {
+      background: #00b4d8;
+      border: none;
+      color: #02111f;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 14px 20px;
+      border-radius: 30px;
+      width: 100%;
+      cursor: pointer;
+      letter-spacing: 0.8px;
+      transition: 0.2s;
+      margin-top: 6px;
+      text-transform: uppercase;
+      box-shadow: 0 10px 18px rgba(0, 180, 216, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .btn:hover {
+      background: #00d4f0;
+      box-shadow: 0 12px 24px rgba(0, 210, 255, 0.5);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #d4eaff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: none;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .btn-small {
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      width: auto;
+    }
+    .btn-danger {
+      background: #ff4757;
+      box-shadow: 0 10px 18px rgba(255, 71, 87, 0.3);
+    }
+    .btn-success {
+      background: #2ed573;
+      box-shadow: 0 10px 18px rgba(46, 213, 115, 0.3);
+    }
+    .balance-box {
+      background: #021a2b;
+      border-radius: 24px;
+      padding: 18px;
+      text-align: center;
+      margin: 15px 0;
+      border: 1px solid #00b4d8;
+      box-shadow: inset 0 0 20px rgba(0,180,216,0.2);
+    }
+    .balance-label {
+      color: #9cc9f0;
+      font-size: 0.9rem;
+    }
+    .balance-amount {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #e0f0ff;
+      text-shadow: 0 0 10px #00b4d8;
+    }
+    .account-info {
+      color: #b0d4f0;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .coupon-area {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .coupon-area input {
+      flex: 1;
+    }
+    .error-message {
+      color: #ff8a8a;
+      font-size: 0.85rem;
+      margin-top: 6px;
+      min-height: 20px;
+    }
+    .success-message {
+      color: #6fe3b6;
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+    hr {
+      border-color: rgba(255,255,255,0.1);
+      margin: 15px 0;
+    }
+    .flex-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .transaction-list {
+      max-height: 250px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    .transaction-item {
+      background: rgba(0, 20, 40, 0.5);
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      color: #d0e0ff;
+      display: flex;
+      justify-content: space-between;
+      border-left: 3px solid #00b4d8;
+    }
+    .transaction-item.sent {
+      border-left-color: #ff6b6b;
+    }
+    .transaction-item.received {
+      border-left-color: #6fe3b6;
+    }
+    .transaction-item.request {
+      border-left-color: #ffa502;
+    }
+    .qr-code {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      margin: 15px 0;
+      display: inline-block;
+    }
+    .qr-code canvas {
+      display: block;
+      margin: 0 auto;
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .tab-btn.active {
+      background: #00b4d8;
+      color: #02111f;
+      font-weight: bold;
+    }
+    .admin-stat {
+      background: rgba(0,180,216,0.2);
+      padding: 15px;
+      border-radius: 16px;
+      margin: 10px 0;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #1a2f40;
+      border-radius: 24px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      border: 2px solid #00b4d8;
+    }
+    .modal-content h3 {
+      color: white;
+      margin-bottom: 15px;
+    }
+    .modal-content .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      color: #d0e0ff;
+    }
+    #cameraContainer {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    #cameraContainer video {
+      width: 100%;
+      border-radius: 12px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
+<div class="app-container" id="mainContainer">
+  <h1>MATA<span>BANK</span></h1>
 
-    <h2>Video Call Website</h2>
-    <div class="controls">
-        <p>Your ID: <span id="my-id">...connecting...</span></p>
-        <input type="text" id="remote-id" placeholder="Paste Remote Peer ID here">
-        <button onclick="makeCall()">Call</button>
+  <!-- Auth Panel -->
+  <div id="authPanel" class="panel">
+    <div style="display: flex; gap: 12px; margin-bottom: 18px;">
+      <button id="showLoginBtn" class="btn" style="width:33%; background:#00b4d8;">USER</button>
+      <button id="showRegisterBtn" class="btn btn-secondary" style="width:33%;">REGISTER</button>
+      <button id="showAdminLoginBtn" class="btn btn-secondary" style="width:33%;">ADMIN</button>
     </div>
 
-    <div class="video-container">
-        <div><p>Local (You)</p><video id="local-video" autoplay muted></video></div>
-        <div><p>Remote (Friend)</p><video id="remote-video" autoplay></video></div>
+    <div id="loginForm">
+      <div class="input-group">
+        <label>12-Digit Account Number</label>
+        <input type="text" id="loginAccNum" placeholder="e.g., 100000000001" maxlength="12" autocomplete="off">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••">
+      </div>
+      <button id="loginSubmitBtn" class="btn">🔐 LOGIN</button>
+      <div id="loginError" class="error-message"></div>
     </div>
 
-    <script>
-        const peer = new Peer(); // Creates a connection to PeerJS Cloud
-        let localStream;
+    <div id="registerForm" class="hidden">
+      <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" id="regName" placeholder="Your name">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="Create password">
+      </div>
+      <button id="registerSubmitBtn" class="btn">✨ CREATE ACCOUNT</button>
+      <div id="regError" class="error-message"></div>
+    </div>
 
-        // 1. Get User Media (Camera/Mic)
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-            localStream = stream;
-            document.getElementById('local-video').srcObject = stream;
+    <div id="adminLoginForm" class="hidden">
+      <div class="input-group">
+        <label>Admin Username</label>
+        <input type="text" id="adminUsername" placeholder="admin">
+      </div>
+      <div class="input-group">
+        <label>Admin Password</label>
+        <input type="password" id="adminPassword" placeholder="••••••••">
+      </div>
+      <button id="adminLoginSubmitBtn" class="btn">👑 ADMIN LOGIN</button>
+      <div id="adminLoginError" class="error-message"></div>
+    </div>
+  </div>
+
+  <!-- User Dashboard -->
+  <div id="dashboardPanel" class="panel hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="color:white; margin:0; font-weight:400;">👤 <span id="displayName"></span></h2>
+      <button id="logoutBtn" class="btn btn-secondary btn-small">Logout</button>
+    </div>
+    <div class="account-info">
+      <span>🏦 A/C: <strong id="displayAccNum"></strong></span>
+    </div>
+    <div class="balance-box">
+      <div class="balance-label">AVAILABLE BALANCE</div>
+      <div class="balance-amount" id="displayBalance">0.00</div>
+      <div style="color:#aaa; font-size:0.8rem;">LKR</div>
+    </div>
+
+    <!-- QR Section -->
+    <div style="display: flex; gap: 10px; margin: 15px 0;">
+      <button id="showMyQrBtn" class="btn btn-secondary" style="flex:1;">📱 My QR Code</button>
+      <button id="requestMoneyBtn" class="btn btn-secondary" style="flex:1;">💰 Request Money</button>
+      <button id="scanQrBtn" class="btn btn-secondary" style="flex:1;">📷 Scan QR</button>
+    </div>
+    
+    <div id="myQrDisplay" class="hidden" style="text-align:center;"></div>
+    
+    <div id="requestMoneyForm" class="hidden">
+      <div class="input-group">
+        <label>Request Amount (LKR)</label>
+        <input type="number" id="requestAmount" placeholder="Enter amount" step="0.01" min="1">
+      </div>
+      <button id="generateRequestQrBtn" class="btn">🎯 Generate Request QR</button>
+      <div id="requestQrDisplay" style="text-align:center; margin-top:10px;"></div>
+    </div>
+
+    <div id="scannerSection" class="hidden">
+      <div id="cameraContainer"></div>
+      <button id="stopCameraBtn" class="btn btn-danger btn-small" style="margin-top:10px;">❌ Stop Camera</button>
+      <div id="scanResult" class="success-message"></div>
+    </div>
+
+    <!-- Coupon -->
+    <div class="coupon-area">
+      <input type="text" id="couponInput" placeholder="Coupon code" autocomplete="off">
+      <button id="applyCouponBtn" class="btn btn-small">➕ ADDON</button>
+    </div>
+    <div id="couponMessage" class="success-message"></div>
+    <div id="couponError" class="error-message"></div>
+
+    <hr>
+    <h3 style="color:#cfe4ff; margin-bottom:12px;">💸 Send Money</h3>
+    <div class="input-group">
+      <label>Recipient Account Number</label>
+      <input type="text" id="recipientAccNum" placeholder="12-digit account number" maxlength="12" autocomplete="off">
+    </div>
+    <div class="input-group">
+      <label>Amount (LKR)</label>
+      <input type="number" id="transferAmount" placeholder="0.00" step="0.01" min="1">
+    </div>
+    <div style="font-size:0.8rem; color:#9cc9f0; margin-bottom: 10px;">
+      ⚡ Transaction fee: 3% (goes to admin)
+    </div>
+    <button id="sendMoneyBtn" class="btn">📤 SEND MONEY</button>
+    <div id="transferError" class="error-message"></div>
+    <div id="transferSuccess" class="success-message"></div>
+
+    <hr>
+    <h3 style="color:#cfe4ff; margin-bottom:12px;">📋 Transaction History</h3>
+    <div class="transaction-list" id="transactionHistory">
+      <div style="color:#aaa; text-align:center;">No transactions yet</div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="adminPanel" class="panel hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="color:gold; margin:0;">👑 Admin Dashboard</h2>
+      <button id="adminLogoutBtn" class="btn btn-secondary btn-small">Logout</button>
+    </div>
+    <div class="admin-stat">
+      <div class="balance-label">TOTAL FEES COLLECTED</div>
+      <div class="balance-amount" style="color:gold;" id="adminBalance">0.00</div>
+      <div style="color:#aaa;">LKR</div>
+    </div>
+    <div class="admin-stat">
+      <div class="balance-label">TOTAL USERS</div>
+      <div style="font-size:2rem; color:white;" id="totalUsers">0</div>
+    </div>
+    <div class="admin-stat">
+      <div class="balance-label">TOTAL TRANSACTIONS</div>
+      <div style="font-size:2rem; color:white;" id="totalTransactions">0</div>
+    </div>
+    <hr>
+    <h3 style="color:gold;">All Users</h3>
+    <div id="allUsersList" style="max-height:200px; overflow-y:auto;"></div>
+    <hr>
+    <h3 style="color:gold;">Recent Transactions</h3>
+    <div class="transaction-list" id="adminTransactionList"></div>
+  </div>
+</div>
+
+<!-- Transaction Confirmation Modal -->
+<div id="confirmModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3>🔍 QR Transaction Details</h3>
+    <div class="detail-row"><span>From:</span> <strong id="modalSender"></strong></div>
+    <div class="detail-row"><span>To:</span> <strong id="modalRecipient"></strong></div>
+    <div class="detail-row"><span>Account:</span> <strong id="modalAccount"></strong></div>
+    <div class="detail-row"><span>Amount:</span> <strong id="modalAmount" style="color:#2ed573;"></strong></div>
+    <div class="detail-row"><span>Fee (3%):</span> <strong id="modalFee" style="color:#ffa502;"></strong></div>
+    <div class="detail-row"><span>Total:</span> <strong id="modalTotal" style="color:#ff4757;"></strong></div>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button id="confirmTransactionBtn" class="btn btn-success" style="flex:1;">✅ CONFIRM</button>
+      <button id="cancelTransactionBtn" class="btn btn-danger" style="flex:1;">❌ CANCEL</button>
+    </div>
+    <div id="modalError" class="error-message"></div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Storage
+    const STORAGE = {
+      USERS: 'mata_users_v3',
+      ADMIN: 'mata_admin_v3',
+      TRANSACTIONS: 'mata_transactions_v3',
+      COUPON_USED: 'mata_coupon_used_v3',
+      ADMIN_CREDENTIALS: 'mata_admin_auth_v3'
+    };
+
+    // Initialize
+    if (!localStorage.getItem(STORAGE.ADMIN_CREDENTIALS)) {
+      localStorage.setItem(STORAGE.ADMIN_CREDENTIALS, JSON.stringify({username: 'admin', password: 'admin123'}));
+    }
+    if (!localStorage.getItem(STORAGE.ADMIN)) {
+      localStorage.setItem(STORAGE.ADMIN, JSON.stringify({accountNumber: '999999999999', balance: 0}));
+    }
+    if (!localStorage.getItem(STORAGE.USERS)) {
+      localStorage.setItem(STORAGE.USERS, JSON.stringify([
+        {accountNumber: '100000000001', name: 'User One', password: 'pass1001', balance: 50000},
+        {accountNumber: '100000000002', name: 'User Two', password: 'pass1002', balance: 25000}
+      ]));
+    }
+    if (!localStorage.getItem(STORAGE.TRANSACTIONS)) {
+      localStorage.setItem(STORAGE.TRANSACTIONS, JSON.stringify([]));
+    }
+    if (!localStorage.getItem(STORAGE.COUPON_USED)) {
+      localStorage.setItem(STORAGE.COUPON_USED, JSON.stringify([]));
+    }
+
+    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE.USERS)) || []; }
+    function saveUsers(u) { localStorage.setItem(STORAGE.USERS, JSON.stringify(u)); }
+    function getAdmin() { return JSON.parse(localStorage.getItem(STORAGE.ADMIN)); }
+    function saveAdmin(a) { localStorage.setItem(STORAGE.ADMIN, JSON.stringify(a)); }
+    function getTransactions() { return JSON.parse(localStorage.getItem(STORAGE.TRANSACTIONS)) || []; }
+    function saveTransactions(t) { localStorage.setItem(STORAGE.TRANSACTIONS, JSON.stringify(t)); }
+    function getCouponUsed() { return JSON.parse(localStorage.getItem(STORAGE.COUPON_USED)) || []; }
+    function addCouponUsed(acc) { const l = getCouponUsed(); if(!l.includes(acc)) { l.push(acc); localStorage.setItem(STORAGE.COUPON_USED, JSON.stringify(l)); } }
+    function hasUsedCoupon(acc) { return getCouponUsed().includes(acc); }
+    function getAdminCreds() { return JSON.parse(localStorage.getItem(STORAGE.ADMIN_CREDENTIALS)); }
+
+    function generateAccountNumber() {
+      let acc;
+      do { acc = Math.floor(100000000000 + Math.random() * 900000000000).toString(); }
+      while (getUsers().some(u => u.accountNumber === acc) || acc === '999999999999');
+      return acc;
+    }
+
+    function addTransaction(sender, recipient, amount, fee, type) {
+      const t = getTransactions();
+      t.unshift({id: Date.now(), sender, recipient, amount, fee, type, timestamp: new Date().toLocaleString()});
+      if(t.length > 100) t.pop();
+      saveTransactions(t);
+    }
+
+    let currentUser = null;
+    let isAdmin = false;
+    let videoStream = null;
+    let pendingQRData = null;
+
+    // UI Elements
+    const authPanel = document.getElementById('authPanel');
+    const dashboardPanel = document.getElementById('dashboardPanel');
+    const adminPanel = document.getElementById('adminPanel');
+    const confirmModal = document.getElementById('confirmModal');
+
+    // Auth Toggle
+    document.getElementById('showLoginBtn').addEventListener('click', () => {
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('adminLoginForm').classList.add('hidden');
+      document.getElementById('showLoginBtn').style.background = '#00b4d8';
+      document.getElementById('showRegisterBtn').style.background = 'rgba(255,255,255,0.08)';
+      document.getElementById('showAdminLoginBtn').style.background = 'rgba(255,255,255,0.08)';
+    });
+    document.getElementById('showRegisterBtn').addEventListener('click', () => {
+      document.getElementById('registerForm').classList.remove('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('adminLoginForm').classList.add('hidden');
+      document.getElementById('showRegisterBtn').style.background = '#00b4d8';
+      document.getElementById('showLoginBtn').style.background = 'rgba(255,255,255,0.08)';
+      document.getElementById('showAdminLoginBtn').style.background = 'rgba(255,255,255,0.08)';
+    });
+    document.getElementById('showAdminLoginBtn').addEventListener('click', () => {
+      document.getElementById('adminLoginForm').classList.remove('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('showAdminLoginBtn').style.background = '#00b4d8';
+      document.getElementById('showLoginBtn').style.background = 'rgba(255,255,255,0.08)';
+      document.getElementById('showRegisterBtn').style.background = 'rgba(255,255,255,0.08)';
+    });
+
+    // Login
+    document.getElementById('loginSubmitBtn').addEventListener('click', () => {
+      const acc = document.getElementById('loginAccNum').value.trim();
+      const pwd = document.getElementById('loginPassword').value.trim();
+      document.getElementById('loginError').textContent = '';
+      if(acc.length !== 12) { document.getElementById('loginError').textContent = 'Enter valid 12-digit account.'; return; }
+      const user = getUsers().find(u => u.accountNumber === acc && u.password === pwd);
+      if(!user) { document.getElementById('loginError').textContent = 'Invalid credentials.'; return; }
+      currentUser = user; isAdmin = false; showDashboard();
+    });
+
+    // Register
+    document.getElementById('registerSubmitBtn').addEventListener('click', () => {
+      const name = document.getElementById('regName').value.trim();
+      const pwd = document.getElementById('regPassword').value.trim();
+      document.getElementById('regError').textContent = '';
+      if(!name || !pwd) { document.getElementById('regError').textContent = 'All fields required.'; return; }
+      const acc = generateAccountNumber();
+      const newUser = {accountNumber: acc, name, password: pwd, balance: 0};
+      getUsers().push(newUser); saveUsers(getUsers());
+      currentUser = newUser; isAdmin = false;
+      alert(`Account created! Your number: ${acc}`);
+      showDashboard();
+    });
+
+    // Admin Login
+    document.getElementById('adminLoginSubmitBtn').addEventListener('click', () => {
+      const u = document.getElementById('adminUsername').value.trim();
+      const p = document.getElementById('adminPassword').value.trim();
+      document.getElementById('adminLoginError').textContent = '';
+      const creds = getAdminCreds();
+      if(u === creds.username && p === creds.password) { isAdmin = true; currentUser = null; showAdminDashboard(); }
+      else { document.getElementById('adminLoginError').textContent = 'Invalid admin credentials.'; }
+    });
+
+    function showDashboard() {
+      authPanel.classList.add('hidden'); dashboardPanel.classList.remove('hidden'); adminPanel.classList.add('hidden');
+      updateDashboard(); updateHistory();
+      document.getElementById('myQrDisplay').classList.add('hidden');
+      document.getElementById('requestMoneyForm').classList.add('hidden');
+      document.getElementById('scannerSection').classList.add('hidden');
+      stopCamera();
+    }
+
+    function updateDashboard() {
+      if(!currentUser) return;
+      const user = getUsers().find(u => u.accountNumber === currentUser.accountNumber);
+      if(user) currentUser = user;
+      document.getElementById('displayName').textContent = currentUser.name;
+      document.getElementById('displayAccNum').textContent = currentUser.accountNumber;
+      document.getElementById('displayBalance').textContent = Number(currentUser.balance).toFixed(2);
+    }
+
+    function updateHistory() {
+      const container = document.getElementById('transactionHistory');
+      const txns = getTransactions().filter(t => t.sender === currentUser.accountNumber || t.recipient === currentUser.accountNumber);
+      if(!txns.length) { container.innerHTML = '<div style="color:#aaa;text-align:center;">No transactions</div>'; return; }
+      container.innerHTML = txns.slice(0,20).map(t => {
+        const isSent = t.sender === currentUser.accountNumber;
+        const cls = t.type === 'request_pay' ? 'request' : (isSent ? 'sent' : 'received');
+        const sign = isSent ? '-' : '+';
+        const other = isSent ? t.recipient : t.sender;
+        return `<div class="transaction-item ${cls}">
+          <div><strong>${sign}${t.amount.toFixed(2)} LKR</strong><div style="font-size:0.7rem;">${isSent?'To':'From'}: ${other}</div></div>
+          <div style="text-align:right;font-size:0.7rem;">${t.timestamp}<br>Fee: ${t.fee.toFixed(2)} ${t.type==='request_pay'?'(Request)':''}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // My QR Code
+    document.getElementById('showMyQrBtn').addEventListener('click', () => {
+      const display = document.getElementById('myQrDisplay');
+      display.classList.toggle('hidden');
+      if(!display.classList.contains('hidden')) {
+        display.innerHTML = '<div class="qr-code"></div>';
+        new QRCode(display.querySelector('.qr-code'), {
+          text: JSON.stringify({type:'account', accountNumber: currentUser.accountNumber, name: currentUser.name}),
+          width: 150, height: 150
         });
+      }
+    });
 
-        // 2. Display your unique ID
-        peer.on('open', id => {
-            document.getElementById('my-id').innerText = id;
-        });
+    // Request Money
+    document.getElementById('requestMoneyBtn').addEventListener('click', () => {
+      document.getElementById('requestMoneyForm').classList.toggle('hidden');
+      document.getElementById('myQrDisplay').classList.add('hidden');
+      document.getElementById('scannerSection').classList.add('hidden');
+      stopCamera();
+    });
 
-        // 3. Handle incoming calls
-        peer.on('call', call => {
-            call.answer(localStream); // Answer with your stream
-            call.on('stream', remoteStream => {
-                document.getElementById('remote-video').srcObject = remoteStream;
-            });
-        });
+    document.getElementById('generateRequestQrBtn').addEventListener('click', () => {
+      const amount = parseFloat(document.getElementById('requestAmount').value);
+      if(isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
+      const display = document.getElementById('requestQrDisplay');
+      display.innerHTML = '<div class="qr-code"></div><p style="color:#ffa502;">Request: '+amount.toFixed(2)+' LKR</p>';
+      new QRCode(display.querySelector('.qr-code'), {
+        text: JSON.stringify({
+          type: 'payment_request',
+          requesterAccount: currentUser.accountNumber,
+          requesterName: currentUser.name,
+          amount: amount
+        }),
+        width: 180, height: 180
+      });
+    });
 
-        // 4. Function to start a call
-        function makeCall() {
-            const remoteId = document.getElementById('remote-id').value;
-            const call = peer.call(remoteId, localStream);
-            call.on('stream', remoteStream => {
-                document.getElementById('remote-video').srcObject = remoteStream;
-            });
+    // QR Scanner
+    document.getElementById('scanQrBtn').addEventListener('click', () => {
+      document.getElementById('scannerSection').classList.toggle('hidden');
+      document.getElementById('myQrDisplay').classList.add('hidden');
+      document.getElementById('requestMoneyForm').classList.add('hidden');
+      if(!document.getElementById('scannerSection').classList.contains('hidden')) {
+        startCamera();
+      } else {
+        stopCamera();
+      }
+    });
+
+    document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
+
+    async function startCamera() {
+      stopCamera();
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}});
+        const container = document.getElementById('cameraContainer');
+        container.innerHTML = '<video id="videoElement" autoplay playsinline></video>';
+        const video = document.getElementById('videoElement');
+        video.srcObject = videoStream;
+        video.play();
+        scanQRCode(video);
+      } catch(e) {
+        document.getElementById('scanResult').textContent = 'Camera error: ' + e.message;
+      }
+    }
+
+    function stopCamera() {
+      if(videoStream) {
+        videoStream.getTracks().forEach(t => t.stop());
+        videoStream = null;
+      }
+      document.getElementById('cameraContainer').innerHTML = '';
+      document.getElementById('scanResult').textContent = '';
+    }
+
+    function scanQRCode(video) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const scan = () => {
+        if(!videoStream) return;
+        if(video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, canvas.width, canvas.height);
+          if(code) {
+            document.getElementById('scanResult').textContent = '✅ QR Detected!';
+            processScannedQR(code.data);
+            stopCamera();
+            document.getElementById('scannerSection').classList.add('hidden');
+            return;
+          }
         }
-    </script>
+        requestAnimationFrame(scan);
+      };
+      scan();
+    }
+
+    function processScannedQR(data) {
+      try {
+        const parsed = JSON.parse(data);
+        if(parsed.type === 'account') {
+          document.getElementById('recipientAccNum').value = parsed.accountNumber;
+          alert(`QR scanned: ${parsed.name} (${parsed.accountNumber})`);
+        } else if(parsed.type === 'payment_request') {
+          pendingQRData = parsed;
+          showConfirmModal(parsed);
+        }
+      } catch(e) {
+        alert('Invalid QR code');
+      }
+    }
+
+    function showConfirmModal(data) {
+      document.getElementById('modalSender').textContent = currentUser.name;
+      document.getElementById('modalRecipient').textContent = data.requesterName;
+      document.getElementById('modalAccount').textContent = data.requesterAccount;
+      document.getElementById('modalAmount').textContent = data.amount.toFixed(2) + ' LKR';
+      const fee = data.amount * 0.03;
+      document.getElementById('modalFee').textContent = fee.toFixed(2) + ' LKR';
+      document.getElementById('modalTotal').textContent = (data.amount + fee).toFixed(2) + ' LKR';
+      document.getElementById('modalError').textContent = '';
+      confirmModal.classList.remove('hidden');
+    }
+
+    document.getElementById('cancelTransactionBtn').addEventListener('click', () => {
+      confirmModal.classList.add('hidden');
+      pendingQRData = null;
+    });
+
+    document.getElementById('confirmTransactionBtn').addEventListener('click', () => {
+      if(!pendingQRData) return;
+      const data = pendingQRData;
+      const users = getUsers();
+      const sender = users.find(u => u.accountNumber === currentUser.accountNumber);
+      const recipient = users.find(u => u.accountNumber === data.requesterAccount);
+      
+      if(!recipient) {
+        document.getElementById('modalError').textContent = 'Recipient not found.';
+        return;
+      }
+      const fee = data.amount * 0.03;
+      const total = data.amount + fee;
+      
+      if(sender.balance < total) {
+        document.getElementById('modalError').textContent = 'Insufficient balance.';
+        return;
+      }
+      
+      sender.balance -= total;
+      recipient.balance += data.amount;
+      const admin = getAdmin(); admin.balance += fee;
+      saveAdmin(admin); saveUsers(users);
+      addTransaction(sender.accountNumber, recipient.accountNumber, data.amount, fee, 'request_pay');
+      
+      currentUser = sender;
+      updateDashboard(); updateHistory();
+      confirmModal.classList.add('hidden');
+      pendingQRData = null;
+      alert(`Payment successful! ${data.amount.toFixed(2)} LKR sent to ${data.requesterName}`);
+    });
+
+    // Coupon
+    document.getElementById('applyCouponBtn').addEventListener('click', () => {
+      const code = document.getElementById('couponInput').value.trim();
+      document.getElementById('couponError').textContent = '';
+      document.getElementById('couponMessage').textContent = '';
+      if(code !== 'äddon') { document.getElementById('couponError').textContent = 'Invalid coupon.'; return; }
+      if(hasUsedCoupon(currentUser.accountNumber)) { document.getElementById('couponError').textContent = 'Already used.'; return; }
+      const users = getUsers();
+      const idx = users.findIndex(u => u.accountNumber === currentUser.accountNumber);
+      users[idx].balance += 10000;
+      saveUsers(users); addCouponUsed(currentUser.accountNumber);
+      currentUser = users[idx]; updateDashboard();
+      document.getElementById('couponMessage').textContent = '✅ 10,000 LKR added!';
+    });
+
+    // Send Money
+    document.getElementById('sendMoneyBtn').addEventListener('click', () => {
+      document.getElementById('transferError').textContent = '';
+      document.getElementById('transferSuccess').textContent = '';
+      const recipient = document.getElementById('recipientAccNum').value.trim();
+      const amount = parseFloat(document.getElementById('transferAmount').value);
+      if(recipient.length !== 12 || isNaN(amount) || amount <= 0) {
+        document.getElementById('transferError').textContent = 'Invalid details.'; return;
+      }
+      if(recipient === currentUser.accountNumber) { document.getElementById('transferError').textContent = 'Cannot send to self.'; return; }
+      const users = getUsers();
+      const sender = users.find(u => u.accountNumber === currentUser.accountNumber);
+      const rec = users.find(u => u.accountNumber === recipient);
+      if(!rec) { document.getElementById('transferError').textContent = 'Recipient not found.'; return; }
+      const fee = amount * 0.03;
+      const total = amount + fee;
+      if(sender.balance < total) { document.getElementById('transferError').textContent = 'Insufficient balance.'; return; }
+      sender.balance -= total; rec.balance += amount;
+      const admin = getAdmin(); admin.balance += fee;
+      saveAdmin(admin); saveUsers(users);
+      addTransaction(sender.accountNumber, rec.accountNumber, amount, fee, 'transfer');
+      currentUser = sender; updateDashboard(); updateHistory();
+      document.getElementById('transferSuccess').textContent = `Sent ${amount.toFixed(2)} LKR. Fee: ${fee.toFixed(2)}.`;
+      document.getElementById('recipientAccNum').value = '';
+      document.getElementById('transferAmount').value = '';
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      stopCamera(); currentUser = null; isAdmin = false;
+      authPanel.classList.remove('hidden'); dashboardPanel.classList.add('hidden'); adminPanel.classList.add('hidden');
+    });
+
+    // Admin
+    function showAdminDashboard() {
+      authPanel.classList.add('hidden'); dashboardPanel.classList.add('hidden'); adminPanel.classList.remove('hidden');
+      updateAdminUI();
+    }
+
+    function updateAdminUI() {
+      const admin = getAdmin(); const users = getUsers(); const txns = getTransactions();
+      document.getElementById('adminBalance').textContent = admin.balance.toFixed(2);
+      document.getElementById('totalUsers').textContent = users.length;
+      document.getElementById('totalTransactions').textContent = txns.length;
+      document.getElementById('allUsersList').innerHTML = users.map(u => 
+        `<div style="padding:8px;background:rgba(0,180,216,0.1);margin:5px 0;border-radius:8px;display:flex;justify-content:space-between;">
+          <span>${u.name} (${u.accountNumber})</span><span>${u.balance.toFixed(2)} LKR</span></div>`
+      ).join('');
+      document.getElementById('adminTransactionList').innerHTML = txns.length ? txns.slice(0,15).map(t =>
+        `<div class="transaction-item"><div><strong>${t.amount.toFixed(2)} LKR</strong><div style="font-size:0.7rem;">${t.sender} → ${t.recipient}</div></div>
+        <div style="text-align:right;font-size:0.7rem;">Fee: ${t.fee.toFixed(2)}<br>${t.timestamp}</div></div>`
+      ).join('') : '<div style="color:#aaa;">No transactions</div>';
+    }
+
+    document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+      isAdmin = false; currentUser = null;
+      authPanel.classList.remove('hidden'); dashboardPanel.classList.add('hidden'); adminPanel.classList.add('hidden');
+    });
+  })();
+</script>
 </body>
 </html>
