@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Mata Bank | Complete Banking with QR Scanner</title>
+  <title>Mata Bank Pro | Firebase Banking System</title>
   <style>
     * {
       margin: 0;
@@ -14,23 +14,22 @@
     body {
       background: linear-gradient(145deg, #0b1a2f 0%, #1a2f40 100%);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 20px;
     }
     .app-container {
-      max-width: 600px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 36px;
-      padding: 24px;
-      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      max-height: 90vh;
-      overflow-y: auto;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 1024px) {
+      .app-container {
+        grid-template-columns: 1fr 1fr;
+      }
+      .admin-full-width {
+        grid-column: 1 / -1;
+      }
     }
     h1 {
       color: #e6f0fa;
@@ -40,10 +39,7 @@
       margin-bottom: 20px;
       font-size: 2.2rem;
       text-shadow: 0 4px 10px rgba(0,160,255,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      grid-column: 1 / -1;
     }
     h1 span {
       background: #00b4d8;
@@ -51,17 +47,13 @@
       font-size: 1rem;
       padding: 4px 12px;
       border-radius: 40px;
-      letter-spacing: 0.5px;
     }
     .panel {
       background: rgba(10, 25, 45, 0.7);
       backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
       border-radius: 28px;
       padding: 22px 20px;
       border: 1px solid rgba(0, 180, 216, 0.25);
-      margin-bottom: 20px;
-      transition: all 0.2s ease;
     }
     .hidden {
       display: none !important;
@@ -75,7 +67,6 @@
       font-size: 0.85rem;
       margin-bottom: 5px;
       font-weight: 500;
-      letter-spacing: 0.5px;
     }
     input, select, textarea {
       width: 100%;
@@ -86,20 +77,20 @@
       color: #fff;
       font-size: 1rem;
       outline: none;
-      transition: 0.2s;
-      backdrop-filter: blur(4px);
     }
     input:focus, select:focus, textarea:focus {
       border-color: #00b4d8;
       box-shadow: 0 0 12px rgba(0, 180, 216, 0.5);
-      background: rgba(0, 20, 40, 0.7);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
     }
     .btn {
       background: #00b4d8;
       border: none;
       color: #02111f;
       font-weight: bold;
-      font-size: 1rem;
       padding: 14px 20px;
       border-radius: 30px;
       width: 100%;
@@ -109,7 +100,6 @@
       margin-top: 6px;
       text-transform: uppercase;
       box-shadow: 0 10px 18px rgba(0, 180, 216, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.3);
     }
     .btn:hover {
       background: #00d4f0;
@@ -118,17 +108,7 @@
     .btn-secondary {
       background: rgba(255, 255, 255, 0.08);
       color: #d4eaff;
-      border: 1px solid rgba(255, 255, 255, 0.35);
       box-shadow: none;
-      margin-top: 8px;
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-    .btn-small {
-      padding: 10px 16px;
-      font-size: 0.85rem;
-      width: auto;
     }
     .btn-danger {
       background: #ff4757;
@@ -138,6 +118,15 @@
       background: #2ed573;
       box-shadow: 0 10px 18px rgba(46, 213, 115, 0.3);
     }
+    .btn-warning {
+      background: #ffa502;
+      box-shadow: 0 10px 18px rgba(255, 165, 2, 0.3);
+    }
+    .btn-small {
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      width: auto;
+    }
     .balance-box {
       background: #021a2b;
       border-radius: 24px;
@@ -145,11 +134,6 @@
       text-align: center;
       margin: 15px 0;
       border: 1px solid #00b4d8;
-      box-shadow: inset 0 0 20px rgba(0,180,216,0.2);
-    }
-    .balance-label {
-      color: #9cc9f0;
-      font-size: 0.9rem;
     }
     .balance-amount {
       font-size: 2.5rem;
@@ -157,45 +141,18 @@
       color: #e0f0ff;
       text-shadow: 0 0 10px #00b4d8;
     }
-    .account-info {
-      color: #b0d4f0;
-      font-size: 0.9rem;
-      margin-top: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .coupon-area {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin: 10px 0;
-    }
-    .coupon-area input {
-      flex: 1;
-    }
     .error-message {
       color: #ff8a8a;
       font-size: 0.85rem;
       margin-top: 6px;
-      min-height: 20px;
     }
     .success-message {
       color: #6fe3b6;
       font-size: 0.85rem;
       margin-top: 6px;
     }
-    hr {
-      border-color: rgba(255,255,255,0.1);
-      margin: 15px 0;
-    }
-    .flex-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
     .transaction-list {
-      max-height: 250px;
+      max-height: 300px;
       overflow-y: auto;
       margin-top: 10px;
     }
@@ -216,47 +173,64 @@
     .transaction-item.received {
       border-left-color: #6fe3b6;
     }
-    .transaction-item.request {
-      border-left-color: #ffa502;
-    }
-    .qr-code {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      text-align: center;
-      margin: 15px 0;
-      display: inline-block;
-    }
-    .qr-code canvas {
-      display: block;
-      margin: 0 auto;
-    }
-    .tab-buttons {
+    .flex-row {
       display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
+      gap: 10px;
+      align-items: center;
     }
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      border-radius: 20px;
-      cursor: pointer;
-      text-align: center;
-      font-size: 0.9rem;
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
-    .tab-btn.active {
-      background: #00b4d8;
-      color: #02111f;
-      font-weight: bold;
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
     }
-    .admin-stat {
-      background: rgba(0,180,216,0.2);
+    .stat-card {
+      background: rgba(0,180,216,0.15);
       padding: 15px;
       border-radius: 16px;
-      margin: 10px 0;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #00b4d8;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: #9cc9f0;
+    }
+    .user-row {
+      background: rgba(0, 20, 40, 0.5);
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .user-row.banned {
+      opacity: 0.5;
+      border-left: 3px solid #ff4757;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .badge-active {
+      background: #2ed573;
+      color: #000;
+    }
+    .badge-banned {
+      background: #ff4757;
+      color: #fff;
     }
     .modal-overlay {
       position: fixed;
@@ -274,82 +248,64 @@
       background: #1a2f40;
       border-radius: 24px;
       padding: 24px;
-      max-width: 400px;
+      max-width: 500px;
       width: 90%;
       border: 2px solid #00b4d8;
+      max-height: 80vh;
+      overflow-y: auto;
     }
-    .modal-content h3 {
+    .notification-item {
+      background: rgba(255,165,2,0.2);
+      padding: 12px;
+      border-radius: 12px;
+      margin: 8px 0;
+      border-left: 3px solid #ffa502;
+    }
+    hr {
+      border-color: rgba(255,255,255,0.1);
+      margin: 15px 0;
+    }
+    select {
+      background: rgba(0, 0, 0, 0.35);
       color: white;
-      margin-bottom: 15px;
     }
-    .modal-content .detail-row {
+    .coupon-card {
+      background: rgba(46, 213, 115, 0.15);
+      padding: 12px;
+      border-radius: 12px;
+      margin: 8px 0;
       display: flex;
       justify-content: space-between;
-      margin: 10px 0;
-      color: #d0e0ff;
-    }
-    #cameraContainer {
-      width: 100%;
-      max-width: 400px;
-      margin: 10px auto;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    #cameraContainer video {
-      width: 100%;
-      border-radius: 12px;
+      align-items: center;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
-<div class="app-container" id="mainContainer">
-  <h1>MATA<span>BANK</span></h1>
+<div class="app-container">
+  <h1>MATA<span>BANK</span> <small style="font-size:0.5rem;display:block;">Firebase Edition</small></h1>
 
   <!-- Auth Panel -->
   <div id="authPanel" class="panel">
     <div style="display: flex; gap: 12px; margin-bottom: 18px;">
-      <button id="showLoginBtn" class="btn" style="width:33%; background:#00b4d8;">USER</button>
-      <button id="showRegisterBtn" class="btn btn-secondary" style="width:33%;">REGISTER</button>
-      <button id="showAdminLoginBtn" class="btn btn-secondary" style="width:33%;">ADMIN</button>
+      <button id="showLoginBtn" class="btn" style="background:#00b4d8;">USER LOGIN</button>
+      <button id="showRegisterBtn" class="btn btn-secondary">REGISTER</button>
+      <button id="showAdminLoginBtn" class="btn btn-secondary">ADMIN</button>
     </div>
-
     <div id="loginForm">
-      <div class="input-group">
-        <label>12-Digit Account Number</label>
-        <input type="text" id="loginAccNum" placeholder="e.g., 100000000001" maxlength="12" autocomplete="off">
-      </div>
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="••••••••">
-      </div>
+      <div class="input-group"><label>12-Digit Account Number</label><input type="text" id="loginAccNum" maxlength="12"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="loginPassword"></div>
       <button id="loginSubmitBtn" class="btn">🔐 LOGIN</button>
       <div id="loginError" class="error-message"></div>
     </div>
-
     <div id="registerForm" class="hidden">
-      <div class="input-group">
-        <label>Full Name</label>
-        <input type="text" id="regName" placeholder="Your name">
-      </div>
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="regPassword" placeholder="Create password">
-      </div>
+      <div class="input-group"><label>Full Name</label><input type="text" id="regName"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="regPassword"></div>
       <button id="registerSubmitBtn" class="btn">✨ CREATE ACCOUNT</button>
       <div id="regError" class="error-message"></div>
     </div>
-
     <div id="adminLoginForm" class="hidden">
-      <div class="input-group">
-        <label>Admin Username</label>
-        <input type="text" id="adminUsername" placeholder="admin">
-      </div>
-      <div class="input-group">
-        <label>Admin Password</label>
-        <input type="password" id="adminPassword" placeholder="••••••••">
-      </div>
+      <div class="input-group"><label>Admin Username</label><input type="text" id="adminUsername" value="admin"></div>
+      <div class="input-group"><label>Admin Password</label><input type="password" id="adminPassword"></div>
       <button id="adminLoginSubmitBtn" class="btn">👑 ADMIN LOGIN</button>
       <div id="adminLoginError" class="error-message"></div>
     </div>
@@ -357,519 +313,881 @@
 
   <!-- User Dashboard -->
   <div id="dashboardPanel" class="panel hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h2 style="color:white; margin:0; font-weight:400;">👤 <span id="displayName"></span></h2>
-      <button id="logoutBtn" class="btn btn-secondary btn-small">Logout</button>
+    <div class="flex-row" style="justify-content:space-between;">
+      <h2 style="color:white;">👤 <span id="displayName"></span></h2>
+      <button id="logoutBtn" class="btn btn-danger btn-small">Logout</button>
     </div>
-    <div class="account-info">
-      <span>🏦 A/C: <strong id="displayAccNum"></strong></span>
-    </div>
+    <div style="color:#b0d4f0;">🏦 A/C: <strong id="displayAccNum"></strong></div>
     <div class="balance-box">
-      <div class="balance-label">AVAILABLE BALANCE</div>
+      <div style="color:#9cc9f0;">AVAILABLE BALANCE</div>
       <div class="balance-amount" id="displayBalance">0.00</div>
-      <div style="color:#aaa; font-size:0.8rem;">LKR</div>
+      <div style="color:#aaa;">LKR</div>
     </div>
+    
+    <!-- Notifications -->
+    <div id="userNotifications" style="margin:10px 0;"></div>
 
     <!-- QR Section -->
-    <div style="display: flex; gap: 10px; margin: 15px 0;">
-      <button id="showMyQrBtn" class="btn btn-secondary" style="flex:1;">📱 My QR Code</button>
-      <button id="requestMoneyBtn" class="btn btn-secondary" style="flex:1;">💰 Request Money</button>
-      <button id="scanQrBtn" class="btn btn-secondary" style="flex:1;">📷 Scan QR</button>
+    <div class="flex-row" style="margin:10px 0;">
+      <button id="showMyQrBtn" class="btn btn-secondary btn-small">📱 My QR</button>
+      <button id="requestMoneyBtn" class="btn btn-secondary btn-small">💰 Request</button>
+      <button id="scanQrBtn" class="btn btn-secondary btn-small">📷 Scan</button>
     </div>
-    
     <div id="myQrDisplay" class="hidden" style="text-align:center;"></div>
-    
     <div id="requestMoneyForm" class="hidden">
-      <div class="input-group">
-        <label>Request Amount (LKR)</label>
-        <input type="number" id="requestAmount" placeholder="Enter amount" step="0.01" min="1">
-      </div>
-      <button id="generateRequestQrBtn" class="btn">🎯 Generate Request QR</button>
-      <div id="requestQrDisplay" style="text-align:center; margin-top:10px;"></div>
+      <input type="number" id="requestAmount" placeholder="Amount" step="0.01">
+      <button id="generateRequestQrBtn" class="btn btn-small">Generate QR</button>
+      <div id="requestQrDisplay" style="text-align:center;margin-top:10px;"></div>
     </div>
-
     <div id="scannerSection" class="hidden">
       <div id="cameraContainer"></div>
-      <button id="stopCameraBtn" class="btn btn-danger btn-small" style="margin-top:10px;">❌ Stop Camera</button>
-      <div id="scanResult" class="success-message"></div>
+      <button id="stopCameraBtn" class="btn btn-danger btn-small">Stop Camera</button>
     </div>
 
     <!-- Coupon -->
-    <div class="coupon-area">
-      <input type="text" id="couponInput" placeholder="Coupon code" autocomplete="off">
-      <button id="applyCouponBtn" class="btn btn-small">➕ ADDON</button>
+    <div class="flex-row">
+      <input type="text" id="couponInput" placeholder="Coupon code">
+      <button id="applyCouponBtn" class="btn btn-success btn-small">➕ ADDON</button>
     </div>
     <div id="couponMessage" class="success-message"></div>
     <div id="couponError" class="error-message"></div>
 
     <hr>
-    <h3 style="color:#cfe4ff; margin-bottom:12px;">💸 Send Money</h3>
-    <div class="input-group">
-      <label>Recipient Account Number</label>
-      <input type="text" id="recipientAccNum" placeholder="12-digit account number" maxlength="12" autocomplete="off">
-    </div>
-    <div class="input-group">
-      <label>Amount (LKR)</label>
-      <input type="number" id="transferAmount" placeholder="0.00" step="0.01" min="1">
-    </div>
-    <div style="font-size:0.8rem; color:#9cc9f0; margin-bottom: 10px;">
-      ⚡ Transaction fee: 3% (goes to admin)
-    </div>
-    <button id="sendMoneyBtn" class="btn">📤 SEND MONEY</button>
+    <h3 style="color:#cfe4ff;">💸 Send Money</h3>
+    <div class="input-group"><label>Recipient Account</label><input type="text" id="recipientAccNum" maxlength="12"></div>
+    <div class="input-group"><label>Amount (LKR)</label><input type="number" id="transferAmount" step="0.01"></div>
+    <div style="font-size:0.8rem;color:#9cc9f0;">⚡ Fee: 3% (goes to admin)</div>
+    <button id="sendMoneyBtn" class="btn">📤 SEND</button>
     <div id="transferError" class="error-message"></div>
     <div id="transferSuccess" class="success-message"></div>
 
     <hr>
-    <h3 style="color:#cfe4ff; margin-bottom:12px;">📋 Transaction History</h3>
-    <div class="transaction-list" id="transactionHistory">
-      <div style="color:#aaa; text-align:center;">No transactions yet</div>
-    </div>
+    <h3 style="color:#cfe4ff;">📋 History</h3>
+    <div class="transaction-list" id="transactionHistory"></div>
   </div>
 
   <!-- Admin Dashboard -->
-  <div id="adminPanel" class="panel hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h2 style="color:gold; margin:0;">👑 Admin Dashboard</h2>
-      <button id="adminLogoutBtn" class="btn btn-secondary btn-small">Logout</button>
+  <div id="adminPanel" class="panel hidden admin-full-width">
+    <div class="flex-row" style="justify-content:space-between;margin-bottom:15px;">
+      <h2 style="color:gold;">👑 Admin Dashboard</h2>
+      <button id="adminLogoutBtn" class="btn btn-danger btn-small">Logout</button>
     </div>
-    <div class="admin-stat">
-      <div class="balance-label">TOTAL FEES COLLECTED</div>
-      <div class="balance-amount" style="color:gold;" id="adminBalance">0.00</div>
-      <div style="color:#aaa;">LKR</div>
+
+    <!-- Stats -->
+    <div class="grid-3" style="margin-bottom:15px;">
+      <div class="stat-card"><div class="stat-value" id="adminBalance">0</div><div class="stat-label">Total Fees (LKR)</div></div>
+      <div class="stat-card"><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total Users</div></div>
+      <div class="stat-card"><div class="stat-value" id="totalTransactions">0</div><div class="stat-label">Transactions</div></div>
     </div>
-    <div class="admin-stat">
-      <div class="balance-label">TOTAL USERS</div>
-      <div style="font-size:2rem; color:white;" id="totalUsers">0</div>
+
+    <!-- Tabs -->
+    <div class="flex-row" style="margin-bottom:15px;flex-wrap:wrap;">
+      <button class="btn btn-small admin-tab active" data-tab="users">👥 Users</button>
+      <button class="btn btn-small btn-secondary admin-tab" data-tab="transactions">📊 Transactions</button>
+      <button class="btn btn-small btn-secondary admin-tab" data-tab="coupons">🎟️ Coupons</button>
+      <button class="btn btn-small btn-secondary admin-tab" data-tab="notifications">🔔 Notifications</button>
+      <button class="btn btn-small btn-secondary admin-tab" data-tab="analytics">📈 Analytics</button>
     </div>
-    <div class="admin-stat">
-      <div class="balance-label">TOTAL TRANSACTIONS</div>
-      <div style="font-size:2rem; color:white;" id="totalTransactions">0</div>
+
+    <!-- Users Tab -->
+    <div id="adminTab-users" class="admin-tab-content">
+      <div class="flex-row" style="margin-bottom:10px;">
+        <input type="text" id="userSearch" placeholder="Search by name or account...">
+      </div>
+      <div id="allUsersList" style="max-height:400px;overflow-y:auto;"></div>
     </div>
-    <hr>
-    <h3 style="color:gold;">All Users</h3>
-    <div id="allUsersList" style="max-height:200px; overflow-y:auto;"></div>
-    <hr>
-    <h3 style="color:gold;">Recent Transactions</h3>
-    <div class="transaction-list" id="adminTransactionList"></div>
+
+    <!-- Transactions Tab -->
+    <div id="adminTab-transactions" class="admin-tab-content hidden">
+      <div class="transaction-list" id="adminTransactionList" style="max-height:400px;"></div>
+    </div>
+
+    <!-- Coupons Tab -->
+    <div id="adminTab-coupons" class="admin-tab-content hidden">
+      <div class="grid-2">
+        <div>
+          <h3 style="color:white;">Create Coupon</h3>
+          <div class="input-group"><label>Coupon Code</label><input type="text" id="newCouponCode"></div>
+          <div class="input-group"><label>Amount (LKR)</label><input type="number" id="newCouponAmount" value="10000"></div>
+          <div class="input-group"><label>Max Uses (0=unlimited)</label><input type="number" id="newCouponMaxUses" value="1"></div>
+          <button id="createCouponBtn" class="btn btn-success">Create Coupon</button>
+        </div>
+        <div>
+          <h3 style="color:white;">Active Coupons</h3>
+          <div id="couponsList" style="max-height:300px;overflow-y:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications Tab -->
+    <div id="adminTab-notifications" class="admin-tab-content hidden">
+      <h3 style="color:white;">Send Announcement</h3>
+      <div class="input-group"><label>Title</label><input type="text" id="notifTitle"></div>
+      <div class="input-group"><label>Message</label><textarea id="notifMessage"></textarea></div>
+      <div class="input-group"><label>Target</label>
+        <select id="notifTarget">
+          <option value="all">All Users</option>
+          <option value="specific">Specific User</option>
+        </select>
+      </div>
+      <div id="notifSpecificUser" class="input-group hidden">
+        <label>User Account Number</label>
+        <input type="text" id="notifUserAcc">
+      </div>
+      <button id="sendNotificationBtn" class="btn btn-warning">📢 Send Announcement</button>
+      <hr>
+      <h3 style="color:white;">Sent Announcements</h3>
+      <div id="notificationsList" style="max-height:300px;overflow-y:auto;"></div>
+    </div>
+
+    <!-- Analytics Tab -->
+    <div id="adminTab-analytics" class="admin-tab-content hidden">
+      <div class="grid-2">
+        <div class="stat-card">
+          <div class="stat-label">Today's Transactions</div>
+          <div class="stat-value" id="todayTxns">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Today's Volume (LKR)</div>
+          <div class="stat-value" id="todayVolume">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Users (24h)</div>
+          <div class="stat-value" id="activeUsers24h">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Banned Users</div>
+          <div class="stat-value" id="bannedUsersCount">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Edit Modal -->
+  <div id="userEditModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 style="color:white;">Edit User</h3>
+      <div class="input-group"><label>Name</label><input type="text" id="editUserName"></div>
+      <div class="input-group"><label>Account Number</label><input type="text" id="editUserAcc" disabled></div>
+      <div class="input-group"><label>Balance (LKR)</label><input type="number" id="editUserBalance" step="0.01"></div>
+      <div class="input-group"><label>Status</label>
+        <select id="editUserStatus">
+          <option value="active">Active</option>
+          <option value="banned">Banned</option>
+        </select>
+      </div>
+      <div class="flex-row">
+        <button id="saveUserBtn" class="btn btn-success">💾 Save</button>
+        <button id="closeEditModalBtn" class="btn btn-danger">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="confirmModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3>🔍 QR Payment Details</h3>
+      <div id="modalDetails"></div>
+      <div class="flex-row">
+        <button id="confirmTransactionBtn" class="btn btn-success">✅ Confirm</button>
+        <button id="cancelTransactionBtn" class="btn btn-danger">Cancel</button>
+      </div>
+      <div id="modalError" class="error-message"></div>
+    </div>
   </div>
 </div>
 
-<!-- Transaction Confirmation Modal -->
-<div id="confirmModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3>🔍 QR Transaction Details</h3>
-    <div class="detail-row"><span>From:</span> <strong id="modalSender"></strong></div>
-    <div class="detail-row"><span>To:</span> <strong id="modalRecipient"></strong></div>
-    <div class="detail-row"><span>Account:</span> <strong id="modalAccount"></strong></div>
-    <div class="detail-row"><span>Amount:</span> <strong id="modalAmount" style="color:#2ed573;"></strong></div>
-    <div class="detail-row"><span>Fee (3%):</span> <strong id="modalFee" style="color:#ffa502;"></strong></div>
-    <div class="detail-row"><span>Total:</span> <strong id="modalTotal" style="color:#ff4757;"></strong></div>
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button id="confirmTransactionBtn" class="btn btn-success" style="flex:1;">✅ CONFIRM</button>
-      <button id="cancelTransactionBtn" class="btn btn-danger" style="flex:1;">❌ CANCEL</button>
-    </div>
-    <div id="modalError" class="error-message"></div>
-  </div>
-</div>
+<!-- Scripts -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, set, get, update, push, onValue, off, query, orderByChild, equalTo, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-<script>
-  (function() {
-    // Storage
-    const STORAGE = {
-      USERS: 'mata_users_v3',
-      ADMIN: 'mata_admin_v3',
-      TRANSACTIONS: 'mata_transactions_v3',
-      COUPON_USED: 'mata_coupon_used_v3',
-      ADMIN_CREDENTIALS: 'mata_admin_auth_v3'
+  const firebaseConfig = {
+    apiKey: "AIzaSyDLSnWPSjF8Qf2mQ9zc2HfvpTH8dPzIrL8",
+    authDomain: "demobatta-1b673.firebaseapp.com",
+    databaseURL: "https://demobatta-1b673-default-rtdb.firebaseio.com",
+    projectId: "demobatta-1b673",
+    storageBucket: "demobatta-1b673.firebasestorage.app",
+    messagingSenderId: "609366383941",
+    appId: "1:609366383941:web:11f782595e3bd4f855722c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // State
+  let currentUser = null;
+  let isAdmin = false;
+  let adminListeners = [];
+  let videoStream = null;
+  let pendingQRData = null;
+
+  // Initialize Database Structure
+  async function initializeDB() {
+    const adminRef = ref(db, 'admin');
+    const adminSnap = await get(adminRef);
+    if (!adminSnap.exists()) {
+      await set(adminRef, {
+        accountNumber: '999999999999',
+        balance: 0,
+        credentials: { username: 'admin', password: 'admin123' }
+      });
+    }
+  }
+  initializeDB();
+
+  // Helper Functions
+  function generateAccountNumber() {
+    return Math.floor(100000000000 + Math.random() * 900000000000).toString();
+  }
+
+  async function getUserByAccount(accNum) {
+    const usersRef = ref(db, 'users');
+    const snap = await get(usersRef);
+    if (snap.exists()) {
+      const users = snap.val();
+      return Object.entries(users).find(([key, u]) => u.accountNumber === accNum);
+    }
+    return null;
+  }
+
+  async function getAllUsers() {
+    const snap = await get(ref(db, 'users'));
+    return snap.exists() ? snap.val() : {};
+  }
+
+  // Auth Functions
+  document.getElementById('loginSubmitBtn').addEventListener('click', async () => {
+    const acc = document.getElementById('loginAccNum').value.trim();
+    const pwd = document.getElementById('loginPassword').value.trim();
+    document.getElementById('loginError').textContent = '';
+    if (acc.length !== 12) { document.getElementById('loginError').textContent = 'Invalid account number.'; return; }
+    
+    const userEntry = await getUserByAccount(acc);
+    if (!userEntry) { document.getElementById('loginError').textContent = 'Account not found.'; return; }
+    const [uid, userData] = userEntry;
+    if (userData.password !== pwd) { document.getElementById('loginError').textContent = 'Wrong password.'; return; }
+    if (userData.status === 'banned') { document.getElementById('loginError').textContent = 'Account is banned.'; return; }
+    
+    currentUser = { uid, ...userData };
+    isAdmin = false;
+    showDashboard();
+  });
+
+  document.getElementById('registerSubmitBtn').addEventListener('click', async () => {
+    const name = document.getElementById('regName').value.trim();
+    const pwd = document.getElementById('regPassword').value.trim();
+    document.getElementById('regError').textContent = '';
+    if (!name || !pwd) { document.getElementById('regError').textContent = 'All fields required.'; return; }
+    
+    let accNum;
+    do { accNum = generateAccountNumber(); }
+    while (await getUserByAccount(accNum));
+    
+    const newUserRef = push(ref(db, 'users'));
+    const newUser = {
+      accountNumber: accNum,
+      name,
+      password: pwd,
+      balance: 0,
+      status: 'active',
+      createdAt: Date.now(),
+      lastActive: Date.now()
     };
+    await set(newUserRef, newUser);
+    currentUser = { uid: newUserRef.key, ...newUser };
+    isAdmin = false;
+    alert(`Account created! Number: ${accNum}`);
+    showDashboard();
+  });
 
-    // Initialize
-    if (!localStorage.getItem(STORAGE.ADMIN_CREDENTIALS)) {
-      localStorage.setItem(STORAGE.ADMIN_CREDENTIALS, JSON.stringify({username: 'admin', password: 'admin123'}));
+  document.getElementById('adminLoginSubmitBtn').addEventListener('click', async () => {
+    const u = document.getElementById('adminUsername').value.trim();
+    const p = document.getElementById('adminPassword').value.trim();
+    document.getElementById('adminLoginError').textContent = '';
+    const adminSnap = await get(ref(db, 'admin/credentials'));
+    const creds = adminSnap.val();
+    if (u === creds.username && p === creds.password) {
+      isAdmin = true;
+      currentUser = null;
+      showAdminDashboard();
+    } else {
+      document.getElementById('adminLoginError').textContent = 'Invalid credentials.';
     }
-    if (!localStorage.getItem(STORAGE.ADMIN)) {
-      localStorage.setItem(STORAGE.ADMIN, JSON.stringify({accountNumber: '999999999999', balance: 0}));
-    }
-    if (!localStorage.getItem(STORAGE.USERS)) {
-      localStorage.setItem(STORAGE.USERS, JSON.stringify([
-        {accountNumber: '100000000001', name: 'User One', password: 'pass1001', balance: 50000},
-        {accountNumber: '100000000002', name: 'User Two', password: 'pass1002', balance: 25000}
-      ]));
-    }
-    if (!localStorage.getItem(STORAGE.TRANSACTIONS)) {
-      localStorage.setItem(STORAGE.TRANSACTIONS, JSON.stringify([]));
-    }
-    if (!localStorage.getItem(STORAGE.COUPON_USED)) {
-      localStorage.setItem(STORAGE.COUPON_USED, JSON.stringify([]));
-    }
+  });
 
-    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE.USERS)) || []; }
-    function saveUsers(u) { localStorage.setItem(STORAGE.USERS, JSON.stringify(u)); }
-    function getAdmin() { return JSON.parse(localStorage.getItem(STORAGE.ADMIN)); }
-    function saveAdmin(a) { localStorage.setItem(STORAGE.ADMIN, JSON.stringify(a)); }
-    function getTransactions() { return JSON.parse(localStorage.getItem(STORAGE.TRANSACTIONS)) || []; }
-    function saveTransactions(t) { localStorage.setItem(STORAGE.TRANSACTIONS, JSON.stringify(t)); }
-    function getCouponUsed() { return JSON.parse(localStorage.getItem(STORAGE.COUPON_USED)) || []; }
-    function addCouponUsed(acc) { const l = getCouponUsed(); if(!l.includes(acc)) { l.push(acc); localStorage.setItem(STORAGE.COUPON_USED, JSON.stringify(l)); } }
-    function hasUsedCoupon(acc) { return getCouponUsed().includes(acc); }
-    function getAdminCreds() { return JSON.parse(localStorage.getItem(STORAGE.ADMIN_CREDENTIALS)); }
+  // Toggle Forms
+  document.getElementById('showLoginBtn').addEventListener('click', () => {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('adminLoginForm').classList.add('hidden');
+  });
+  document.getElementById('showRegisterBtn').addEventListener('click', () => {
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('adminLoginForm').classList.add('hidden');
+  });
+  document.getElementById('showAdminLoginBtn').addEventListener('click', () => {
+    document.getElementById('adminLoginForm').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+  });
 
-    function generateAccountNumber() {
-      let acc;
-      do { acc = Math.floor(100000000000 + Math.random() * 900000000000).toString(); }
-      while (getUsers().some(u => u.accountNumber === acc) || acc === '999999999999');
-      return acc;
-    }
+  // Dashboard Functions
+  function showDashboard() {
+    document.getElementById('authPanel').classList.add('hidden');
+    document.getElementById('dashboardPanel').classList.remove('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+    stopCamera();
+    updateDashboard();
+    listenUserNotifications();
+    listenTransactions();
+  }
 
-    function addTransaction(sender, recipient, amount, fee, type) {
-      const t = getTransactions();
-      t.unshift({id: Date.now(), sender, recipient, amount, fee, type, timestamp: new Date().toLocaleString()});
-      if(t.length > 100) t.pop();
-      saveTransactions(t);
-    }
-
-    let currentUser = null;
-    let isAdmin = false;
-    let videoStream = null;
-    let pendingQRData = null;
-
-    // UI Elements
-    const authPanel = document.getElementById('authPanel');
-    const dashboardPanel = document.getElementById('dashboardPanel');
-    const adminPanel = document.getElementById('adminPanel');
-    const confirmModal = document.getElementById('confirmModal');
-
-    // Auth Toggle
-    document.getElementById('showLoginBtn').addEventListener('click', () => {
-      document.getElementById('loginForm').classList.remove('hidden');
-      document.getElementById('registerForm').classList.add('hidden');
-      document.getElementById('adminLoginForm').classList.add('hidden');
-      document.getElementById('showLoginBtn').style.background = '#00b4d8';
-      document.getElementById('showRegisterBtn').style.background = 'rgba(255,255,255,0.08)';
-      document.getElementById('showAdminLoginBtn').style.background = 'rgba(255,255,255,0.08)';
-    });
-    document.getElementById('showRegisterBtn').addEventListener('click', () => {
-      document.getElementById('registerForm').classList.remove('hidden');
-      document.getElementById('loginForm').classList.add('hidden');
-      document.getElementById('adminLoginForm').classList.add('hidden');
-      document.getElementById('showRegisterBtn').style.background = '#00b4d8';
-      document.getElementById('showLoginBtn').style.background = 'rgba(255,255,255,0.08)';
-      document.getElementById('showAdminLoginBtn').style.background = 'rgba(255,255,255,0.08)';
-    });
-    document.getElementById('showAdminLoginBtn').addEventListener('click', () => {
-      document.getElementById('adminLoginForm').classList.remove('hidden');
-      document.getElementById('loginForm').classList.add('hidden');
-      document.getElementById('registerForm').classList.add('hidden');
-      document.getElementById('showAdminLoginBtn').style.background = '#00b4d8';
-      document.getElementById('showLoginBtn').style.background = 'rgba(255,255,255,0.08)';
-      document.getElementById('showRegisterBtn').style.background = 'rgba(255,255,255,0.08)';
-    });
-
-    // Login
-    document.getElementById('loginSubmitBtn').addEventListener('click', () => {
-      const acc = document.getElementById('loginAccNum').value.trim();
-      const pwd = document.getElementById('loginPassword').value.trim();
-      document.getElementById('loginError').textContent = '';
-      if(acc.length !== 12) { document.getElementById('loginError').textContent = 'Enter valid 12-digit account.'; return; }
-      const user = getUsers().find(u => u.accountNumber === acc && u.password === pwd);
-      if(!user) { document.getElementById('loginError').textContent = 'Invalid credentials.'; return; }
-      currentUser = user; isAdmin = false; showDashboard();
-    });
-
-    // Register
-    document.getElementById('registerSubmitBtn').addEventListener('click', () => {
-      const name = document.getElementById('regName').value.trim();
-      const pwd = document.getElementById('regPassword').value.trim();
-      document.getElementById('regError').textContent = '';
-      if(!name || !pwd) { document.getElementById('regError').textContent = 'All fields required.'; return; }
-      const acc = generateAccountNumber();
-      const newUser = {accountNumber: acc, name, password: pwd, balance: 0};
-      getUsers().push(newUser); saveUsers(getUsers());
-      currentUser = newUser; isAdmin = false;
-      alert(`Account created! Your number: ${acc}`);
-      showDashboard();
-    });
-
-    // Admin Login
-    document.getElementById('adminLoginSubmitBtn').addEventListener('click', () => {
-      const u = document.getElementById('adminUsername').value.trim();
-      const p = document.getElementById('adminPassword').value.trim();
-      document.getElementById('adminLoginError').textContent = '';
-      const creds = getAdminCreds();
-      if(u === creds.username && p === creds.password) { isAdmin = true; currentUser = null; showAdminDashboard(); }
-      else { document.getElementById('adminLoginError').textContent = 'Invalid admin credentials.'; }
-    });
-
-    function showDashboard() {
-      authPanel.classList.add('hidden'); dashboardPanel.classList.remove('hidden'); adminPanel.classList.add('hidden');
-      updateDashboard(); updateHistory();
-      document.getElementById('myQrDisplay').classList.add('hidden');
-      document.getElementById('requestMoneyForm').classList.add('hidden');
-      document.getElementById('scannerSection').classList.add('hidden');
-      stopCamera();
-    }
-
-    function updateDashboard() {
-      if(!currentUser) return;
-      const user = getUsers().find(u => u.accountNumber === currentUser.accountNumber);
-      if(user) currentUser = user;
+  async function updateDashboard() {
+    if (!currentUser) return;
+    const snap = await get(ref(db, `users/${currentUser.uid}`));
+    if (snap.exists()) {
+      currentUser = { uid: currentUser.uid, ...snap.val() };
       document.getElementById('displayName').textContent = currentUser.name;
       document.getElementById('displayAccNum').textContent = currentUser.accountNumber;
       document.getElementById('displayBalance').textContent = Number(currentUser.balance).toFixed(2);
     }
+  }
 
-    function updateHistory() {
-      const container = document.getElementById('transactionHistory');
-      const txns = getTransactions().filter(t => t.sender === currentUser.accountNumber || t.recipient === currentUser.accountNumber);
-      if(!txns.length) { container.innerHTML = '<div style="color:#aaa;text-align:center;">No transactions</div>'; return; }
-      container.innerHTML = txns.slice(0,20).map(t => {
-        const isSent = t.sender === currentUser.accountNumber;
-        const cls = t.type === 'request_pay' ? 'request' : (isSent ? 'sent' : 'received');
-        const sign = isSent ? '-' : '+';
-        const other = isSent ? t.recipient : t.sender;
-        return `<div class="transaction-item ${cls}">
-          <div><strong>${sign}${t.amount.toFixed(2)} LKR</strong><div style="font-size:0.7rem;">${isSent?'To':'From'}: ${other}</div></div>
-          <div style="text-align:right;font-size:0.7rem;">${t.timestamp}<br>Fee: ${t.fee.toFixed(2)} ${t.type==='request_pay'?'(Request)':''}</div>
-        </div>`;
-      }).join('');
-    }
-
-    // My QR Code
-    document.getElementById('showMyQrBtn').addEventListener('click', () => {
-      const display = document.getElementById('myQrDisplay');
-      display.classList.toggle('hidden');
-      if(!display.classList.contains('hidden')) {
-        display.innerHTML = '<div class="qr-code"></div>';
-        new QRCode(display.querySelector('.qr-code'), {
-          text: JSON.stringify({type:'account', accountNumber: currentUser.accountNumber, name: currentUser.name}),
-          width: 150, height: 150
-        });
-      }
-    });
-
-    // Request Money
-    document.getElementById('requestMoneyBtn').addEventListener('click', () => {
-      document.getElementById('requestMoneyForm').classList.toggle('hidden');
-      document.getElementById('myQrDisplay').classList.add('hidden');
-      document.getElementById('scannerSection').classList.add('hidden');
-      stopCamera();
-    });
-
-    document.getElementById('generateRequestQrBtn').addEventListener('click', () => {
-      const amount = parseFloat(document.getElementById('requestAmount').value);
-      if(isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
-      const display = document.getElementById('requestQrDisplay');
-      display.innerHTML = '<div class="qr-code"></div><p style="color:#ffa502;">Request: '+amount.toFixed(2)+' LKR</p>';
-      new QRCode(display.querySelector('.qr-code'), {
-        text: JSON.stringify({
-          type: 'payment_request',
-          requesterAccount: currentUser.accountNumber,
-          requesterName: currentUser.name,
-          amount: amount
-        }),
-        width: 180, height: 180
-      });
-    });
-
-    // QR Scanner
-    document.getElementById('scanQrBtn').addEventListener('click', () => {
-      document.getElementById('scannerSection').classList.toggle('hidden');
-      document.getElementById('myQrDisplay').classList.add('hidden');
-      document.getElementById('requestMoneyForm').classList.add('hidden');
-      if(!document.getElementById('scannerSection').classList.contains('hidden')) {
-        startCamera();
-      } else {
-        stopCamera();
-      }
-    });
-
-    document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
-
-    async function startCamera() {
-      stopCamera();
-      try {
-        videoStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}});
-        const container = document.getElementById('cameraContainer');
-        container.innerHTML = '<video id="videoElement" autoplay playsinline></video>';
-        const video = document.getElementById('videoElement');
-        video.srcObject = videoStream;
-        video.play();
-        scanQRCode(video);
-      } catch(e) {
-        document.getElementById('scanResult').textContent = 'Camera error: ' + e.message;
-      }
-    }
-
-    function stopCamera() {
-      if(videoStream) {
-        videoStream.getTracks().forEach(t => t.stop());
-        videoStream = null;
-      }
-      document.getElementById('cameraContainer').innerHTML = '';
-      document.getElementById('scanResult').textContent = '';
-    }
-
-    function scanQRCode(video) {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const scan = () => {
-        if(!videoStream) return;
-        if(video.readyState === video.HAVE_ENOUGH_DATA) {
-          canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const code = jsQR(imageData.data, canvas.width, canvas.height);
-          if(code) {
-            document.getElementById('scanResult').textContent = '✅ QR Detected!';
-            processScannedQR(code.data);
-            stopCamera();
-            document.getElementById('scannerSection').classList.add('hidden');
-            return;
+  function listenUserNotifications() {
+    const notifRef = ref(db, 'notifications');
+    onValue(notifRef, (snap) => {
+      const container = document.getElementById('userNotifications');
+      if (!snap.exists()) { container.innerHTML = ''; return; }
+      const notifs = snap.val();
+      let html = '';
+      Object.entries(notifs).forEach(([key, n]) => {
+        if (n.target === 'all' || n.targetUser === currentUser.accountNumber) {
+          if (!n.readBy || !n.readBy[currentUser.uid]) {
+            html += `<div class="notification-item">
+              <strong>📢 ${n.title}</strong>
+              <p>${n.message}</p>
+              <small>${new Date(n.timestamp).toLocaleString()}</small>
+              <button class="btn btn-small btn-secondary" onclick="markNotifRead('${key}')">✓ Read</button>
+            </div>`;
           }
         }
-        requestAnimationFrame(scan);
-      };
-      scan();
-    }
+      });
+      container.innerHTML = html;
+    });
+  }
 
-    function processScannedQR(data) {
-      try {
-        const parsed = JSON.parse(data);
-        if(parsed.type === 'account') {
-          document.getElementById('recipientAccNum').value = parsed.accountNumber;
-          alert(`QR scanned: ${parsed.name} (${parsed.accountNumber})`);
-        } else if(parsed.type === 'payment_request') {
-          pendingQRData = parsed;
-          showConfirmModal(parsed);
+  window.markNotifRead = async (notifId) => {
+    await update(ref(db, `notifications/${notifId}/readBy`), { [currentUser.uid]: true });
+  };
+
+  function listenTransactions() {
+    const txnsRef = ref(db, 'transactions');
+    onValue(txnsRef, (snap) => {
+      const container = document.getElementById('transactionHistory');
+      if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No transactions</div>'; return; }
+      const txns = snap.val();
+      let html = '';
+      Object.entries(txns).reverse().forEach(([key, t]) => {
+        if (t.sender === currentUser.accountNumber || t.recipient === currentUser.accountNumber) {
+          const isSent = t.sender === currentUser.accountNumber;
+          const cls = isSent ? 'sent' : 'received';
+          const sign = isSent ? '-' : '+';
+          html += `<div class="transaction-item ${cls}">
+            <div><strong>${sign}${t.amount.toFixed(2)} LKR</strong><br><small>${isSent?'To':'From'}: ${isSent?t.recipient:t.sender}</small></div>
+            <div style="text-align:right;"><small>${t.timestamp?new Date(t.timestamp).toLocaleString():''}<br>Fee: ${t.fee?.toFixed(2)||0}</small></div>
+          </div>`;
         }
-      } catch(e) {
-        alert('Invalid QR code');
-      }
-    }
-
-    function showConfirmModal(data) {
-      document.getElementById('modalSender').textContent = currentUser.name;
-      document.getElementById('modalRecipient').textContent = data.requesterName;
-      document.getElementById('modalAccount').textContent = data.requesterAccount;
-      document.getElementById('modalAmount').textContent = data.amount.toFixed(2) + ' LKR';
-      const fee = data.amount * 0.03;
-      document.getElementById('modalFee').textContent = fee.toFixed(2) + ' LKR';
-      document.getElementById('modalTotal').textContent = (data.amount + fee).toFixed(2) + ' LKR';
-      document.getElementById('modalError').textContent = '';
-      confirmModal.classList.remove('hidden');
-    }
-
-    document.getElementById('cancelTransactionBtn').addEventListener('click', () => {
-      confirmModal.classList.add('hidden');
-      pendingQRData = null;
+      });
+      container.innerHTML = html || '<div style="color:#aaa;">No transactions</div>';
     });
+  }
 
-    document.getElementById('confirmTransactionBtn').addEventListener('click', () => {
-      if(!pendingQRData) return;
-      const data = pendingQRData;
-      const users = getUsers();
-      const sender = users.find(u => u.accountNumber === currentUser.accountNumber);
-      const recipient = users.find(u => u.accountNumber === data.requesterAccount);
-      
-      if(!recipient) {
-        document.getElementById('modalError').textContent = 'Recipient not found.';
+  // Send Money
+  document.getElementById('sendMoneyBtn').addEventListener('click', async () => {
+    document.getElementById('transferError').textContent = '';
+    document.getElementById('transferSuccess').textContent = '';
+    const recipientAcc = document.getElementById('recipientAccNum').value.trim();
+    const amount = parseFloat(document.getElementById('transferAmount').value);
+    
+    if (recipientAcc.length !== 12 || isNaN(amount) || amount <= 0) {
+      document.getElementById('transferError').textContent = 'Invalid details.'; return;
+    }
+    if (recipientAcc === currentUser.accountNumber) {
+      document.getElementById('transferError').textContent = 'Cannot send to self.'; return;
+    }
+    
+    const recipientEntry = await getUserByAccount(recipientAcc);
+    if (!recipientEntry) { document.getElementById('transferError').textContent = 'Recipient not found.'; return; }
+    const [recUid, recData] = recipientEntry;
+    if (recData.status === 'banned') { document.getElementById('transferError').textContent = 'Recipient is banned.'; return; }
+    
+    const senderSnap = await get(ref(db, `users/${currentUser.uid}`));
+    const senderData = senderSnap.val();
+    const fee = amount * 0.03;
+    const total = amount + fee;
+    
+    if (senderData.balance < total) {
+      document.getElementById('transferError').textContent = `Insufficient balance. Need ${total.toFixed(2)} LKR.`; return;
+    }
+    
+    // Perform transaction
+    await update(ref(db, `users/${currentUser.uid}`), { balance: senderData.balance - total, lastActive: Date.now() });
+    await update(ref(db, `users/${recUid}`), { balance: recData.balance + amount });
+    
+    const adminSnap = await get(ref(db, 'admin/balance'));
+    await set(ref(db, 'admin/balance'), (adminSnap.val() || 0) + fee);
+    
+    // Add transaction record
+    const txnRef = push(ref(db, 'transactions'));
+    await set(txnRef, {
+      sender: currentUser.accountNumber,
+      recipient: recipientAcc,
+      amount,
+      fee,
+      type: 'transfer',
+      timestamp: Date.now()
+    });
+    
+    document.getElementById('transferSuccess').textContent = `Sent ${amount.toFixed(2)} LKR. Fee: ${fee.toFixed(2)}.`;
+    document.getElementById('recipientAccNum').value = '';
+    document.getElementById('transferAmount').value = '';
+    updateDashboard();
+  });
+
+  // Coupon
+  document.getElementById('applyCouponBtn').addEventListener('click', async () => {
+    const code = document.getElementById('couponInput').value.trim();
+    document.getElementById('couponError').textContent = '';
+    document.getElementById('couponMessage').textContent = '';
+    
+    const couponsSnap = await get(ref(db, 'coupons'));
+    if (!couponsSnap.exists()) { document.getElementById('couponError').textContent = 'Invalid coupon.'; return; }
+    
+    const coupons = couponsSnap.val();
+    const couponEntry = Object.entries(coupons).find(([key, c]) => c.code === code && c.active);
+    if (!couponEntry) { document.getElementById('couponError').textContent = 'Invalid or expired coupon.'; return; }
+    
+    const [couponId, couponData] = couponEntry;
+    const usedBy = couponData.usedBy || {};
+    if (usedBy[currentUser.uid]) { document.getElementById('couponError').textContent = 'Already used this coupon.'; return; }
+    if (couponData.maxUses > 0 && Object.keys(usedBy).length >= couponData.maxUses) {
+      document.getElementById('couponError').textContent = 'Coupon limit reached.'; return;
+    }
+    
+    const userSnap = await get(ref(db, `users/${currentUser.uid}`));
+    const userData = userSnap.val();
+    await update(ref(db, `users/${currentUser.uid}`), { balance: userData.balance + couponData.amount });
+    await update(ref(db, `coupons/${couponId}/usedBy`), { [currentUser.uid]: true });
+    
+    document.getElementById('couponMessage').textContent = `✅ ${couponData.amount} LKR added!`;
+    updateDashboard();
+  });
+
+  // QR Functions (simplified for Firebase version)
+  document.getElementById('showMyQrBtn').addEventListener('click', () => {
+    const display = document.getElementById('myQrDisplay');
+    display.classList.toggle('hidden');
+    if (!display.classList.contains('hidden')) {
+      display.innerHTML = '<div class="qr-code"></div>';
+      new QRCode(display.querySelector('.qr-code'), {
+        text: JSON.stringify({type:'account', accountNumber: currentUser.accountNumber, name: currentUser.name}),
+        width: 150, height: 150
+      });
+    }
+  });
+
+  document.getElementById('requestMoneyBtn').addEventListener('click', () => {
+    document.getElementById('requestMoneyForm').classList.toggle('hidden');
+  });
+
+  document.getElementById('generateRequestQrBtn').addEventListener('click', () => {
+    const amount = parseFloat(document.getElementById('requestAmount').value);
+    if (isNaN(amount) || amount <= 0) { alert('Enter valid amount'); return; }
+    const display = document.getElementById('requestQrDisplay');
+    display.innerHTML = '<div class="qr-code"></div>';
+    new QRCode(display.querySelector('.qr-code'), {
+      text: JSON.stringify({
+        type: 'payment_request',
+        requesterAccount: currentUser.accountNumber,
+        requesterName: currentUser.name,
+        amount
+      }),
+      width: 180, height: 180
+    });
+  });
+
+  // Scanner
+  document.getElementById('scanQrBtn').addEventListener('click', () => {
+    document.getElementById('scannerSection').classList.toggle('hidden');
+    if (!document.getElementById('scannerSection').classList.contains('hidden')) {
+      startCamera();
+    } else { stopCamera(); }
+  });
+
+  document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
+
+  async function startCamera() {
+    stopCamera();
+    try {
+      videoStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}});
+      const container = document.getElementById('cameraContainer');
+      container.innerHTML = '<video id="videoElement" autoplay playsinline></video>';
+      document.getElementById('videoElement').srcObject = videoStream;
+      scanLoop();
+    } catch(e) { console.error('Camera error:', e); }
+  }
+
+  function stopCamera() {
+    if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+    document.getElementById('cameraContainer').innerHTML = '';
+  }
+
+  function scanLoop() {
+    if (!videoStream) return;
+    const video = document.getElementById('videoElement');
+    if (!video) return;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const scan = () => {
+      if (!videoStream || video.readyState < 2) { requestAnimationFrame(scan); return; }
+      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, canvas.width, canvas.height);
+      if (code) {
+        processQRData(code.data);
+        stopCamera();
+        document.getElementById('scannerSection').classList.add('hidden');
         return;
       }
-      const fee = data.amount * 0.03;
-      const total = data.amount + fee;
-      
-      if(sender.balance < total) {
-        document.getElementById('modalError').textContent = 'Insufficient balance.';
-        return;
+      requestAnimationFrame(scan);
+    };
+    scan();
+  }
+
+  function processQRData(data) {
+    try {
+      const parsed = JSON.parse(data);
+      if (parsed.type === 'account') {
+        document.getElementById('recipientAccNum').value = parsed.accountNumber;
+        alert(`QR: ${parsed.name} (${parsed.accountNumber})`);
+      } else if (parsed.type === 'payment_request') {
+        pendingQRData = parsed;
+        document.getElementById('modalDetails').innerHTML = `
+          <p><strong>From:</strong> ${currentUser.name}</p>
+          <p><strong>To:</strong> ${parsed.requesterName}</p>
+          <p><strong>Account:</strong> ${parsed.requesterAccount}</p>
+          <p><strong>Amount:</strong> ${parsed.amount.toFixed(2)} LKR</p>
+          <p><strong>Fee (3%):</strong> ${(parsed.amount*0.03).toFixed(2)} LKR</p>
+          <p><strong>Total:</strong> ${(parsed.amount*1.03).toFixed(2)} LKR</p>
+        `;
+        document.getElementById('confirmModal').classList.remove('hidden');
       }
-      
-      sender.balance -= total;
-      recipient.balance += data.amount;
-      const admin = getAdmin(); admin.balance += fee;
-      saveAdmin(admin); saveUsers(users);
-      addTransaction(sender.accountNumber, recipient.accountNumber, data.amount, fee, 'request_pay');
-      
-      currentUser = sender;
-      updateDashboard(); updateHistory();
-      confirmModal.classList.add('hidden');
-      pendingQRData = null;
-      alert(`Payment successful! ${data.amount.toFixed(2)} LKR sent to ${data.requesterName}`);
-    });
+    } catch(e) { alert('Invalid QR code'); }
+  }
 
-    // Coupon
-    document.getElementById('applyCouponBtn').addEventListener('click', () => {
-      const code = document.getElementById('couponInput').value.trim();
-      document.getElementById('couponError').textContent = '';
-      document.getElementById('couponMessage').textContent = '';
-      if(code !== '123') { document.getElementById('couponError').textContent = 'Invalid coupon.'; return; }
-      if(hasUsedCoupon(currentUser.accountNumber)) { document.getElementById('couponError').textContent = 'Already used.'; return; }
-      const users = getUsers();
-      const idx = users.findIndex(u => u.accountNumber === currentUser.accountNumber);
-      users[idx].balance += 10000;
-      saveUsers(users); addCouponUsed(currentUser.accountNumber);
-      currentUser = users[idx]; updateDashboard();
-      document.getElementById('couponMessage').textContent = '✅ 10,000 LKR added!';
-    });
+  document.getElementById('cancelTransactionBtn').addEventListener('click', () => {
+    document.getElementById('confirmModal').classList.add('hidden');
+    pendingQRData = null;
+  });
 
-    // Send Money
-    document.getElementById('sendMoneyBtn').addEventListener('click', () => {
-      document.getElementById('transferError').textContent = '';
-      document.getElementById('transferSuccess').textContent = '';
-      const recipient = document.getElementById('recipientAccNum').value.trim();
-      const amount = parseFloat(document.getElementById('transferAmount').value);
-      if(recipient.length !== 12 || isNaN(amount) || amount <= 0) {
-        document.getElementById('transferError').textContent = 'Invalid details.'; return;
+  document.getElementById('confirmTransactionBtn').addEventListener('click', async () => {
+    if (!pendingQRData) return;
+    const data = pendingQRData;
+    const recipientEntry = await getUserByAccount(data.requesterAccount);
+    if (!recipientEntry) { document.getElementById('modalError').textContent = 'Recipient not found.'; return; }
+    const [recUid, recData] = recipientEntry;
+    
+    const senderSnap = await get(ref(db, `users/${currentUser.uid}`));
+    const senderData = senderSnap.val();
+    const fee = data.amount * 0.03;
+    const total = data.amount + fee;
+    
+    if (senderData.balance < total) {
+      document.getElementById('modalError').textContent = 'Insufficient balance.'; return;
+    }
+    
+    await update(ref(db, `users/${currentUser.uid}`), { balance: senderData.balance - total });
+    await update(ref(db, `users/${recUid}`), { balance: recData.balance + data.amount });
+    const adminSnap = await get(ref(db, 'admin/balance'));
+    await set(ref(db, 'admin/balance'), (adminSnap.val() || 0) + fee);
+    
+    const txnRef = push(ref(db, 'transactions'));
+    await set(txnRef, {
+      sender: currentUser.accountNumber,
+      recipient: data.requesterAccount,
+      amount: data.amount,
+      fee,
+      type: 'request_pay',
+      timestamp: Date.now()
+    });
+    
+    document.getElementById('confirmModal').classList.add('hidden');
+    pendingQRData = null;
+    updateDashboard();
+    alert('Payment successful!');
+  });
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    stopCamera();
+    currentUser = null;
+    document.getElementById('authPanel').classList.remove('hidden');
+    document.getElementById('dashboardPanel').classList.add('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+  });
+
+  // Admin Dashboard
+  async function showAdminDashboard() {
+    document.getElementById('authPanel').classList.add('hidden');
+    document.getElementById('dashboardPanel').classList.add('hidden');
+    document.getElementById('adminPanel').classList.remove('hidden');
+    document.querySelector('.admin-tab[data-tab="users"]').click();
+    updateAdminStats();
+  }
+
+  async function updateAdminStats() {
+    const adminSnap = await get(ref(db, 'admin/balance'));
+    document.getElementById('adminBalance').textContent = (adminSnap.val() || 0).toFixed(2);
+    
+    const usersSnap = await get(ref(db, 'users'));
+    const users = usersSnap.exists() ? usersSnap.val() : {};
+    document.getElementById('totalUsers').textContent = Object.keys(users).length;
+    
+    const txnsSnap = await get(ref(db, 'transactions'));
+    const txns = txnsSnap.exists() ? txnsSnap.val() : {};
+    document.getElementById('totalTransactions').textContent = Object.keys(txns).length;
+  }
+
+  // Admin Tabs
+  document.querySelectorAll('.admin-tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+      this.classList.add('active');
+      document.getElementById(`adminTab-${this.dataset.tab}`).classList.remove('hidden');
+      
+      switch(this.dataset.tab) {
+        case 'users': loadUsersList(); break;
+        case 'transactions': loadAdminTransactions(); break;
+        case 'coupons': loadCoupons(); break;
+        case 'notifications': loadNotifications(); break;
+        case 'analytics': loadAnalytics(); break;
       }
-      if(recipient === currentUser.accountNumber) { document.getElementById('transferError').textContent = 'Cannot send to self.'; return; }
-      const users = getUsers();
-      const sender = users.find(u => u.accountNumber === currentUser.accountNumber);
-      const rec = users.find(u => u.accountNumber === recipient);
-      if(!rec) { document.getElementById('transferError').textContent = 'Recipient not found.'; return; }
-      const fee = amount * 0.03;
-      const total = amount + fee;
-      if(sender.balance < total) { document.getElementById('transferError').textContent = 'Insufficient balance.'; return; }
-      sender.balance -= total; rec.balance += amount;
-      const admin = getAdmin(); admin.balance += fee;
-      saveAdmin(admin); saveUsers(users);
-      addTransaction(sender.accountNumber, rec.accountNumber, amount, fee, 'transfer');
-      currentUser = sender; updateDashboard(); updateHistory();
-      document.getElementById('transferSuccess').textContent = `Sent ${amount.toFixed(2)} LKR. Fee: ${fee.toFixed(2)}.`;
-      document.getElementById('recipientAccNum').value = '';
-      document.getElementById('transferAmount').value = '';
     });
+  });
 
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      stopCamera(); currentUser = null; isAdmin = false;
-      authPanel.classList.remove('hidden'); dashboardPanel.classList.add('hidden'); adminPanel.classList.add('hidden');
+  async function loadUsersList() {
+    const users = await getAllUsers();
+    const container = document.getElementById('allUsersList');
+    let html = '';
+    Object.entries(users).forEach(([uid, user]) => {
+      html += `<div class="user-row ${user.status==='banned'?'banned':''}">
+        <div>
+          <strong>${user.name}</strong>
+          <div><small>${user.accountNumber}</small></div>
+          <span class="badge ${user.status==='banned'?'badge-banned':'badge-active'}">${user.status||'active'}</span>
+        </div>
+        <div style="text-align:right;">
+          <div>${Number(user.balance).toFixed(2)} LKR</div>
+          <div class="flex-row" style="margin-top:5px;">
+            <button class="btn btn-small btn-secondary" onclick="editUser('${uid}')">✏️ Edit</button>
+            <button class="btn btn-small ${user.status==='banned'?'btn-success':'btn-danger'}" onclick="toggleBan('${uid}', '${user.status||'active'}')">${user.status==='banned'?'✅ Unban':'🚫 Ban'}</button>
+          </div>
+        </div>
+      </div>`;
     });
+    container.innerHTML = html || '<div style="color:#aaa;">No users</div>';
+  }
 
-    // Admin
-    function showAdminDashboard() {
-      authPanel.classList.add('hidden'); dashboardPanel.classList.add('hidden'); adminPanel.classList.remove('hidden');
-      updateAdminUI();
+  window.editUser = async (uid) => {
+    const snap = await get(ref(db, `users/${uid}`));
+    const user = snap.val();
+    document.getElementById('editUserName').value = user.name;
+    document.getElementById('editUserAcc').value = user.accountNumber;
+    document.getElementById('editUserBalance').value = user.balance;
+    document.getElementById('editUserStatus').value = user.status || 'active';
+    document.getElementById('userEditModal').classList.remove('hidden');
+    document.getElementById('saveUserBtn').onclick = async () => {
+      await update(ref(db, `users/${uid}`), {
+        name: document.getElementById('editUserName').value,
+        balance: parseFloat(document.getElementById('editUserBalance').value) || 0,
+        status: document.getElementById('editUserStatus').value
+      });
+      document.getElementById('userEditModal').classList.add('hidden');
+      loadUsersList();
+      updateAdminStats();
+    };
+  };
+
+  document.getElementById('closeEditModalBtn').addEventListener('click', () => {
+    document.getElementById('userEditModal').classList.add('hidden');
+  });
+
+  window.toggleBan = async (uid, currentStatus) => {
+    const newStatus = currentStatus === 'banned' ? 'active' : 'banned';
+    await update(ref(db, `users/${uid}`), { status: newStatus });
+    loadUsersList();
+    updateAdminStats();
+  };
+
+  // User Search
+  document.getElementById('userSearch').addEventListener('input', async function() {
+    const query = this.value.toLowerCase();
+    const users = await getAllUsers();
+    const container = document.getElementById('allUsersList');
+    let html = '';
+    Object.entries(users).forEach(([uid, user]) => {
+      if (user.name.toLowerCase().includes(query) || user.accountNumber.includes(query)) {
+        html += `<div class="user-row ${user.status==='banned'?'banned':''}">
+          <div><strong>${user.name}</strong><div><small>${user.accountNumber}</small></div></div>
+          <div>${Number(user.balance).toFixed(2)} LKR</div>
+        </div>`;
+      }
+    });
+    container.innerHTML = html || '<div style="color:#aaa;">No users found</div>';
+  });
+
+  async function loadAdminTransactions() {
+    const snap = await get(ref(db, 'transactions'));
+    const container = document.getElementById('adminTransactionList');
+    if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No transactions</div>'; return; }
+    const txns = snap.val();
+    let html = '';
+    Object.entries(txns).reverse().slice(0, 50).forEach(([key, t]) => {
+      html += `<div class="transaction-item">
+        <div><strong>${t.amount?.toFixed(2)} LKR</strong><br><small>${t.sender} → ${t.recipient}</small></div>
+        <div style="text-align:right;"><small>Fee: ${t.fee?.toFixed(2)||0}<br>${t.timestamp?new Date(t.timestamp).toLocaleString():''}</small></div>
+      </div>`;
+    });
+    container.innerHTML = html || '<div style="color:#aaa;">No transactions</div>';
+  }
+
+  // Coupons
+  async function loadCoupons() {
+    const snap = await get(ref(db, 'coupons'));
+    const container = document.getElementById('couponsList');
+    if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No coupons</div>'; return; }
+    const coupons = snap.val();
+    let html = '';
+    Object.entries(coupons).forEach(([key, c]) => {
+      html += `<div class="coupon-card">
+        <div><strong>${c.code}</strong><br><small>${c.amount} LKR | Uses: ${Object.keys(c.usedBy||{}).length}/${c.maxUses||'∞'}</small></div>
+        <button class="btn btn-small btn-danger" onclick="deleteCoupon('${key}')">🗑️</button>
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  document.getElementById('createCouponBtn').addEventListener('click', async () => {
+    const code = document.getElementById('newCouponCode').value.trim();
+    const amount = parseFloat(document.getElementById('newCouponAmount').value);
+    const maxUses = parseInt(document.getElementById('newCouponMaxUses').value);
+    if (!code || isNaN(amount)) { alert('Invalid coupon details'); return; }
+    
+    const couponRef = push(ref(db, 'coupons'));
+    await set(couponRef, {
+      code, amount, maxUses, active: true, usedBy: {}, createdAt: Date.now()
+    });
+    document.getElementById('newCouponCode').value = '';
+    loadCoupons();
+    alert('Coupon created!');
+  });
+
+  window.deleteCoupon = async (couponId) => {
+    await remove(ref(db, `coupons/${couponId}`));
+    loadCoupons();
+  };
+
+  // Notifications
+  document.getElementById('notifTarget').addEventListener('change', function() {
+    document.getElementById('notifSpecificUser').classList.toggle('hidden', this.value !== 'specific');
+  });
+
+  document.getElementById('sendNotificationBtn').addEventListener('click', async () => {
+    const title = document.getElementById('notifTitle').value.trim();
+    const message = document.getElementById('notifMessage').value.trim();
+    const target = document.getElementById('notifTarget').value;
+    const targetUser = document.getElementById('notifUserAcc').value.trim();
+    
+    if (!title || !message) { alert('Fill all fields'); return; }
+    
+    const notifRef = push(ref(db, 'notifications'));
+    const notifData = { title, message, target, timestamp: Date.now() };
+    if (target === 'specific') {
+      if (!targetUser) { alert('Enter user account number'); return; }
+      notifData.targetUser = targetUser;
     }
+    await set(notifRef, notifData);
+    document.getElementById('notifTitle').value = '';
+    document.getElementById('notifMessage').value = '';
+    loadNotifications();
+    alert('Announcement sent!');
+  });
 
-    function updateAdminUI() {
-      const admin = getAdmin(); const users = getUsers(); const txns = getTransactions();
-      document.getElementById('adminBalance').textContent = admin.balance.toFixed(2);
-      document.getElementById('totalUsers').textContent = users.length;
-      document.getElementById('totalTransactions').textContent = txns.length;
-      document.getElementById('allUsersList').innerHTML = users.map(u => 
-        `<div style="padding:8px;background:rgba(0,180,216,0.1);margin:5px 0;border-radius:8px;display:flex;justify-content:space-between;">
-          <span>${u.name} (${u.accountNumber})</span><span>${u.balance.toFixed(2)} LKR</span></div>`
-      ).join('');
-      document.getElementById('adminTransactionList').innerHTML = txns.length ? txns.slice(0,15).map(t =>
-        `<div class="transaction-item"><div><strong>${t.amount.toFixed(2)} LKR</strong><div style="font-size:0.7rem;">${t.sender} → ${t.recipient}</div></div>
-        <div style="text-align:right;font-size:0.7rem;">Fee: ${t.fee.toFixed(2)}<br>${t.timestamp}</div></div>`
-      ).join('') : '<div style="color:#aaa;">No transactions</div>';
-    }
-
-    document.getElementById('adminLogoutBtn').addEventListener('click', () => {
-      isAdmin = false; currentUser = null;
-      authPanel.classList.remove('hidden'); dashboardPanel.classList.add('hidden'); adminPanel.classList.add('hidden');
+  async function loadNotifications() {
+    const snap = await get(ref(db, 'notifications'));
+    const container = document.getElementById('notificationsList');
+    if (!snap.exists()) { container.innerHTML = '<div style="color:#aaa;">No announcements</div>'; return; }
+    const notifs = snap.val();
+    let html = '';
+    Object.entries(notifs).reverse().forEach(([key, n]) => {
+      html += `<div class="notification-item">
+        <strong>📢 ${n.title}</strong>
+        <p>${n.message}</p>
+        <small>Target: ${n.target==='all'?'All Users':n.targetUser} | ${new Date(n.timestamp).toLocaleString()}</small>
+      </div>`;
     });
-  })();
+    container.innerHTML = html;
+  }
+
+  // Analytics
+  async function loadAnalytics() {
+    const txnsSnap = await get(ref(db, 'transactions'));
+    const txns = txnsSnap.exists() ? txnsSnap.val() : {};
+    const today = new Date().setHours(0,0,0,0);
+    
+    let todayCount = 0, todayVol = 0;
+    const activeUsersSet = new Set();
+    
+    Object.values(txns).forEach(t => {
+      if (t.timestamp >= today) {
+        todayCount++;
+        todayVol += t.amount || 0;
+        activeUsersSet.add(t.sender);
+      }
+    });
+    
+    document.getElementById('todayTxns').textContent = todayCount;
+    document.getElementById('todayVolume').textContent = todayVol.toFixed(2);
+    document.getElementById('activeUsers24h').textContent = activeUsersSet.size;
+    
+    const users = await getAllUsers();
+    const banned = Object.values(users).filter(u => u.status === 'banned').length;
+    document.getElementById('bannedUsersCount').textContent = banned;
+  }
+
+  // Admin Logout
+  document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+    isAdmin = false;
+    document.getElementById('authPanel').classList.remove('hidden');
+    document.getElementById('dashboardPanel').classList.add('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+  });
+
+  // QR Code Library
+  const qrScript = document.createElement('script');
+  qrScript.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+  document.head.appendChild(qrScript);
+  
+  const jsqrScript = document.createElement('script');
+  jsqrScript.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
+  document.head.appendChild(jsqrScript);
+
+  console.log('✅ Mata Bank Pro - Firebase Edition Ready');
+  console.log('Admin: username=admin, password=admin123');
 </script>
 </body>
 </html>
