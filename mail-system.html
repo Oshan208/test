@@ -1,1 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Mata Mail Pro | Email System</title>
+  <style>
+    :root {
+      --primary: #6c5ce7; --primary-light: #a29bfe; --secondary: #00cec9;
+      --accent: #fd79a8; --success: #00b894; --warning: #fdcb6e; --danger: #e17055;
+      --dark: #0c0c1d; --darker: #060612; --card: #151530; --card-light: #1e1e3a;
+      --text: #e0e0f0; --text-muted: #8888aa; --border: rgba(108,92,231,0.2);
+      --glow: 0 0 30px rgba(108,92,231,0.3); --radius: 20px; --radius-sm: 12px;
+      --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--darker); color:var(--text); min-height:100vh; overflow-x:hidden; }
+    .bg-animation { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+    .bg-circle { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.08; animation:float 20s infinite ease-in-out; }
+    .bg-circle:nth-child(1){width:400px;height:400px;background:var(--primary);top:-100px;left:-100px}
+    .bg-circle:nth-child(2){width:350px;height:350px;background:var(--secondary);bottom:-80px;right:-80px;animation-delay:-7s}
+    .bg-circle:nth-child(3){width:300px;height:300px;background:var(--accent);top:40%;left:60%;animation-delay:-14s}
+    @keyframes float{0%,100%{transform:translate(0,0)scale(1)}33%{transform:translate(40px,-40px)scale(1.05)}66%{transform:translate(-30px,30px)scale(0.95)}}
 
+    .app-wrapper { position:relative; z-index:1; max-width:480px; margin:0 auto; min-height:100vh; background:rgba(12,12,29,0.85); backdrop-filter:blur(20px); border-left:1px solid var(--border); border-right:1px solid var(--border); overflow:hidden; display:flex; flex-direction:column; }
+
+    .splash-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--darker); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; transition:opacity 0.5s; }
+    .splash-screen.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+    .splash-logo { width:100px; height:100px; background:linear-gradient(135deg,var(--primary),var(--secondary)); border-radius:25px; display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:white; animation:pulse 2s infinite; box-shadow:var(--glow); }
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .splash-text { margin-top:15px; font-size:1.3rem; font-weight:700; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .loading-bar { width:180px; height:3px; background:var(--card); border-radius:2px; margin-top:25px; overflow:hidden; }
+    .loading-bar::after { content:''; display:block; width:50%; height:100%; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:2px; animation:loading 1.5s infinite; }
+    @keyframes loading{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+
+    .nav-bar { display:flex; align-items:center; justify-content:space-between; padding:15px 20px; background:rgba(21,21,48,0.9); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+    .nav-title { font-size:1.2rem; font-weight:700; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .nav-icon { width:40px; height:40px; border-radius:12px; background:var(--card-light); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:var(--transition); color:var(--text); font-size:1.2rem; }
+    .nav-icon:hover { background:var(--primary); border-color:var(--primary); box-shadow:var(--glow); }
+
+    .main-content { flex:1; overflow-y:auto; padding:10px; }
+
+    .email-item { display:flex; align-items:center; padding:12px 14px; background:var(--card-light); border-radius:var(--radius-sm); margin-bottom:6px; cursor:pointer; transition:var(--transition); gap:12px; }
+    .email-item:hover { background:rgba(108,92,231,0.12); transform:translateX(3px); }
+    .email-item.unread { border-left:3px solid var(--primary); background:rgba(108,92,231,0.06); }
+    .email-item.unread .email-subject { font-weight:700; color:white; }
+    .email-item.otp { border-left-color:var(--accent); }
+    .email-item.transaction { border-left-color:var(--secondary); }
+    .email-item.notification { border-left-color:var(--warning); }
+
+    .email-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+    .email-icon.otp { background:rgba(253,121,168,0.2); color:var(--accent); }
+    .email-icon.transaction { background:rgba(0,206,201,0.2); color:var(--secondary); }
+    .email-icon.notification { background:rgba(253,203,110,0.2); color:var(--warning); }
+    .email-icon.normal { background:rgba(108,92,231,0.2); color:var(--primary-light); }
+
+    .email-content { flex:1; min-width:0; }
+    .email-from { font-size:0.85rem; font-weight:500; }
+    .email-subject { font-size:0.8rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .email-preview { font-size:0.7rem; color:var(--text-muted); opacity:0.6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .email-time { font-size:0.7rem; color:var(--text-muted); white-space:nowrap; }
+    .email-star { cursor:pointer; font-size:1rem; }
+    .email-badge { display:inline-block; padding:2px 7px; border-radius:8px; font-size:0.6rem; font-weight:600; text-transform:uppercase; margin-left:4px; }
+    .email-badge.otp { background:rgba(253,121,168,0.25); color:var(--accent); }
+    .email-badge.txn { background:rgba(0,206,201,0.25); color:var(--secondary); }
+    .email-badge.sys { background:rgba(253,203,110,0.25); color:var(--warning); }
+
+    .email-detail { padding:20px; }
+    .email-detail-header { border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px; }
+    .email-detail-subject { font-size:1.3rem; font-weight:700; margin-bottom:10px; }
+    .email-detail-meta { font-size:0.85rem; color:var(--text-muted); margin-bottom:4px; }
+    .email-detail-body { line-height:1.8; white-space:pre-wrap; font-size:0.9rem; color:var(--text); }
+    .otp-highlight { display:inline-block; background:var(--primary); color:white; padding:10px 24px; border-radius:12px; font-size:1.4rem; font-weight:700; letter-spacing:4px; margin:8px 0; }
+
+    .tabs { display:flex; gap:3px; background:var(--card-light); border-radius:var(--radius-sm); padding:4px; margin-bottom:12px; flex-wrap:wrap; }
+    .tab { padding:9px 14px; text-align:center; border-radius:10px; cursor:pointer; font-size:0.75rem; font-weight:500; color:var(--text-muted); border:none; background:none; transition:var(--transition); }
+    .tab.active { background:var(--primary); color:white; box-shadow:0 5px 15px rgba(108,92,231,0.3); }
+    .tab .count { background:var(--accent); color:white; padding:1px 6px; border-radius:8px; font-size:0.6rem; margin-left:3px; }
+
+    .form-group { margin-bottom:14px; }
+    .form-label { display:block; font-size:0.7rem; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:1px; }
+    .form-input, .form-textarea { width:100%; padding:12px 14px; background:var(--card-light); border:2px solid var(--border); border-radius:12px; color:var(--text); font-size:0.9rem; outline:none; font-family:inherit; transition:var(--transition); }
+    .form-textarea { min-height:150px; resize:vertical; }
+    .form-input:focus, .form-textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(108,92,231,0.1); }
+
+    .btn { width:100%; padding:13px; border:none; border-radius:22px; font-weight:600; font-size:0.85rem; cursor:pointer; transition:var(--transition); text-transform:uppercase; letter-spacing:0.5px; }
+    .btn-primary { background:linear-gradient(135deg,var(--primary),#4834d4); color:white; box-shadow:0 4px 15px rgba(108,92,231,0.3); }
+    .btn-primary:hover { transform:translateY(-2px); }
+    .btn-secondary { background:var(--card-light); color:var(--text); border:1px solid var(--border); width:auto; }
+    .btn-danger { background:var(--danger); color:white; width:auto; }
+    .btn-success { background:var(--success); color:white; width:auto; }
+    .btn-sm { padding:7px 14px; font-size:0.7rem; width:auto; }
+
+    .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; z-index:1000; animation:fadeIn 0.3s ease; }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .modal { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:22px; width:90%; max-width:420px; max-height:85vh; overflow-y:auto; animation:slideUp 0.3s ease; }
+    @keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .modal-title { font-size:1.1rem; font-weight:700; margin-bottom:15px; }
+
+    .auth-tabs { display:flex; background:var(--card-light); border-radius:12px; margin-bottom:15px; }
+    .auth-tab { flex:1; padding:12px; text-align:center; cursor:pointer; font-weight:600; font-size:0.85rem; color:var(--text-muted); border-bottom:3px solid transparent; transition:var(--transition); }
+    .auth-tab.active { color:var(--primary-light); border-bottom-color:var(--primary); background:rgba(108,92,231,0.1); }
+
+    .badge { display:inline-block; padding:3px 8px; border-radius:12px; font-size:0.65rem; font-weight:600; text-transform:uppercase; }
+    .badge-warning { background:rgba(253,203,110,0.2); color:var(--warning); }
+
+    .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--border); border-radius:22px; padding:10px 22px; z-index:2000; font-size:0.8rem; box-shadow:0 8px 20px rgba(0,0,0,0.5); animation:toastIn 0.4s ease; }
+    @keyframes toastIn{from{transform:translateX(-50%)translateY(80px);opacity:0}to{transform:translateX(-50%)translateY(0);opacity:1}}
+
+    .hidden { display:none !important; }
+    .text-center { text-align:center; }
+    .mt-8 { margin-top:8px; }
+    .mt-10 { margin-top:10px; }
+    .error-msg { color:var(--danger); font-size:0.75rem; margin-top:5px; }
+    .success-msg { color:var(--success); font-size:0.75rem; margin-top:5px; }
+
+    ::-webkit-scrollbar { width:3px; } ::-webkit-scrollbar-thumb { background:var(--primary); border-radius:2px; }
+  </style>
+</head>
+<body>
+
+<div class="bg-animation"><div class="bg-circle"></div><div class="bg-circle"></div><div class="bg-circle"></div></div>
+<div id="toastContainer"></div>
+
+<!-- Splash -->
+<div class="splash-screen" id="splashScreen">
+  <div class="splash-logo">📧</div>
+  <div class="splash-text">MATA MAIL</div>
+  <div class="loading-bar"></div>
+</div>
+
+<div class="app-wrapper" id="appWrapper" style="display:none;">
+  <div class="nav-bar">
+    <div class="nav-icon" id="backBtn" onclick="goBack()" style="visibility:hidden;">←</div>
+    <div class="nav-title" id="navTitle">📧 Inbox</div>
+    <div class="nav-icon" onclick="openCompose()" title="Compose">✏️</div>
+  </div>
+
+  <div class="main-content" id="mainContent">
+    <!-- Email List -->
+    <div id="emailListView">
+      <div class="tabs" id="emailTabs">
+        <button class="tab active" data-filter="all" onclick="setFilter('all',this)">📥 All</button>
+        <button class="tab" data-filter="otp" onclick="setFilter('otp',this)">🔐 OTP <span class="count" id="otpCount">0</span></button>
+        <button class="tab" data-filter="transaction" onclick="setFilter('transaction',this)">💳 TXN <span class="count" id="txnCount">0</span></button>
+        <button class="tab" data-filter="notification" onclick="setFilter('notification',this)">🔔 Alerts</button>
+        <button class="tab" data-filter="starred" onclick="setFilter('starred',this)">⭐ Starred</button>
+        <button class="tab" data-filter="drafts" onclick="setFilter('drafts',this)">📝 Drafts</button>
+        <button class="tab" data-filter="trash" onclick="setFilter('trash',this)">🗑️ Trash</button>
+      </div>
+      <div id="emailList"></div>
+    </div>
+    
+    <!-- Email Detail -->
+    <div id="emailDetailView" class="hidden"></div>
+  </div>
+</div>
+
+<!-- Auth Modal -->
+<div class="modal-overlay hidden" id="authModal">
+  <div class="modal">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="loginTab" onclick="switchAuth('login')">🔐 Login</div>
+      <div class="auth-tab" id="registerTab" onclick="switchAuth('register')">✨ Register</div>
+    </div>
+    <div id="loginForm">
+      <div class="text-center" style="font-size:3rem;margin-bottom:10px;">📧</div>
+      <h3 class="text-center" style="margin-bottom:15px;">Welcome Back</h3>
+      <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" id="loginEmail" placeholder="you@mail.com"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword" placeholder="••••••••"></div>
+      <button class="btn btn-primary" onclick="login()">🔐 Login</button>
+      <div class="error-msg text-center mt-8" id="loginError"></div>
+    </div>
+    <div id="registerForm" class="hidden">
+      <div class="text-center" style="font-size:3rem;margin-bottom:10px;">✨</div>
+      <h3 class="text-center" style="margin-bottom:15px;">Create Account</h3>
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="regName" placeholder="Your name"></div>
+      <div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" id="regEmail" placeholder="you@mail.com"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="regPassword" placeholder="Min 4 chars"></div>
+      <button class="btn btn-primary" onclick="register()">✨ Create Account</button>
+      <div class="error-msg text-center mt-8" id="regError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Compose Modal -->
+<div class="modal-overlay hidden" id="composeModal">
+  <div class="modal" style="max-width:500px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+      <span class="modal-title" style="margin:0;">✏️ New Message</span>
+      <span style="cursor:pointer;font-size:1.3rem;color:var(--text-muted);" onclick="closeCompose()">✕</span>
+    </div>
+    <div class="form-group"><label class="form-label">To (Email Address)</label><input type="text" class="form-input" id="composeTo" placeholder="recipient@mail.com"></div>
+    <div class="form-group"><label class="form-label">Subject</label><input type="text" class="form-input" id="composeSubject" placeholder="Subject"></div>
+    <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" id="composeBody" placeholder="Write your message..."></textarea></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary" onclick="saveDraft()" style="flex:1;">💾 Draft</button>
+      <button class="btn btn-primary" onclick="sendEmail()" style="flex:1;">📤 Send</button>
+    </div>
+    <input type="hidden" id="composeDraftId">
+    <div class="error-msg mt-8" id="composeError"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, update, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDLSnWPSjF8Qf2mQ9zc2HfvpTH8dPzIrL8",
+  authDomain: "demobatta-1b673.firebaseapp.com",
+  databaseURL: "https://demobatta-1b673-default-rtdb.firebaseio.com",
+  projectId: "demobatta-1b673",
+  storageBucket: "demobatta-1b673.firebasestorage.app",
+  messagingSenderId: "609366383941",
+  appId: "1:609366383941:web:11f782595e3bd4f855722c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let currentUser = null, currentFilter = 'all', currentView = 'list', allEmails = {};
+let realtimeListener = null;
+
+function showToast(msg,type='info'){
+  const c=document.getElementById('toastContainer'), t=document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  t.style.background={success:'var(--success)',error:'var(--danger)',warning:'var(--warning)',info:'var(--card)'}[type]||'var(--card)';
+  t.style.color=type==='warning'?'#000':'#fff'; c.appendChild(t); setTimeout(()=>t.remove(),3000);
+}
+
+function formatTime(ts){
+  if(!ts)return''; const d=new Date(ts), n=new Date(), diff=n-d;
+  if(diff<60000)return'Just now'; if(diff<3600000)return Math.floor(diff/60000)+'m';
+  if(diff<86400000)return Math.floor(diff/3600000)+'h'; if(diff<604800000)return Math.floor(diff/86400000)+'d';
+  return d.toLocaleDateString();
+}
+
+// Auth Tab Switch
+window.switchAuth = (tab) => {
+  document.getElementById('loginTab').classList.toggle('active', tab==='login');
+  document.getElementById('registerTab').classList.toggle('active', tab==='register');
+  document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
+  document.getElementById('registerForm').classList.toggle('hidden', tab!=='register');
+  document.getElementById('loginError').textContent='';
+  document.getElementById('regError').textContent='';
+};
+
+// Login
+window.login = async () => {
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pwd=document.getElementById('loginPassword').value.trim();
+  document.getElementById('loginError').textContent='';
+  if(!email||!pwd){document.getElementById('loginError').textContent='Fill all fields';return;}
+  const snap=await get(ref(db,'mail_users'));
+  if(!snap.exists()){document.getElementById('loginError').textContent='No accounts found. Register first.';return;}
+  const entry=Object.entries(snap.val()).find(([k,u])=>u.email===email&&u.password===pwd);
+  if(!entry){document.getElementById('loginError').textContent='Invalid email or password';return;}
+  currentUser={uid:entry[0],...entry[1]};
+  document.getElementById('authModal').classList.add('hidden');
+  setupRealtime();
+  setFilter('all', document.querySelector('#emailTabs .tab[data-filter="all"]'));
+  document.getElementById('backBtn').style.visibility='hidden';
+  document.getElementById('navTitle').textContent='📧 Inbox';
+  showToast(`Welcome, ${currentUser.name}!`,'success');
+};
+
+// Register
+window.register = async () => {
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim().toLowerCase();
+  const pwd=document.getElementById('regPassword').value.trim();
+  document.getElementById('regError').textContent='';
+  if(!name||!email||!pwd){document.getElementById('regError').textContent='All fields required';return;}
+  if(pwd.length<4){document.getElementById('regError').textContent='Password too short';return;}
+  if(!email.includes('@')){document.getElementById('regError').textContent='Invalid email';return;}
+  const snap=await get(ref(db,'mail_users'));
+  if(snap.exists()&&Object.values(snap.val()).some(u=>u.email===email)){document.getElementById('regError').textContent='Email already registered';return;}
+  const newRef=push(ref(db,'mail_users'));
+  await set(newRef,{name,email,password:pwd,createdAt:Date.now()});
+  currentUser={uid:newRef.key,name,email,password:pwd};
+  document.getElementById('authModal').classList.add('hidden');
+  setupRealtime();
+  setFilter('all', document.querySelector('#emailTabs .tab[data-filter="all"]'));
+  document.getElementById('backBtn').style.visibility='hidden';
+  document.getElementById('navTitle').textContent='📧 Inbox';
+  showToast('Account created! Welcome!','success');
+};
+
+// Real-time listener
+function setupRealtime(){
+  if(realtimeListener) off(ref(db,'mail_emails'));
+  realtimeListener = onValue(ref(db,'mail_emails'), (snap) => {
+    allEmails = snap.exists() ? snap.val() : {};
+    if(currentView==='list') renderEmailList();
+    updateCounts();
+  });
+}
+
+// Update badge counts
+function updateCounts(){
+  if(!currentUser) return;
+  const vals = Object.values(allEmails);
+  document.getElementById('otpCount').textContent = vals.filter(e=>e.to===currentUser.email&&e.emailType==='otp'&&!e.read&&!e.deleted&&!e.draft).length||'0';
+  document.getElementById('txnCount').textContent = vals.filter(e=>e.to===currentUser.email&&e.emailType==='transaction'&&!e.read&&!e.deleted&&!e.draft).length||'0';
+}
+
+// Render email list
+function renderEmailList(){
+  if(!currentUser) return;
+  const container = document.getElementById('emailList');
+  let emails = Object.entries(allEmails)
+    .filter(([id, email]) => {
+      if(currentFilter==='sent') return email.from === currentUser.email && !email.deleted && !email.draft;
+      if(currentFilter==='drafts') return email.from === currentUser.email && email.draft && !email.deleted;
+      return email.to === currentUser.email || (currentFilter==='starred' && email.starred);
+    })
+    .filter(([id, email]) => {
+      if(currentFilter==='all') return !email.deleted && !email.draft && email.to===currentUser.email;
+      if(currentFilter==='starred') return email.starred && !email.deleted;
+      if(currentFilter==='trash') return email.deleted;
+      if(currentFilter==='drafts') return email.draft && !email.deleted;
+      if(currentFilter==='sent') return !email.deleted && !email.draft;
+      return email.emailType === currentFilter && !email.deleted && !email.draft && email.to===currentUser.email;
+    })
+    .sort((a,b) => b[1].timestamp - a[1].timestamp);
+
+  if(emails.length === 0){
+    container.innerHTML = '<div class="text-center" style="padding:40px;color:var(--text-muted);">📭 No emails</div>';
+    return;
+  }
+
+  container.innerHTML = emails.map(([id, email]) => {
+    const isUnread = !email.read && email.to === currentUser.email && !email.draft;
+    const typeClass = email.emailType || 'normal';
+    const icons = { otp:'🔐', transaction:'💳', notification:'🔔', normal:'📧' };
+    const badgeLabels = { otp:'<span class="email-badge otp">OTP</span>', transaction:'<span class="email-badge txn">TXN</span>', notification:'<span class="email-badge sys">SYS</span>', normal:'' };
+    const displayFrom = currentFilter==='sent' ? 'To: '+email.to : email.from;
+    
+    return `<div class="email-item ${isUnread?'unread':''} ${typeClass}" onclick="viewEmail('${id}')">
+      <div class="email-icon ${typeClass}">${icons[typeClass]||'📧'}</div>
+      <div class="email-content">
+        <div class="email-from">${displayFrom} ${badgeLabels[typeClass]||''}</div>
+        <div class="email-subject">${email.subject||'(No subject)'}</div>
+        <div class="email-preview">${(email.body||'').replace(/\n/g,' ').substring(0,45)}...</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="email-time">${formatTime(email.timestamp)}</div>
+        <div class="email-star" onclick="event.stopPropagation();toggleStar('${id}')">${email.starred?'⭐':'☆'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Set filter
+window.setFilter = (filter, el) => {
+  currentFilter = filter;
+  document.querySelectorAll('#emailTabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderEmailList();
+};
+
+// View email detail
+window.viewEmail = async (id) => {
+  const email = allEmails[id];
+  if(!email) return;
+  
+  if(!email.read && email.to === currentUser.email){
+    await update(ref(db,`mail_emails/${id}`),{read:true});
+  }
+  
+  currentView = 'detail';
+  document.getElementById('emailListView').classList.add('hidden');
+  document.getElementById('emailDetailView').classList.remove('hidden');
+  document.getElementById('navTitle').textContent = 'Email';
+  document.getElementById('backBtn').style.visibility = 'visible';
+  
+  let bodyHtml = (email.body||'').replace(/\n/g,'<br>');
+  bodyHtml = bodyHtml.replace(/\b(\d{4,8})\b/g, '<span class="otp-highlight">$1</span>');
+  
+  const isTrash = currentFilter === 'trash';
+  const isDraft = email.draft;
+  
+  document.getElementById('emailDetailView').innerHTML = `
+    <div class="email-detail">
+      <div class="email-detail-header">
+        <div class="email-detail-subject">${email.subject||'(No subject)'}</div>
+        <div class="email-detail-meta"><strong>From:</strong> ${email.from}</div>
+        <div class="email-detail-meta"><strong>To:</strong> ${email.to}</div>
+        <div class="email-detail-meta"><strong>Date:</strong> ${new Date(email.timestamp).toLocaleString()}</div>
+      </div>
+      <div class="email-detail-body">${bodyHtml}</div>
+      <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-secondary" onclick="toggleStar('${id}')">${email.starred?'⭐ Unstar':'☆ Star'}</button>
+        ${!isTrash && !isDraft ? `<button class="btn btn-sm btn-secondary" onclick="replyEmail('${id}')">↩️ Reply</button>` : ''}
+        ${isDraft ? `<button class="btn btn-sm btn-primary" onclick="editDraft('${id}')">✏️ Edit Draft</button>` : ''}
+        ${isTrash ? 
+          `<button class="btn btn-sm btn-success" onclick="restoreEmail('${id}')">🔄 Restore</button>
+           <button class="btn btn-sm btn-danger" onclick="permanentDelete('${id}')">❌ Delete Forever</button>` :
+          `<button class="btn btn-sm btn-danger" onclick="deleteEmail('${id}')">🗑️ Delete</button>`
+        }
+      </div>
+    </div>`;
+};
+
+// Go back to list
+window.goBack = () => {
+  currentView = 'list';
+  document.getElementById('emailListView').classList.remove('hidden');
+  document.getElementById('emailDetailView').classList.add('hidden');
+  document.getElementById('navTitle').textContent = '📧 Inbox';
+  document.getElementById('backBtn').style.visibility = 'hidden';
+  renderEmailList();
+};
+
+// Toggle star
+window.toggleStar = async (id) => {
+  const email = allEmails[id];
+  if(!email) return;
+  await update(ref(db,`mail_emails/${id}`),{starred:!email.starred});
+};
+
+// Delete email (move to trash)
+window.deleteEmail = async (id) => {
+  await update(ref(db,`mail_emails/${id}`),{deleted:true});
+  if(currentView==='detail') goBack();
+  showToast('Moved to trash','info');
+};
+
+// Restore from trash
+window.restoreEmail = async (id) => {
+  await update(ref(db,`mail_emails/${id}`),{deleted:false});
+  if(currentView==='detail') goBack();
+  showToast('Restored!','success');
+};
+
+// Permanent delete
+window.permanentDelete = async (id) => {
+  if(confirm('Permanently delete this email?')){
+    await remove(ref(db,`mail_emails/${id}`));
+    goBack();
+    showToast('Deleted forever','info');
+  }
+};
+
+// Edit draft
+window.editDraft = (id) => {
+  const email = allEmails[id];
+  if(!email) return;
+  document.getElementById('composeTo').value = email.to || '';
+  document.getElementById('composeSubject').value = email.subject || '';
+  document.getElementById('composeBody').value = email.body || '';
+  document.getElementById('composeDraftId').value = id;
+  document.getElementById('composeModal').classList.remove('hidden');
+  document.getElementById('composeError').textContent = '';
+};
+
+// Open compose
+window.openCompose = (replyData=null) => {
+  document.getElementById('composeModal').classList.remove('hidden');
+  document.getElementById('composeTo').value = replyData?.to || '';
+  document.getElementById('composeSubject').value = replyData?.subject || '';
+  document.getElementById('composeBody').value = replyData?.body || '';
+  document.getElementById('composeDraftId').value = replyData?.draftId || '';
+  document.getElementById('composeError').textContent = '';
+};
+
+// Close compose
+window.closeCompose = () => {
+  document.getElementById('composeModal').classList.add('hidden');
+  document.getElementById('composeTo').value = '';
+  document.getElementById('composeSubject').value = '';
+  document.getElementById('composeBody').value = '';
+  document.getElementById('composeDraftId').value = '';
+};
+
+// Send email
+window.sendEmail = async () => {
+  const to=document.getElementById('composeTo').value.trim().toLowerCase();
+  const subject=document.getElementById('composeSubject').value.trim();
+  const body=document.getElementById('composeBody').value.trim();
+  const draftId=document.getElementById('composeDraftId').value;
+  document.getElementById('composeError').textContent='';
+  if(!to||!subject||!body){document.getElementById('composeError').textContent='Fill all fields';return;}
+  
+  const snap=await get(ref(db,'mail_users'));
+  if(!snap.exists()||!Object.values(snap.val()).some(u=>u.email===to)){document.getElementById('composeError').textContent='Recipient not found';return;}
+  
+  const emailData={from:currentUser.email,to,subject,body,emailType:'normal',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false};
+  if(draftId){await update(ref(db,`mail_emails/${draftId}`),emailData);}
+  else{await set(push(ref(db,'mail_emails')),emailData);}
+  closeCompose();
+  showToast('Email sent!','success');
+};
+
+// Save draft
+window.saveDraft = async () => {
+  const to=document.getElementById('composeTo').value.trim();
+  const subject=document.getElementById('composeSubject').value.trim();
+  const body=document.getElementById('composeBody').value.trim();
+  const draftId=document.getElementById('composeDraftId').value;
+  if(!subject&&!body&&!to){showToast('Nothing to save','warning');return;}
+  const draftData={from:currentUser.email,to,subject:subject||'(No subject)',body,emailType:'normal',timestamp:Date.now(),read:true,starred:false,draft:true,deleted:false};
+  if(draftId){await update(ref(db,`mail_emails/${draftId}`),draftData);}
+  else{const newRef=push(ref(db,'mail_emails')); await set(newRef,draftData); document.getElementById('composeDraftId').value=newRef.key;}
+  closeCompose();
+  showToast('Draft saved!','success');
+};
+
+// Reply
+window.replyEmail = (emailId) => {
+  const email=allEmails[emailId];
+  if(!email)return;
+  openCompose({to:email.from,subject:'Re: '+(email.subject||''),body:`\n\n--- Original message ---\nFrom: ${email.from}\nDate: ${new Date(email.timestamp).toLocaleString()}\n\n${email.body}`});
+};
+
+// Logout
+window.logout = () => {
+  if(realtimeListener) off(ref(db,'mail_emails'));
+  currentUser=null; currentView='list';
+  document.getElementById('emailDetailView').classList.add('hidden');
+  document.getElementById('emailListView').classList.remove('hidden');
+  document.getElementById('navTitle').textContent='📧 Inbox';
+  document.getElementById('backBtn').style.visibility='hidden';
+  document.getElementById('authModal').classList.remove('hidden');
+  document.getElementById('loginEmail').value='';
+  document.getElementById('loginPassword').value='';
+  window.switchAuth('login');
+};
+
+// Init
+async function init(){
+  const mSnap=await get(ref(db,'mail_users'));
+  if(!mSnap.exists()){
+    await set(ref(db,'mail_users'),{
+      m1:{name:'Alice Johnson',email:'alice@mail.com',password:'pass1001',createdAt:Date.now()},
+      m2:{name:'Bob Smith',email:'bob@mail.com',password:'pass1002',createdAt:Date.now()}
+    });
+  }
+  const eSnap=await get(ref(db,'mail_emails'));
+  if(!eSnap.exists()){
+    await set(push(ref(db,'mail_emails')),{from:'system@matabank.com',to:'alice@mail.com',subject:'🔐 OTP Verification Code',body:'Your OTP code is: 482915\n\nThis code expires in 5 minutes.\n\n- Mata Bank Security',emailType:'otp',timestamp:Date.now()-60000,read:false,starred:false,draft:false,deleted:false});
+    await set(push(ref(db,'mail_emails')),{from:'alerts@matabank.com',to:'alice@mail.com',subject:'💳 Received 5,000.00 LKR',body:'Transaction Details:\n\nAmount: 5,000.00 LKR\nFrom: Bob Smith\nFee: 150.00 LKR\nDate: '+new Date().toLocaleString()+'\n\n- Mata Bank',emailType:'transaction',timestamp:Date.now()-120000,read:false,starred:false,draft:false,deleted:false});
+    await set(push(ref(db,'mail_emails')),{from:'admin@matabank.com',to:'alice@mail.com',subject:'📢 System Update',body:'Dear Alice,\n\nSystem maintenance on Sunday at 2 AM.\n\n- Mata Bank Admin',emailType:'notification',timestamp:Date.now()-300000,read:false,starred:false,draft:false,deleted:false});
+  }
+  setTimeout(()=>{
+    document.getElementById('splashScreen').classList.add('hidden');
+    document.getElementById('appWrapper').style.display='flex';
+    document.getElementById('authModal').classList.remove('hidden');
+  },2000);
+}
+
+init();
+console.log('✅ Mata Mail Pro Ready | Separate Email System');
+console.log('👤 alice@mail.com/pass1001 | bob@mail.com/pass1002');
+console.log('📧 Shares Firebase with Mata Bank System');
+</script>
+</body>
+</html>
