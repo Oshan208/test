@@ -801,7 +801,7 @@
       const code = document.getElementById('couponInput').value.trim();
       document.getElementById('couponError').textContent = '';
       document.getElementById('couponMessage').textContent = '';
-      if(code !== 'äddon') { document.getElementById('couponError').textContent = 'Invalid coupon.'; return; }
+      if(code !== '123') { document.getElementById('couponError').textContent = 'Invalid coupon.'; return; }
       if(hasUsedCoupon(currentUser.accountNumber)) { document.getElementById('couponError').textContent = 'Already used.'; return; }
       const users = getUsers();
       const idx = users.findIndex(u => u.accountNumber === currentUser.accountNumber);
