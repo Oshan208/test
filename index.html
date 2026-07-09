@@ -3,402 +3,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Mata Bank Pro | Complete Banking + Email System</title>
+  <title>Mata Bank Pro | Premium Banking System</title>
   <style>
     :root {
-      --primary: #6c5ce7;
-      --primary-light: #a29bfe;
-      --secondary: #00cec9;
-      --accent: #fd79a8;
-      --success: #00b894;
-      --warning: #fdcb6e;
-      --danger: #e17055;
-      --dark: #0c0c1d;
-      --darker: #060612;
-      --card: #151530;
-      --card-light: #1e1e3a;
-      --text: #e0e0f0;
-      --text-muted: #8888aa;
-      --border: rgba(108, 92, 231, 0.2);
-      --glow: 0 0 30px rgba(108, 92, 231, 0.3);
-      --radius: 20px;
-      --radius-sm: 12px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --primary: #6c5ce7; --primary-light: #a29bfe; --secondary: #00cec9;
+      --accent: #fd79a8; --success: #00b894; --warning: #fdcb6e; --danger: #e17055;
+      --dark: #0c0c1d; --darker: #060612; --card: #151530; --card-light: #1e1e3a;
+      --text: #e0e0f0; --text-muted: #8888aa; --border: rgba(108,92,231,0.2);
+      --glow: 0 0 30px rgba(108,92,231,0.3); --radius: 20px; --radius-sm: 12px;
+      --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--darker);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-    .bg-circle { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.08; animation: float 20s infinite ease-in-out; }
-    .bg-circle:nth-child(1) { width: 400px; height: 400px; background: var(--primary); top: -100px; left: -100px; }
-    .bg-circle:nth-child(2) { width: 350px; height: 350px; background: var(--secondary); bottom: -80px; right: -80px; animation-delay: -7s; }
-    .bg-circle:nth-child(3) { width: 300px; height: 300px; background: var(--accent); top: 40%; left: 60%; animation-delay: -14s; }
-    @keyframes float { 0%,100%{transform:translate(0,0)scale(1)}33%{transform:translate(40px,-40px)scale(1.05)}66%{transform:translate(-30px,30px)scale(0.95)} }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--darker); color:var(--text); min-height:100vh; overflow-x:hidden; }
+    .bg-animation { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+    .bg-circle { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.1; animation:float 20s infinite ease-in-out; }
+    .bg-circle:nth-child(1){width:400px;height:400px;background:var(--primary);top:-100px;left:-100px;animation-delay:0s}
+    .bg-circle:nth-child(2){width:300px;height:300px;background:var(--secondary);bottom:-50px;right:-50px;animation-delay:-7s}
+    .bg-circle:nth-child(3){width:250px;height:250px;background:var(--accent);top:50%;left:50%;animation-delay:-14s}
+    @keyframes float{0%,100%{transform:translate(0,0)scale(1)}33%{transform:translate(50px,-50px)scale(1.1)}66%{transform:translate(-30px,30px)scale(0.9)}}
 
-    .app-wrapper { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; min-height: 100vh; background: rgba(12,12,29,0.85); backdrop-filter: blur(20px); border-left: 1px solid var(--border); border-right: 1px solid var(--border); overflow: hidden; }
+    .app-wrapper { position:relative; z-index:1; max-width:480px; margin:0 auto; min-height:100vh; background:rgba(12,12,29,0.8); backdrop-filter:blur(20px); border-left:1px solid var(--border); border-right:1px solid var(--border); overflow:hidden; }
 
-    .splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--darker); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s; }
-    .splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .splash-logo { width: 100px; height: 100px; background: linear-gradient(135deg,var(--primary),var(--secondary)); border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white; animation: pulse 2s infinite; box-shadow: var(--glow); }
-    @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.05)} }
-    .splash-text { margin-top: 15px; font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .loading-bar { width: 180px; height: 3px; background: var(--card); border-radius: 2px; margin-top: 25px; overflow: hidden; }
-    .loading-bar::after { content: ''; display: block; width: 50%; height: 100%; background: linear-gradient(90deg,var(--primary),var(--secondary)); border-radius: 2px; animation: loading 1.5s infinite; }
-    @keyframes loading { 0%{transform:translateX(-100%)}100%{transform:translateX(300%)} }
+    .splash-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--darker); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; transition:opacity 0.5s,visibility 0.5s; }
+    .splash-screen.hidden { opacity:0; visibility:hidden; }
+    .splash-logo { width:120px; height:120px; background:linear-gradient(135deg,var(--primary),var(--secondary)); border-radius:30px; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white; animation:pulse 2s infinite; box-shadow:var(--glow); }
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .splash-text { margin-top:20px; font-size:1.5rem; font-weight:700; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .loading-bar { width:200px; height:4px; background:var(--card); border-radius:2px; margin-top:30px; overflow:hidden; }
+    .loading-bar::after { content:''; display:block; width:50%; height:100%; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:2px; animation:loading 1.5s infinite; }
+    @keyframes loading{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
 
-    .nav-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: rgba(21,21,48,0.9); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-    .nav-title { font-size: 1rem; font-weight: 700; background: linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .nav-icon { width: 35px; height: 35px; border-radius: 10px; background: var(--card-light); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); color: var(--text); font-size: 1rem; }
-    .nav-icon:hover { background: var(--primary); border-color: var(--primary); box-shadow: var(--glow); }
+    .nav-bar { display:flex; align-items:center; justify-content:space-between; padding:15px 20px; background:rgba(21,21,48,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+    .nav-title { font-size:1.2rem; font-weight:700; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .nav-icon { width:40px; height:40px; border-radius:12px; background:var(--card-light); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:var(--transition); color:var(--text); font-size:1.2rem; }
+    .nav-icon:hover { background:var(--primary); border-color:var(--primary); box-shadow:var(--glow); }
 
-    .page-container { position: relative; min-height: calc(100vh - 60px); }
-    .page { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; transition: transform 0.35s ease, opacity 0.35s ease; display: none; }
-    .page.active { position: relative; display: block; transform: translateX(0); opacity: 1; }
+    .page-container { position:relative; min-height:calc(100vh - 70px); }
+    .page { position:absolute; top:0; left:0; width:100%; padding:20px; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1),opacity 0.4s ease; display:none; }
+    .page.active { position:relative; display:block; transform:translateX(0); opacity:1; }
 
-    .balance-card { background: linear-gradient(135deg,var(--primary),#4834d4); border-radius: var(--radius); padding: 20px; margin-bottom: 15px; position: relative; overflow: hidden; box-shadow: var(--glow); }
-    .balance-card::before { content: ''; position: absolute; top: -40%; right: -40%; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-    .balance-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
-    .balance-amount { font-size: 2.2rem; font-weight: 800; margin: 3px 0; position: relative; z-index: 1; }
-    .balance-account { font-size: 0.8rem; opacity: 0.9; position: relative; z-index: 1; }
-    .balance-actions { display: flex; gap: 8px; margin-top: 12px; position: relative; z-index: 1; }
+    .balance-card { background:linear-gradient(135deg,var(--primary),#4834d4); border-radius:var(--radius); padding:25px; margin-bottom:20px; position:relative; overflow:hidden; box-shadow:var(--glow); }
+    .balance-card::before { content:''; position:absolute; top:-50%; right:-50%; width:200px; height:200px; background:rgba(255,255,255,0.1); border-radius:50%; }
+    .balance-label { font-size:0.85rem; text-transform:uppercase; letter-spacing:2px; opacity:0.8; }
+    .balance-amount { font-size:2.8rem; font-weight:800; margin:5px 0; position:relative; z-index:1; }
+    .balance-account { font-size:0.9rem; opacity:0.9; position:relative; z-index:1; }
+    .balance-actions { display:flex; gap:10px; margin-top:15px; position:relative; z-index:1; }
 
-    .quick-actions { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 15px; }
-    .quick-action { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; cursor: pointer; transition: var(--transition); font-size: 0.75rem; }
-    .quick-action:hover { background: var(--card-light); transform: translateY(-2px); box-shadow: var(--glow); }
-    .quick-action-icon { font-size: 1.5rem; margin-bottom: 5px; }
+    .quick-actions { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+    .quick-action { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:15px 10px; text-align:center; cursor:pointer; transition:var(--transition); }
+    .quick-action:hover { background:var(--card-light); transform:translateY(-3px); box-shadow:var(--glow); }
+    .quick-action-icon { font-size:1.8rem; margin-bottom:8px; }
+    .quick-action-label { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
 
-    .widget { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; margin-bottom: 12px; }
-    .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .widget-title { font-weight: 600; font-size: 0.9rem; }
-    .widget-badge { background: rgba(108,92,231,0.2); color: var(--primary-light); padding: 3px 10px; border-radius: 15px; font-size: 0.7rem; cursor: pointer; }
+    .widget { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:15px; transition:var(--transition); }
+    .widget:hover { border-color:var(--primary); box-shadow:0 0 20px rgba(108,92,231,0.1); }
+    .widget-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+    .widget-title { font-weight:600; font-size:1rem; }
+    .widget-badge { background:rgba(108,92,231,0.2); color:var(--primary-light); padding:4px 12px; border-radius:20px; font-size:0.75rem; cursor:pointer; }
 
-    .txn-item { display: flex; align-items: center; padding: 10px; background: var(--card-light); border-radius: var(--radius-sm); margin-bottom: 6px; transition: var(--transition); cursor: pointer; }
-    .txn-item:hover { transform: translateX(4px); background: rgba(108,92,231,0.1); }
-    .txn-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; margin-right: 10px; flex-shrink: 0; }
-    .txn-icon.sent { background: rgba(225,112,85,0.2); color: var(--danger); }
-    .txn-icon.received { background: rgba(0,184,148,0.2); color: var(--success); }
-    .txn-info { flex: 1; min-width: 0; }
-    .txn-name { font-weight: 600; font-size: 0.8rem; }
-    .txn-date { font-size: 0.7rem; color: var(--text-muted); }
-    .txn-amount { font-weight: 700; text-align: right; font-size: 0.85rem; }
-    .txn-amount.credit { color: var(--success); }
-    .txn-amount.debit { color: var(--danger); }
+    .txn-item { display:flex; align-items:center; padding:12px; background:var(--card-light); border-radius:var(--radius-sm); margin-bottom:8px; transition:var(--transition); cursor:pointer; }
+    .txn-item:hover { transform:translateX(5px); background:rgba(108,92,231,0.1); }
+    .txn-icon { width:45px; height:45px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; margin-right:12px; flex-shrink:0; }
+    .txn-icon.sent { background:rgba(225,112,85,0.2); color:var(--danger); }
+    .txn-icon.received { background:rgba(0,184,148,0.2); color:var(--success); }
+    .txn-info { flex:1; min-width:0; }
+    .txn-name { font-weight:600; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .txn-date { font-size:0.75rem; color:var(--text-muted); }
+    .txn-amount { font-weight:700; text-align:right; }
+    .txn-amount.credit { color:var(--success); }
+    .txn-amount.debit { color:var(--danger); }
 
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-    .form-input { width: 100%; padding: 12px 14px; background: var(--card-light); border: 2px solid var(--border); border-radius: 12px; color: var(--text); font-size: 0.9rem; outline: none; transition: var(--transition); }
-    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,92,231,0.1); }
+    .form-group { margin-bottom:18px; }
+    .form-label { display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; }
+    .form-input { width:100%; padding:14px 18px; background:var(--card-light); border:2px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:1rem; transition:var(--transition); outline:none; }
+    .form-input:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(108,92,231,0.1); }
+    .form-input::placeholder { color:var(--text-muted); }
 
-    .btn { width: 100%; padding: 12px; border: none; border-radius: 22px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: var(--transition); text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn-primary { background: linear-gradient(135deg,var(--primary),#4834d4); color: white; box-shadow: 0 4px 15px rgba(108,92,231,0.3); }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(108,92,231,0.5); }
-    .btn-secondary { background: var(--card-light); color: var(--text); border: 1px solid var(--border); width: auto; }
-    .btn-success { background: linear-gradient(135deg,var(--success),#00a884); color: white; }
-    .btn-danger { background: var(--danger); color: white; width: auto; }
-    .btn-warning { background: var(--warning); color: #000; width: auto; }
-    .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary-light); }
-    .btn-sm { padding: 7px 14px; font-size: 0.7rem; width: auto; }
+    .btn { width:100%; padding:15px; border:none; border-radius:var(--radius-sm); font-weight:600; font-size:1rem; cursor:pointer; transition:var(--transition); text-transform:uppercase; letter-spacing:1px; position:relative; overflow:hidden; }
+    .btn::after { content:''; position:absolute; top:50%; left:50%; width:0; height:0; background:rgba(255,255,255,0.2); border-radius:50%; transform:translate(-50%,-50%); transition:width 0.6s,height 0.6s; }
+    .btn:active::after { width:300px; height:300px; }
+    .btn-primary { background:linear-gradient(135deg,var(--primary),#4834d4); color:white; box-shadow:0 5px 20px rgba(108,92,231,0.3); }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(108,92,231,0.5); }
+    .btn-secondary { background:var(--card-light); color:var(--text); border:1px solid var(--border); }
+    .btn-success { background:linear-gradient(135deg,var(--success),#00a884); color:white; }
+    .btn-danger { background:linear-gradient(135deg,var(--danger),#c0392b); color:white; }
+    .btn-warning { background:linear-gradient(135deg,var(--warning),#f39c12); color:#000; }
+    .btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary-light); }
+    .btn-sm { padding:8px 16px; font-size:0.8rem; width:auto; }
 
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from{opacity:0}to{opacity:1} }
-    .modal { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; width: 90%; max-width: 400px; animation: slideUp 0.3s ease; max-height: 85vh; overflow-y: auto; }
-    @keyframes slideUp { from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1} }
-    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; }
+    .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; z-index:1000; animation:fadeIn 0.3s ease; }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .modal { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:25px; width:90%; max-width:400px; animation:slideUp 0.3s ease; max-height:80vh; overflow-y:auto; }
+    @keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .modal-title { font-size:1.3rem; font-weight:700; margin-bottom:20px; }
 
-    .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
-    .badge-success { background: rgba(0,184,148,0.2); color: var(--success); }
-    .badge-danger { background: rgba(225,112,85,0.2); color: var(--danger); }
-    .badge-warning { background: rgba(253,203,110,0.2); color: var(--warning); }
+    .announcement-popup { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:3000; animation:fadeIn 0.5s ease; }
+    .announcement-card { background:linear-gradient(135deg,var(--card),var(--card-light)); border:2px solid var(--primary); border-radius:var(--radius); padding:30px; width:90%; max-width:420px; text-align:center; box-shadow:0 0 50px rgba(108,92,231,0.5); animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+    @keyframes popIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+    .announcement-icon { font-size:4rem; margin-bottom:15px; }
+    .announcement-title { font-size:1.5rem; font-weight:700; color:var(--primary-light); margin-bottom:10px; }
+    .announcement-message { color:var(--text); margin-bottom:20px; line-height:1.6; }
+    .announcement-time { font-size:0.8rem; color:var(--text-muted); margin-bottom:15px; }
 
-    .notification-item { background: rgba(255,165,2,0.15); padding: 10px; border-radius: 10px; margin: 6px 0; border-left: 3px solid var(--warning); font-size: 0.8rem; }
-    .email-preview { background: var(--card-light); padding: 8px 12px; border-radius: 8px; margin: 4px 0; font-size: 0.75rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-    .email-preview.unread { border-left: 3px solid var(--accent); font-weight: 600; }
+    .badge { display:inline-block; padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+    .badge-success { background:rgba(0,184,148,0.2); color:var(--success); }
+    .badge-danger { background:rgba(225,112,85,0.2); color:var(--danger); }
+    .badge-warning { background:rgba(253,203,110,0.2); color:var(--warning); }
+    .badge-info { background:rgba(108,92,231,0.2); color:var(--primary-light); }
 
-    .tabs { display: flex; gap: 3px; background: var(--card-light); border-radius: 12px; padding: 3px; margin-bottom: 12px; }
-    .tab { flex: 1; padding: 8px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 0.75rem; font-weight: 500; transition: var(--transition); color: var(--text-muted); }
-    .tab.active { background: var(--primary); color: white; }
+    .tabs { display:flex; gap:5px; background:var(--card-light); border-radius:var(--radius-sm); padding:4px; margin-bottom:15px; }
+    .tab { flex:1; padding:10px; text-align:center; border-radius:10px; cursor:pointer; font-size:0.85rem; font-weight:500; transition:var(--transition); color:var(--text-muted); }
+    .tab.active { background:var(--primary); color:white; box-shadow:0 5px 15px rgba(108,92,231,0.3); }
 
-    .camera-container { width: 100%; border-radius: var(--radius); overflow: hidden; border: 2px solid var(--border); position: relative; }
-    .camera-container video { width: 100%; display: block; }
-    .scan-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 180px; height: 180px; border: 3px solid var(--primary); border-radius: 15px; box-shadow: 0 0 0 1000px rgba(0,0,0,0.5); }
-    .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary); animation: scanLine 2s infinite; }
-    @keyframes scanLine { 0%,100%{top:0}50%{top:calc(100%-2px)} }
+    .camera-container { width:100%; border-radius:var(--radius); overflow:hidden; border:2px solid var(--border); position:relative; }
+    .camera-container video { width:100%; display:block; }
+    .scan-overlay { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:200px; height:200px; border:3px solid var(--primary); border-radius:20px; box-shadow:0 0 0 1000px rgba(0,0,0,0.5); }
+    .scan-line { position:absolute; top:0; left:0; width:100%; height:3px; background:var(--primary); animation:scanLine 2s infinite; }
+    @keyframes scanLine{0%,100%{top:0}50%{top:calc(100% - 3px)}}
 
-    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 10px 20px; z-index: 2000; animation: toastIn 0.4s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.5); font-size: 0.8rem; }
-    @keyframes toastIn { from{transform:translateX(-50%)translateY(80px);opacity:0}to{transform:translateX(-50%)translateY(0);opacity:1} }
+    .pending-card { background:var(--card); border:2px solid var(--warning); border-radius:var(--radius); padding:30px; text-align:center; }
+    .pending-icon { font-size:4rem; margin-bottom:15px; }
 
-    ::-webkit-scrollbar { width: 3px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 2px; }
-    .hidden { display: none !important; }
-    .text-center { text-align: center; }
-    .mt-10 { margin-top: 10px; }
-    .error-message { color: var(--danger); font-size: 0.75rem; margin-top: 5px; }
-    .success-message { color: var(--success); font-size: 0.75rem; margin-top: 5px; }
+    .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--border); border-radius:30px; padding:12px 25px; z-index:2000; animation:toastIn 0.5s ease; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+    @keyframes toastIn{from{transform:translateX(-50%)translateY(100px);opacity:0}to{transform:translateX(-50%)translateY(0);opacity:1}}
+
+    ::-webkit-scrollbar { width:4px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--primary); border-radius:2px; }
+
+    .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:15px; text-align:center; }
+    .stat-value { font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .stat-label { font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:5px; }
+
+    .text-center { text-align:center; }
+    .mt-10 { margin-top:10px; }
+    .mt-15 { margin-top:15px; }
+    .mt-20 { margin-top:20px; }
+    .hidden { display:none !important; }
+    .error-message { color:var(--danger); font-size:0.85rem; margin-top:10px; }
+    .success-message { color:var(--success); font-size:0.85rem; margin-top:10px; }
   </style>
 </head>
 <body>
 
 <div class="bg-animation"><div class="bg-circle"></div><div class="bg-circle"></div><div class="bg-circle"></div></div>
-
+<div class="splash-screen" id="splashScreen"><div class="splash-logo">🏦</div><div class="splash-text">MATA BANK</div><div class="loading-bar"></div></div>
 <div id="toastContainer"></div>
-
-<!-- Splash -->
-<div class="splash-screen" id="splashScreen">
-  <div class="splash-logo">🏦</div>
-  <div class="splash-text">MATA BANK PRO</div>
-  <div class="loading-bar"></div>
-</div>
+<div id="announcementPopup"></div>
 
 <div class="app-wrapper" id="appWrapper" style="display:none;">
   <div class="nav-bar" id="navBar">
     <div class="nav-icon" id="backBtn" style="visibility:hidden;">←</div>
-    <div class="nav-title" id="navTitle">Mata Bank</div>
-    <div class="nav-icon" id="menuBtn" onclick="toggleMenu()">☰</div>
-  </div>
-
-  <!-- Quick Menu -->
-  <div id="quickMenu" class="hidden" style="position:absolute;top:55px;right:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px;z-index:150;min-width:150px;">
-    <div style="padding:8px 12px;cursor:pointer;border-radius:8px;" onclick="navigateTo('dashboard')">🏠 Dashboard</div>
-    <div style="padding:8px 12px;cursor:pointer;border-radius:8px;" onclick="navigateTo('inbox')">📧 Inbox <span id="menuInboxBadge" style="background:var(--accent);color:white;padding:1px 6px;border-radius:8px;font-size:0.6rem;margin-left:5px;">0</span></div>
-    <div style="padding:8px 12px;cursor:pointer;border-radius:8px;" onclick="navigateTo('history')">📋 History</div>
-    <div style="padding:8px 12px;cursor:pointer;border-radius:8px;" onclick="navigateTo('profile')">👤 Profile</div>
-    <hr style="border-color:var(--border);margin:4px 0;">
-    <div style="padding:8px 12px;cursor:pointer;border-radius:8px;color:var(--danger);" onclick="logout()">🚪 Logout</div>
+    <div class="nav-title" id="navTitle">Dashboard</div>
+    <div class="nav-icon" id="menuBtn">☰</div>
   </div>
 
   <div class="page-container" id="pageContainer">
 
-    <!-- LOGIN PAGE -->
-    <div class="page active" id="page-login">
-      <div style="text-align:center;padding:30px 0;">
-        <div style="font-size:4rem;">🏦</div>
-        <h2>Mata Bank</h2>
-        <p style="color:var(--text-muted);">Login with username</p>
-      </div>
-      <div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="loginUsername" placeholder="userone"></div>
-      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword" placeholder="pass1001"></div>
-      <button class="btn btn-primary" onclick="login()">🔐 Login</button>
-      <div style="text-align:center;margin-top:12px;">
-        <span style="color:var(--text-muted);">No account?</span>
-        <span style="color:var(--primary-light);cursor:pointer;" onclick="navigateTo('register')"> Register</span>
-        <span style="color:var(--text-muted);margin-left:10px;">|</span>
-        <span style="color:var(--text-muted);cursor:pointer;font-size:0.7rem;" onclick="navigateTo('admin-login')"> Admin</span>
-      </div>
-      <div class="error-message" id="loginError"></div>
-    </div>
-
-    <!-- REGISTER PAGE -->
-    <div class="page" id="page-register">
-      <div style="text-align:center;padding:20px 0;">
-        <div style="font-size:3rem;">✨</div>
-        <h3>Create Account</h3>
-      </div>
-      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="regName" placeholder="Your name"></div>
-      <div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="regUsername" placeholder="Choose username"></div>
-      <div class="form-group"><label class="form-label">Email (for OTP & alerts)</label><input type="email" class="form-input" id="regEmail" placeholder="you@mail.com"></div>
-      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="regPassword" placeholder="Min 4 chars"></div>
-      <button class="btn btn-primary" onclick="register()">✨ Register</button>
-      <div style="text-align:center;margin-top:10px;">
-        <span style="color:var(--text-muted);">Have account?</span>
-        <span style="color:var(--primary-light);cursor:pointer;" onclick="navigateTo('login')"> Login</span>
-      </div>
-      <div class="error-message" id="regError"></div>
-    </div>
-
-    <!-- OTP VERIFICATION PAGE -->
-    <div class="page" id="page-otp">
-      <div style="text-align:center;padding:30px 0;">
-        <div style="font-size:3rem;">🔐</div>
-        <h3>Email Verification</h3>
-        <p style="color:var(--text-muted);">OTP sent to: <strong id="otpEmail">---</strong></p>
-      </div>
-      <div class="form-group"><label class="form-label">Enter OTP Code</label><input type="text" class="form-input" id="otpInput" placeholder="6-digit code" maxlength="6"></div>
-      <button class="btn btn-primary" onclick="verifyOTP()">✅ Verify</button>
-      <button class="btn btn-secondary mt-10" onclick="resendOTP()">📧 Resend OTP</button>
-      <div class="error-message" id="otpError"></div>
-    </div>
-
-    <!-- PENDING APPROVAL PAGE -->
-    <div class="page" id="page-pending">
-      <div style="text-align:center;padding:30px;">
-        <div style="font-size:4rem;">⏳</div>
-        <h3>Pending Approval</h3>
-        <p style="color:var(--text-muted);">Your account is under review.</p>
-        <div style="background:var(--card-light);padding:15px;border-radius:12px;margin:15px 0;">
-          <strong>Account:</strong> <span id="pendingAcc">---</span><br>
-          <strong>Status:</strong> <span class="badge badge-warning">Pending</span>
-        </div>
-        <button class="btn btn-secondary" onclick="checkApproval()">🔄 Check Status</button>
-        <button class="btn btn-danger mt-10" onclick="logout()">Logout</button>
-      </div>
-    </div>
-
-    <!-- DASHBOARD PAGE -->
-    <div class="page" id="page-dashboard">
-      <div class="balance-card">
-        <div class="balance-label">Total Balance</div>
-        <div class="balance-amount" id="dashBalance">0.00</div>
-        <div class="balance-account" id="dashAccount">LKR • ****</div>
-        <div class="balance-actions">
-          <button class="btn btn-outline btn-sm" onclick="navigateTo('send-money')">📤 Send</button>
-          <button class="btn btn-outline btn-sm" onclick="navigateTo('request-money')">📥 Request</button>
-          <button class="btn btn-outline btn-sm" onclick="navigateTo('qr-scanner')">📷 Scan</button>
-        </div>
-      </div>
-      <div class="quick-actions">
-        <div class="quick-action" onclick="navigateTo('send-money')"><div class="quick-action-icon">💸</div>Transfer</div>
-        <div class="quick-action" onclick="navigateTo('qr-scanner')"><div class="quick-action-icon">📷</div>Scan QR</div>
-        <div class="quick-action" onclick="navigateTo('my-qr')"><div class="quick-action-icon">📱</div>My QR</div>
-        <div class="quick-action" onclick="navigateTo('inbox')"><div class="quick-action-icon">📧</div>Inbox <span id="dashInboxBadge" style="background:var(--accent);color:white;padding:1px 5px;border-radius:8px;font-size:0.55rem;">0</span></div>
-      </div>
-      <div class="widget">
-        <div class="widget-header"><div class="widget-title">Recent Transactions</div><span class="widget-badge" onclick="navigateTo('history')">All</span></div>
-        <div id="recentTransactions"></div>
-      </div>
-      <div class="widget">
-        <div class="widget-header"><div class="widget-title">📧 Recent Emails</div><span class="widget-badge" onclick="navigateTo('inbox')">Inbox</span></div>
-        <div id="recentEmails"></div>
-      </div>
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="balance-card"><div class="balance-label">Total Balance</div><div class="balance-amount" id="dashBalance">0.00</div><div class="balance-account" id="dashAccount">LKR • ****</div><div class="balance-actions"><button class="btn btn-outline btn-sm" onclick="navigateTo('send-money')">📤 Send</button><button class="btn btn-outline btn-sm" onclick="navigateTo('request-money')">📥 Request</button><button class="btn btn-outline btn-sm" onclick="navigateTo('qr-scanner')">📷 Scan</button></div></div>
+      <div class="quick-actions"><div class="quick-action" onclick="navigateTo('send-money')"><div class="quick-action-icon">💸</div><div class="quick-action-label">Transfer</div></div><div class="quick-action" onclick="navigateTo('qr-scanner')"><div class="quick-action-icon">📷</div><div class="quick-action-label">Scan QR</div></div><div class="quick-action" onclick="navigateTo('my-qr')"><div class="quick-action-icon">📱</div><div class="quick-action-label">My QR</div></div><div class="quick-action" onclick="navigateTo('coupons')"><div class="quick-action-icon">🎟️</div><div class="quick-action-label">Coupons</div></div></div>
+      <div class="widget"><div class="widget-header"><div class="widget-title">Recent Transactions</div><span class="widget-badge" onclick="navigateTo('history')">View All</span></div><div id="recentTransactions"></div></div>
       <div id="dashNotifications"></div>
     </div>
 
-    <!-- SEND MONEY PAGE -->
-    <div class="page" id="page-send-money">
-      <h3 style="margin-bottom:15px;">💸 Send Money</h3>
-      <div class="form-group"><label class="form-label">Recipient (Username or Account)</label><input type="text" class="form-input" id="sendRecipient" placeholder="username or 12-digit account"></div>
-      <div class="form-group"><label class="form-label">Amount (LKR)</label><input type="number" class="form-input" id="sendAmount" placeholder="0.00" step="0.01" oninput="updateFee()"></div>
-      <div style="background:var(--card-light);padding:10px;border-radius:10px;margin-bottom:12px;font-size:0.8rem;">
-        Fee (3%): <span id="sendFee">0.00</span> LKR | Total: <strong id="sendTotal">0.00</strong> LKR
-      </div>
-      <button class="btn btn-primary" onclick="sendMoney()">Send Money</button>
-      <div class="error-message" id="sendError"></div>
-      <div class="success-message" id="sendSuccess"></div>
-    </div>
+    <!-- Pending -->
+    <div class="page" id="page-pending"><div class="pending-card"><div class="pending-icon">⏳</div><h2>Account Pending Approval</h2><p style="color:var(--text-muted);margin:15px 0;">Your account is under review by admin.</p><div style="background:var(--card-light);padding:15px;border-radius:12px;margin:15px 0;"><strong>Account:</strong> <span id="pendingAccNum">---</span><br><strong>Username:</strong> <span id="pendingUsername">---</span><br><strong>Status:</strong> <span class="badge badge-warning">Pending</span></div><button class="btn btn-secondary" onclick="checkApprovalStatus()">🔄 Check Status</button><button class="btn btn-danger mt-10" onclick="logout()">Logout</button></div></div>
 
-    <!-- REQUEST MONEY PAGE -->
-    <div class="page" id="page-request-money">
-      <h3 style="margin-bottom:15px;">📥 Request Money</h3>
-      <div class="form-group"><label class="form-label">Amount (LKR)</label><input type="number" class="form-input" id="requestAmount" placeholder="0.00" step="0.01"></div>
-      <button class="btn btn-primary" onclick="generateRequestQR()">Generate Request QR</button>
-      <div id="requestQrDisplay" style="text-align:center;margin-top:15px;"></div>
-    </div>
+    <!-- OTP -->
+    <div class="page" id="page-otp"><div style="text-align:center;padding:30px 0;"><div style="font-size:3rem;">🔐</div><h3>Email Verification</h3><p style="color:var(--text-muted);">OTP sent to: <strong id="otpEmail">---</strong></p></div><div class="form-group"><label class="form-label">OTP Code</label><input type="text" class="form-input" id="otpInput" maxlength="6"></div><button class="btn btn-primary" onclick="verifyOTP()">✅ Verify</button><button class="btn btn-secondary mt-10" onclick="resendOTP()">📧 Resend OTP</button><div class="error-message" id="otpError"></div></div>
 
-    <!-- QR SCANNER PAGE -->
-    <div class="page" id="page-qr-scanner">
-      <h3 style="margin-bottom:10px;">📷 Scan QR</h3>
-      <div class="camera-container" id="cameraContainer"><div class="scan-overlay"><div class="scan-line"></div></div></div>
-      <button class="btn btn-danger btn-sm mt-10" onclick="stopCamera()">Stop Camera</button>
-    </div>
+    <!-- Send Money -->
+    <div class="page" id="page-send-money"><h2 style="margin-bottom:20px;">💸 Send Money</h2><div class="form-group"><label class="form-label">Recipient (Username/Account)</label><input type="text" class="form-input" id="sendRecipient"></div><div class="form-group"><label class="form-label">Amount (LKR)</label><input type="number" class="form-input" id="sendAmount" step="0.01" oninput="updateFee()"></div><div style="background:var(--card-light);padding:12px;border-radius:12px;margin-bottom:15px;font-size:0.85rem;">Fee (3%): <span id="sendFee">0.00</span> LKR | Total: <strong id="sendTotal">0.00</strong> LKR</div><button class="btn btn-primary" onclick="sendMoney()">Send Money</button><div class="error-message" id="sendError"></div><div class="success-message" id="sendSuccess"></div></div>
 
-    <!-- MY QR PAGE -->
-    <div class="page" id="page-my-qr">
-      <h3 style="margin-bottom:10px;">📱 My QR Code</h3>
-      <div style="text-align:center;"><div id="myQrDisplay"></div><p style="margin-top:10px;" id="myQrAccount"></p></div>
-    </div>
+    <!-- Request Money -->
+    <div class="page" id="page-request-money"><h2 style="margin-bottom:20px;">📥 Request Money</h2><div class="form-group"><label class="form-label">Amount (LKR)</label><input type="number" class="form-input" id="requestAmount" step="0.01"></div><button class="btn btn-primary" onclick="generateRequestQR()">Generate Request QR</button><div id="requestQrDisplay" style="text-align:center;margin-top:20px;"></div></div>
 
-    <!-- TRANSACTION HISTORY PAGE -->
-    <div class="page" id="page-history">
-      <h3 style="margin-bottom:10px;">📋 History</h3>
-      <div class="tabs">
-        <div class="tab active" onclick="filterTxns('all',this)">All</div>
-        <div class="tab" onclick="filterTxns('sent',this)">Sent</div>
-        <div class="tab" onclick="filterTxns('received',this)">Received</div>
-      </div>
-      <div id="fullTransactionList"></div>
-    </div>
+    <!-- QR Scanner -->
+    <div class="page" id="page-qr-scanner"><h2 style="margin-bottom:20px;">📷 Scan QR Code</h2><div class="camera-container" id="cameraContainer"><div class="scan-overlay"><div class="scan-line"></div></div></div><button class="btn btn-danger" id="stopCameraBtn" style="margin-top:15px;">Stop Camera</button></div>
 
-    <!-- INBOX PAGE -->
-    <div class="page" id="page-inbox">
-      <h3 style="margin-bottom:10px;">📧 Inbox</h3>
-      <div class="tabs">
-        <div class="tab active" onclick="emailTab('all',this)">All</div>
-        <div class="tab" onclick="emailTab('otp',this)">🔐 OTP</div>
-        <div class="tab" onclick="emailTab('transaction',this)">💳 TXN</div>
-        <div class="tab" onclick="emailTab('notification',this)">🔔 Alerts</div>
-      </div>
-      <div id="inboxEmailList"></div>
-    </div>
+    <!-- My QR -->
+    <div class="page" id="page-my-qr"><h2 style="margin-bottom:20px;">📱 My QR Code</h2><div style="text-align:center;"><div id="myQrDisplay" style="display:inline-block;"></div><p style="margin-top:15px;font-weight:600;" id="myQrAccount"></p></div></div>
 
-    <!-- PROFILE PAGE -->
-    <div class="page" id="page-profile">
-      <h3 style="margin-bottom:15px;">👤 Profile</h3>
-      <div class="widget">
-        <p><strong>Name:</strong> <span id="profileName"></span></p>
-        <p><strong>Username:</strong> <span id="profileUsername"></span></p>
-        <p><strong>Email:</strong> <span id="profileEmail"></span></p>
-        <p><strong>Account:</strong> <span id="profileAcc"></span></p>
-        <p><strong>Status:</strong> <span id="profileStatus"></span></p>
-      </div>
-      <div class="form-group"><label class="form-label">Coupon Code</label><input type="text" class="form-input" id="couponInput" placeholder="Enter coupon"></div>
-      <button class="btn btn-success" onclick="redeemCoupon()">🎟️ Redeem</button>
-      <div id="couponMsg" style="margin-top:8px;"></div>
-    </div>
+    <!-- History -->
+    <div class="page" id="page-history"><h2 style="margin-bottom:20px;">📋 History</h2><div class="tabs"><div class="tab active" onclick="filterTxns('all',this)">All</div><div class="tab" onclick="filterTxns('sent',this)">Sent</div><div class="tab" onclick="filterTxns('received',this)">Received</div></div><div id="fullTransactionList"></div></div>
 
-    <!-- ADMIN LOGIN PAGE -->
-    <div class="page" id="page-admin-login">
-      <div style="text-align:center;padding:30px 0;">
-        <div style="font-size:3rem;">👑</div>
-        <h3>Admin Portal</h3>
-      </div>
-      <div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="adminUser" value="admin"></div>
-      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="adminPass" placeholder="admin123"></div>
-      <button class="btn btn-primary" onclick="adminLogin()">Access Admin</button>
-      <div class="error-message" id="adminError"></div>
-    </div>
+    <!-- Coupons -->
+    <div class="page" id="page-coupons"><h2 style="margin-bottom:20px;">🎟️ Coupons</h2><div class="form-group"><label class="form-label">Code</label><input type="text" class="form-input" id="couponInput"></div><button class="btn btn-primary" onclick="redeemCoupon()">Redeem</button><div id="couponMsg" style="margin-top:8px;"></div></div>
 
-    <!-- ADMIN DASHBOARD PAGE -->
-    <div class="page" id="page-admin-dashboard">
-      <h3 style="margin-bottom:10px;">👑 Admin Panel</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div class="widget text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--primary-light);" id="aBalance">0</div><small>Fees</small></div>
-        <div class="widget text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--primary-light);" id="aUsers">0</div><small>Users</small></div>
-        <div class="widget text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--primary-light);" id="aPending">0</div><small>Pending</small></div>
-        <div class="widget text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--primary-light);" id="aTxns">0</div><small>Txns</small></div>
-      </div>
-      <div class="tabs">
-        <div class="tab active" onclick="adminTab('users',this)">Users</div>
-        <div class="tab" onclick="adminTab('pending',this)">Pending</div>
-        <div class="tab" onclick="adminTab('txns',this)">Txns</div>
-        <div class="tab" onclick="adminTab('coupons',this)">Coupons</div>
-        <div class="tab" onclick="adminTab('broadcast',this)">📢 Broadcast</div>
-      </div>
-      <div id="adminContent"></div>
-    </div>
+    <!-- Login -->
+    <div class="page" id="page-login"><div style="text-align:center;margin-bottom:30px;"><div style="font-size:4rem;">🏦</div><h2>Welcome Back</h2><p style="color:var(--text-muted);">Login with username</p></div><div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="loginUsername"></div><div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword"></div><button class="btn btn-primary" onclick="login()">🔐 Login</button><div style="text-align:center;margin-top:15px;"><span style="color:var(--text-muted);">No account?</span> <span style="color:var(--primary-light);cursor:pointer;" onclick="navigateTo('register')">Register</span> | <span style="color:var(--text-muted);font-size:0.8rem;cursor:pointer;" onclick="navigateTo('admin-login')">Admin</span></div><div class="error-message text-center" id="loginError"></div></div>
+
+    <!-- Register -->
+    <div class="page" id="page-register"><div style="text-align:center;margin-bottom:30px;"><div style="font-size:4rem;">✨</div><h2>Create Account</h2><p style="color:var(--text-muted);">Join Mata Bank</p></div><div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="regName"></div><div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="regUsername"></div><div class="form-group"><label class="form-label">Email (for OTP)</label><input type="email" class="form-input" id="regEmail"></div><div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="regPassword"></div><button class="btn btn-primary" onclick="register()">✨ Register</button><div style="text-align:center;margin-top:15px;"><span style="color:var(--text-muted);">Have account?</span> <span style="color:var(--primary-light);cursor:pointer;" onclick="navigateTo('login')">Login</span></div><div class="error-message text-center" id="regError"></div></div>
+
+    <!-- Admin Login -->
+    <div class="page" id="page-admin-login"><div style="text-align:center;margin-bottom:30px;"><div style="font-size:4rem;">👑</div><h2>Admin Portal</h2></div><div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="adminUsername" value="admin"></div><div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="adminPassword" placeholder="admin123"></div><button class="btn btn-primary" onclick="adminLogin()">Access Admin</button><div class="error-message text-center" id="adminLoginError"></div></div>
+
+    <!-- Admin Dashboard -->
+    <div class="page" id="page-admin-dashboard"><h2 style="margin-bottom:20px;">👑 Admin Panel</h2><div class="stat-grid"><div class="stat-card"><div class="stat-value" id="adminBalance">0</div><div class="stat-label">Fees</div></div><div class="stat-card"><div class="stat-value" id="adminUsers">0</div><div class="stat-label">Users</div></div><div class="stat-card"><div class="stat-value" id="adminPending">0</div><div class="stat-label">Pending</div></div><div class="stat-card"><div class="stat-value" id="adminTxns">0</div><div class="stat-label">Txns</div></div></div><div class="tabs"><div class="tab active" onclick="adminTab('users',this)">Users</div><div class="tab" onclick="adminTab('pending',this)">Pending <span class="badge badge-warning" id="pendingBadge">0</span></div><div class="tab" onclick="adminTab('txns',this)">Txns</div><div class="tab" onclick="adminTab('coupons',this)">Coupons</div><div class="tab" onclick="adminTab('broadcast',this)">📢</div></div><div id="adminContent"></div></div>
 
   </div>
 
-  <!-- Bottom Nav -->
-  <div style="display:flex;background:var(--card);border-top:1px solid var(--border);padding:8px;position:sticky;bottom:0;" id="bottomNav">
-    <div style="flex:1;text-align:center;cursor:pointer;color:var(--primary-light);" onclick="navigateTo('dashboard')">🏠<div style="font-size:0.6rem;">Home</div></div>
-    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('send-money')">💸<div style="font-size:0.6rem;">Send</div></div>
-    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('inbox')">📧<div style="font-size:0.6rem;">Inbox</div></div>
-    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('profile')">👤<div style="font-size:0.6rem;">Profile</div></div>
+  <div style="display:flex;background:var(--card);border-top:1px solid var(--border);padding:10px;position:sticky;bottom:0;" id="bottomNav">
+    <div style="flex:1;text-align:center;cursor:pointer;color:var(--primary-light);" onclick="navigateTo('dashboard')"><div>🏠</div><div style="font-size:0.7rem;">Home</div></div>
+    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('history')"><div>📋</div><div style="font-size:0.7rem;">History</div></div>
+    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('qr-scanner')"><div>📷</div><div style="font-size:0.7rem;">Scan</div></div>
+    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('coupons')"><div>🎟️</div><div style="font-size:0.7rem;">Coupons</div></div>
   </div>
 </div>
 
 <!-- QR Confirm Modal -->
-<div class="modal-overlay hidden" id="qrConfirmModal">
-  <div class="modal">
-    <div class="modal-title">Confirm Payment</div>
-    <div id="qrConfirmDetails"></div>
-    <button class="btn btn-success mt-10" onclick="confirmQRPayment()">✅ Confirm</button>
-    <button class="btn btn-secondary mt-10" onclick="closeQRConfirm()">Cancel</button>
-    <div class="error-message" id="qrConfirmError"></div>
-  </div>
-</div>
+<div class="modal-overlay hidden" id="qrConfirmModal"><div class="modal"><div class="modal-title">Confirm Payment</div><div id="qrConfirmDetails"></div><button class="btn btn-success mt-15" onclick="confirmQRPayment()">✅ Confirm</button><button class="btn btn-secondary mt-10" onclick="closeQRConfirm()">Cancel</button><div class="error-message" id="qrConfirmError"></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, update, push, remove, onValue, off, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, set, get, update, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDLSnWPSjF8Qf2mQ9zc2HfvpTH8dPzIrL8",
@@ -413,561 +236,235 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ==================== STATE ====================
-let currentUser = null;
-let isAdmin = false;
-let currentPage = 'login';
-let videoStream = null;
-let scanInterval = null;
-let pendingQRData = null;
-let txnFilter = 'all';
-let emailFilter = 'all';
-let realtimeListeners = [];
-
-// ==================== HELPERS ====================
 function formatCurrency(n) { return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function generateAccNum() { return Math.floor(100000000000+Math.random()*900000000000).toString(); }
 function generateOTP() { return Math.floor(100000+Math.random()*900000).toString(); }
-function showToast(msg,type='info') {
-  const c=document.getElementById('toastContainer');
-  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+
+let currentUser = null, isAdmin = false, currentPage = 'login', videoStream = null, scanInterval = null, pendingQRData = null, txnFilter = 'all';
+let realtimeListeners = [];
+
+function showToast(msg,type='info'){
+  const c=document.getElementById('toastContainer'), t=document.createElement('div'); t.className='toast'; t.textContent=msg;
   t.style.background={success:'var(--success)',error:'var(--danger)',warning:'var(--warning)',info:'var(--card)'}[type]||'var(--card)';
   t.style.color=type==='warning'?'#000':'#fff'; c.appendChild(t); setTimeout(()=>t.remove(),3000);
 }
 
-// ==================== NAVIGATION ====================
-window.navigateTo = function(page) {
+function showAnnouncementPopup(n){ document.getElementById('announcementPopup').innerHTML=`<div class="announcement-popup" id="aa"><div class="announcement-card"><div class="announcement-icon">📢</div><div class="announcement-title">${n.title}</div><div class="announcement-message">${n.message}</div><div class="announcement-time">${new Date(n.timestamp).toLocaleString()}</div><button class="btn btn-primary" onclick="document.getElementById('aa').remove()">✓ Got it</button></div></div>`; }
+
+window.navigateTo = function(page){
   stopCamera();
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const target=document.getElementById('page-'+page);
-  if(target) target.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active');p.style.display='none';});
+  const target=document.getElementById('page-'+page); if(target){target.style.display='block';target.classList.add('active');}
   currentPage=page;
-  
-  const titles={dashboard:'Dashboard','send-money':'Send Money','request-money':'Request','qr-scanner':'Scan QR','my-qr':'My QR',history:'History',inbox:'Inbox',profile:'Profile',login:'Login',register:'Register','admin-login':'Admin','admin-dashboard':'Admin Panel',pending:'Pending',otp:'Verification'};
+  const titles={dashboard:'Dashboard','send-money':'Send','request-money':'Request','qr-scanner':'Scan','my-qr':'My QR',history:'History',coupons:'Coupons',login:'Login',register:'Register','admin-login':'Admin','admin-dashboard':'Admin',pending:'Pending',otp:'OTP'};
   document.getElementById('navTitle').textContent=titles[page]||'Mata Bank';
   document.getElementById('backBtn').style.visibility=['login','dashboard','admin-dashboard','pending','otp'].includes(page)?'hidden':'visible';
-  document.getElementById('bottomNav').style.display=['dashboard','send-money','inbox','profile','history'].includes(page)?'flex':'none';
-  document.getElementById('quickMenu').classList.add('hidden');
-  
+  document.getElementById('bottomNav').style.display=['dashboard','history','qr-scanner','coupons','send-money','my-qr','request-money'].includes(page)?'flex':'none';
   if(page==='dashboard') loadDashboard();
   if(page==='my-qr') generateMyQR();
   if(page==='qr-scanner') startCamera();
   if(page==='admin-dashboard') loadAdminDashboard();
   if(page==='history') loadFullHistory();
-  if(page==='inbox') loadInbox();
-  if(page==='profile') loadProfile();
+  if(page==='pending') setupPending();
   if(page==='otp') document.getElementById('otpError').textContent='';
 };
 
-window.toggleMenu = ()=>document.getElementById('quickMenu').classList.toggle('hidden');
+document.getElementById('backBtn').onclick=()=>{if(currentUser&&!isAdmin)navigateTo('dashboard');else if(isAdmin)navigateTo('admin-dashboard');else navigateTo('login');};
 
-document.getElementById('backBtn').onclick=()=>{
-  if(currentUser&&!isAdmin) navigateTo('dashboard');
-  else if(isAdmin) navigateTo('admin-dashboard');
-  else navigateTo('login');
-};
-
-// ==================== AUTH ====================
+// Auth
 window.login = async ()=>{
-  const u=document.getElementById('loginUsername').value.trim().toLowerCase();
-  const p=document.getElementById('loginPassword').value.trim();
+  const u=document.getElementById('loginUsername').value.trim().toLowerCase(), p=document.getElementById('loginPassword').value.trim();
   document.getElementById('loginError').textContent='';
   if(!u||!p){document.getElementById('loginError').textContent='Fill all fields';return;}
-  
   const snap=await get(ref(db,'users'));
   if(!snap.exists()){document.getElementById('loginError').textContent='No accounts';return;}
   const entry=Object.entries(snap.val()).find(([k,v])=>v.username===u&&v.password===p);
   if(!entry){document.getElementById('loginError').textContent='Invalid credentials';return;}
-  
-  const userData=entry[1];
-  if(userData.status==='pending'){currentUser={uid:entry[0],...userData};navigateTo('pending');return;}
-  if(userData.status==='banned'){document.getElementById('loginError').textContent='Account banned';return;}
-  if(userData.status==='otp_pending'){currentUser={uid:entry[0],...userData};navigateTo('otp');return;}
-  
-  currentUser={uid:entry[0],...userData}; isAdmin=false;
-  await update(ref(db,`users/${entry[0]}`),{lastActive:Date.now()});
-  setupRealtimeListeners();
-  navigateTo('dashboard');
-  showToast(`Welcome, ${userData.name}!`,'success');
+  const [uid,userData]=entry;
+  if(userData.status==='otp_pending'){currentUser={uid,...userData};navigateTo('otp');document.getElementById('otpEmail').textContent=userData.email;return;}
+  if(userData.status==='pending'){currentUser={uid,...userData};navigateTo('pending');return;}
+  if(userData.status==='banned'){document.getElementById('loginError').textContent='Banned';return;}
+  currentUser={uid,...userData}; isAdmin=false;
+  await update(ref(db,`users/${uid}`),{lastActive:Date.now()});
+  setupRealtime(); navigateTo('dashboard'); showToast(`Welcome, ${userData.name}!`,'success');
+  checkUnreadAnnouncements();
 };
 
 window.register = async ()=>{
-  const name=document.getElementById('regName').value.trim();
-  const username=document.getElementById('regUsername').value.trim().toLowerCase();
-  const email=document.getElementById('regEmail').value.trim().toLowerCase();
-  const pwd=document.getElementById('regPassword').value.trim();
+  const name=document.getElementById('regName').value.trim(), username=document.getElementById('regUsername').value.trim().toLowerCase(), email=document.getElementById('regEmail').value.trim().toLowerCase(), pwd=document.getElementById('regPassword').value.trim();
   document.getElementById('regError').textContent='';
-  
-  if(!name||!username||!email||!pwd){document.getElementById('regError').textContent='All fields required';return;}
+  if(!name||!username||!email||!pwd){document.getElementById('regError').textContent='All fields';return;}
   if(pwd.length<4){document.getElementById('regError').textContent='Password too short';return;}
-  if(!email.includes('@')){document.getElementById('regError').textContent='Invalid email';return;}
-  
   const snap=await get(ref(db,'users'));
   if(snap.exists()&&Object.values(snap.val()).some(u=>u.username===username)){document.getElementById('regError').textContent='Username taken';return;}
   
-  // Check/create email account
-  const mailSnap=await get(ref(db,'mail_users'));
-  let mailExists=false;
-  if(mailSnap.exists()) mailExists=Object.values(mailSnap.val()).some(m=>m.email===email);
-  if(!mailExists){
-    await set(push(ref(db,'mail_users')),{name,email,password:pwd,createdAt:Date.now()});
-  }
+  const mSnap=await get(ref(db,'mail_users'));
+  if(!mSnap.exists()||!Object.values(mSnap.val()).some(m=>m.email===email)){await set(push(ref(db,'mail_users')),{name,email,password:pwd,createdAt:Date.now()});}
   
-  const accNum=generateAccNum();
-  const otp=generateOTP();
+  const accNum=generateAccNum(), otp=generateOTP();
   const newRef=push(ref(db,'users'));
   await set(newRef,{accountNumber:accNum,username,name,email,password:pwd,balance:0,status:'otp_pending',otpCode:otp,createdAt:Date.now(),lastActive:Date.now()});
   
-  // Send OTP email
-  await set(push(ref(db,'mail_emails')),{from:'system@matabank.com',to:email,subject:'🔐 Email Verification OTP',body:`Your OTP code is: ${otp}\n\nEnter this code to verify your email.\n\n- Mata Bank`,emailType:'otp',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
+  await set(push(ref(db,'mail_emails')),{from:'system@matabank.com',to:email,subject:'🔐 Bank OTP Verification',body:`Your OTP: ${otp}\n\n- Mata Bank`,emailType:'otp',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
   
   currentUser={uid:newRef.key,accountNumber:accNum,username,name,email,status:'otp_pending',otpCode:otp};
-  navigateTo('otp');
-  document.getElementById('otpEmail').textContent=email;
-  showToast('OTP sent to your email!','success');
+  navigateTo('otp'); document.getElementById('otpEmail').textContent=email;
+  showToast('OTP sent to email!','success');
 };
 
 window.verifyOTP = async ()=>{
-  const code=document.getElementById('otpInput').value.trim();
-  document.getElementById('otpError').textContent='';
-  if(!code){document.getElementById('otpError').textContent='Enter OTP';return;}
-  if(code!==currentUser.otpCode){document.getElementById('otpError').textContent='Invalid OTP';return;}
-  
+  if(document.getElementById('otpInput').value.trim()!==currentUser.otpCode){document.getElementById('otpError').textContent='Invalid OTP';return;}
   await update(ref(db,`users/${currentUser.uid}`),{status:'pending',otpCode:null});
-  currentUser.status='pending';
-  navigateTo('pending');
-  showToast('Email verified! Awaiting admin approval.','success');
+  currentUser.status='pending'; navigateTo('pending'); showToast('Verified! Awaiting approval.','success');
 };
 
 window.resendOTP = async ()=>{
   const otp=generateOTP();
   await update(ref(db,`users/${currentUser.uid}`),{otpCode:otp});
-  await set(push(ref(db,'mail_emails')),{from:'system@matabank.com',to:currentUser.email,subject:'🔐 New OTP Code',body:`Your new OTP is: ${otp}`,emailType:'otp',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
-  currentUser.otpCode=otp;
-  showToast('New OTP sent!','success');
+  await set(push(ref(db,'mail_emails')),{from:'system@matabank.com',to:currentUser.email,subject:'🔐 New OTP',body:`New OTP: ${otp}`,emailType:'otp',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
+  currentUser.otpCode=otp; showToast('New OTP sent!','success');
 };
 
-window.checkApproval = async ()=>{
+window.checkApprovalStatus = async ()=>{
   const snap=await get(ref(db,`users/${currentUser.uid}`));
-  if(snap.exists()&&snap.val().status==='approved'){
-    currentUser={uid:currentUser.uid,...snap.val()};
-    setupRealtimeListeners();
-    navigateTo('dashboard');
-    showToast('Account approved!','success');
-  }else{showToast('Still pending','warning');}
+  if(snap.val().status==='approved'){currentUser={uid:currentUser.uid,...snap.val()}; setupRealtime(); navigateTo('dashboard'); showToast('Approved!','success');}
+  else showToast('Still pending','warning');
 };
 
-window.logout = ()=>{
-  stopCamera();
-  realtimeListeners.forEach(l=>off(l));
-  realtimeListeners=[];
-  currentUser=null; isAdmin=false;
-  navigateTo('login');
-};
+function setupPending(){ document.getElementById('pendingAccNum').textContent=currentUser.accountNumber; document.getElementById('pendingUsername').textContent=currentUser.username; }
 
-// ==================== DASHBOARD ====================
-function setupRealtimeListeners(){
-  realtimeListeners.forEach(l=>off(l));
-  realtimeListeners=[];
-  
-  const userRef=ref(db,`users/${currentUser.uid}`);
-  const l1=onValue(userRef,(snap)=>{if(snap.exists()){currentUser={uid:currentUser.uid,...snap.val()};if(currentPage==='dashboard')updateDashboardUI();}});
-  realtimeListeners.push(userRef);
-  
-  const txnsRef=ref(db,'transactions');
-  const l2=onValue(txnsRef,()=>{if(currentPage==='dashboard')loadRecentTxns();if(currentPage==='history')loadFullHistory();});
-  realtimeListeners.push(txnsRef);
-  
-  const emailsRef=ref(db,'mail_emails');
-  const l3=onValue(emailsRef,()=>{if(currentPage==='dashboard')loadRecentEmails();if(currentPage==='inbox')loadInbox();updateBadges();});
-  realtimeListeners.push(emailsRef);
-  
-  const notifsRef=ref(db,'notifications');
-  const l4=onValue(notifsRef,()=>{if(currentPage==='dashboard')loadNotifications();});
-  realtimeListeners.push(notifsRef);
-}
+window.logout = ()=>{ stopCamera(); realtimeListeners.forEach(l=>off(l)); realtimeListeners=[]; currentUser=null; isAdmin=false; navigateTo('login'); document.getElementById('announcementPopup').innerHTML=''; };
 
-async function loadDashboard(){
-  if(!currentUser)return;
-  const snap=await get(ref(db,`users/${currentUser.uid}`));
-  if(snap.exists())currentUser={uid:currentUser.uid,...snap.val()};
-  updateDashboardUI();
-  loadRecentTxns();
-  loadRecentEmails();
-  loadNotifications();
-  updateBadges();
-}
-
-function updateDashboardUI(){
-  document.getElementById('dashBalance').textContent=formatCurrency(currentUser.balance||0);
-  document.getElementById('dashAccount').textContent='LKR • '+((currentUser.accountNumber||'').slice(-4));
-}
-
-async function loadRecentTxns(){
-  const snap=await get(ref(db,'transactions'));
-  const container=document.getElementById('recentTransactions');
-  if(!snap.exists()){container.innerHTML='<p style="color:var(--text-muted);text-align:center;">No transactions</p>';return;}
-  const txns=Object.entries(snap.val()).reverse().filter(([k,t])=>t.sender===currentUser.accountNumber||t.recipient===currentUser.accountNumber).slice(0,5);
-  container.innerHTML=txns.map(([k,t])=>{
-    const sent=t.sender===currentUser.accountNumber;
-    return`<div class="txn-item"><div class="txn-icon ${sent?'sent':'received'}">${sent?'↑':'↓'}</div><div class="txn-info"><div class="txn-name">${sent?'To: '+t.recipient:'From: '+t.sender}</div><div class="txn-date">${new Date(t.timestamp).toLocaleDateString()}</div></div><div class="txn-amount ${sent?'debit':'credit'}">${sent?'-':'+'}${formatCurrency(t.amount)}</div></div>`;
-  }).join('')||'<p style="color:var(--text-muted);text-align:center;">No transactions</p>';
-}
-
-async function loadRecentEmails(){
-  const snap=await get(ref(db,'mail_emails'));
-  const container=document.getElementById('recentEmails');
-  if(!snap.exists()){container.innerHTML='<p style="color:var(--text-muted);text-align:center;">No emails</p>';return;}
-  const emails=Object.entries(snap.val()).reverse().filter(([k,e])=>e.to===currentUser.email&&!e.deleted).slice(0,3);
-  container.innerHTML=emails.map(([k,e])=>`<div class="email-preview ${!e.read?'unread':''}" onclick="navigateTo('inbox')"><span>${e.subject||'(No subject)'}</span><small>${new Date(e.timestamp).toLocaleDateString()}</small></div>`).join('')||'<p style="color:var(--text-muted);text-align:center;">No emails</p>';
-}
-
-async function loadNotifications(){
+async function checkUnreadAnnouncements(){
   const snap=await get(ref(db,'notifications'));
-  const container=document.getElementById('dashNotifications');
-  if(!snap.exists()){container.innerHTML='';return;}
-  const notifs=Object.entries(snap.val()).filter(([k,n])=>(n.target==='all'||n.targetUser===currentUser.accountNumber)&&(!n.readBy||!n.readBy[currentUser.uid]));
-  container.innerHTML=notifs.map(([k,n])=>`<div class="notification-item"><strong>📢 ${n.title}</strong><p>${n.message}</p></div>`).join('');
-}
-
-function updateBadges(){
-  if(!currentUser)return;
-  get(ref(db,'mail_emails')).then(snap=>{
-    if(!snap.exists())return;
-    const count=Object.values(snap.val()).filter(e=>e.to===currentUser.email&&!e.read&&!e.deleted).length;
-    document.getElementById('menuInboxBadge').textContent=count||'0';
-    document.getElementById('dashInboxBadge').textContent=count||'0';
-  });
-}
-
-// ==================== SEND MONEY ====================
-window.updateFee = ()=>{
-  const a=parseFloat(document.getElementById('sendAmount').value)||0;
-  const f=a*0.03;
-  document.getElementById('sendFee').textContent=formatCurrency(f);
-  document.getElementById('sendTotal').textContent=formatCurrency(a+f);
-};
-
-window.sendMoney = async ()=>{
-  const recipient=document.getElementById('sendRecipient').value.trim().toLowerCase();
-  const amount=parseFloat(document.getElementById('sendAmount').value);
-  document.getElementById('sendError').textContent='';
-  document.getElementById('sendSuccess').textContent='';
-  
-  if(!recipient||isNaN(amount)||amount<=0){document.getElementById('sendError').textContent='Invalid details';return;}
-  
-  const snap=await get(ref(db,'users'));
-  const users=snap.val();
-  const recEntry=Object.entries(users).find(([k,u])=>u.username===recipient||u.accountNumber===recipient);
-  if(!recEntry){document.getElementById('sendError').textContent='Recipient not found';return;}
-  if(recEntry[1].accountNumber===currentUser.accountNumber){document.getElementById('sendError').textContent='Cannot send to self';return;}
-  
-  const fee=amount*0.03; const total=amount+fee;
-  if(currentUser.balance<total){document.getElementById('sendError').textContent=`Need ${formatCurrency(total)}`;return;}
-  
-  if(!confirm(`Send ${formatCurrency(amount)}?\nFee: ${formatCurrency(fee)}\nTotal: ${formatCurrency(total)}`))return;
-  
-  await update(ref(db,`users/${currentUser.uid}`),{balance:currentUser.balance-total});
-  await update(ref(db,`users/${recEntry[0]}`),{balance:recEntry[1].balance+amount});
-  const aSnap=await get(ref(db,'admin/balance'));
-  await set(ref(db,'admin/balance'),(aSnap.val()||0)+fee);
-  await set(push(ref(db,'transactions')),{sender:currentUser.accountNumber,recipient:recEntry[1].accountNumber,amount,fee,type:'transfer',timestamp:Date.now()});
-  
-  // Send transaction email
-  if(recEntry[1].email){
-    await set(push(ref(db,'mail_emails')),{from:'alerts@matabank.com',to:recEntry[1].email,subject:'💳 Received '+formatCurrency(amount)+' LKR',body:`You received ${formatCurrency(amount)} LKR from ${currentUser.name}.\nFee: ${formatCurrency(fee)}\nDate: ${new Date().toLocaleString()}`,emailType:'transaction',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
-  }
-  if(currentUser.email){
-    await set(push(ref(db,'mail_emails')),{from:'alerts@matabank.com',to:currentUser.email,subject:'💳 Sent '+formatCurrency(amount)+' LKR',body:`You sent ${formatCurrency(amount)} LKR to ${recEntry[1].name}.\nFee: ${formatCurrency(fee)}\nDate: ${new Date().toLocaleString()}`,emailType:'transaction',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
-  }
-  
-  document.getElementById('sendSuccess').textContent='Money sent!';
-  document.getElementById('sendAmount').value='';
-  document.getElementById('sendRecipient').value='';
-  showToast('Transaction complete!','success');
-};
-
-// ==================== QR ====================
-function generateMyQR(){
-  setTimeout(()=>{
-    const c=document.getElementById('myQrDisplay'); c.innerHTML='';
-    document.getElementById('myQrAccount').textContent=currentUser.accountNumber;
-    if(typeof QRCode!=='undefined')new QRCode(c,{text:JSON.stringify({type:'account',accountNumber:currentUser.accountNumber,name:currentUser.name}),width:180,height:180});
-  },200);
-}
-
-window.generateRequestQR = ()=>{
-  const a=parseFloat(document.getElementById('requestAmount').value);
-  if(isNaN(a)||a<=0){alert('Enter amount');return;}
-  const c=document.getElementById('requestQrDisplay'); c.innerHTML='';
-  setTimeout(()=>{if(typeof QRCode!=='undefined')new QRCode(c,{text:JSON.stringify({type:'payment_request',requesterAccount:currentUser.accountNumber,requesterName:currentUser.name,amount:a}),width:180,height:180});},100);
-};
-
-async function startCamera(){
-  stopCamera();
-  try{
-    videoStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    const container=document.getElementById('cameraContainer');
-    container.innerHTML='<div class="scan-overlay"><div class="scan-line"></div></div>';
-    const video=document.createElement('video'); video.autoplay=true; video.playsInline=true; video.srcObject=videoStream;
-    container.prepend(video);
-    video.onloadedmetadata=()=>{video.play();startScanning(video);};
-  }catch(e){alert('Camera error. Paste QR data manually:');}
-}
-
-function stopCamera(){
-  if(scanInterval)clearInterval(scanInterval);
-  if(videoStream){videoStream.getTracks().forEach(t=>t.stop());videoStream=null;}
-}
-
-function startScanning(video){
-  const canvas=document.createElement('canvas'); const ctx=canvas.getContext('2d');
-  scanInterval=setInterval(()=>{
-    if(video.readyState<2)return;
-    canvas.width=video.videoWidth; canvas.height=video.videoHeight;
-    if(!canvas.width)return;
-    ctx.drawImage(video,0,0);
-    const code=jsQR(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height);
-    if(code){stopCamera();processQR(code.data);}
-  },100);
-}
-
-function processQR(data){
-  try{
-    const p=JSON.parse(data);
-    if(p.type==='account'){document.getElementById('sendRecipient').value=p.accountNumber;navigateTo('send-money');}
-    else if(p.type==='payment_request'){
-      pendingQRData=p;
-      document.getElementById('qrConfirmDetails').innerHTML=`<p><strong>To:</strong> ${p.requesterName} (${p.requesterAccount})</p><p><strong>Amount:</strong> ${formatCurrency(p.amount)}</p><p><strong>Fee:</strong> ${formatCurrency(p.amount*0.03)}</p><p><strong>Total:</strong> ${formatCurrency(p.amount*1.03)}</p>`;
-      document.getElementById('qrConfirmModal').classList.remove('hidden');
-    }
-  }catch(e){alert('Invalid QR');}
-}
-
-window.closeQRConfirm = ()=>{document.getElementById('qrConfirmModal').classList.add('hidden');pendingQRData=null;};
-
-window.confirmQRPayment = async ()=>{
-  if(!pendingQRData)return;
-  const d=pendingQRData; const fee=d.amount*0.03; const total=d.amount+fee;
-  if(currentUser.balance<total){document.getElementById('qrConfirmError').textContent='Insufficient balance';return;}
-  
-  const snap=await get(ref(db,'users'));
-  const recEntry=Object.entries(snap.val()).find(([k,u])=>u.accountNumber===d.requesterAccount);
-  if(!recEntry){document.getElementById('qrConfirmError').textContent='Recipient not found';return;}
-  
-  await update(ref(db,`users/${currentUser.uid}`),{balance:currentUser.balance-total});
-  await update(ref(db,`users/${recEntry[0]}`),{balance:recEntry[1].balance+d.amount});
-  const aSnap=await get(ref(db,'admin/balance'));
-  await set(ref(db,'admin/balance'),(aSnap.val()||0)+fee);
-  await set(push(ref(db,'transactions')),{sender:currentUser.accountNumber,recipient:d.requesterAccount,amount:d.amount,fee,type:'request_pay',timestamp:Date.now()});
-  
-  closeQRConfirm();
-  showToast('Payment successful!','success');
-  navigateTo('dashboard');
-};
-
-// ==================== HISTORY ====================
-async function loadFullHistory(){
-  const snap=await get(ref(db,'transactions'));
-  const c=document.getElementById('fullTransactionList');
-  if(!snap.exists()){c.innerHTML='<p style="color:var(--text-muted);text-align:center;">No transactions</p>';return;}
-  let txns=Object.entries(snap.val()).reverse().filter(([k,t])=>t.sender===currentUser.accountNumber||t.recipient===currentUser.accountNumber);
-  if(txnFilter==='sent')txns=txns.filter(([k,t])=>t.sender===currentUser.accountNumber);
-  if(txnFilter==='received')txns=txns.filter(([k,t])=>t.recipient===currentUser.accountNumber);
-  c.innerHTML=txns.map(([k,t])=>{
-    const sent=t.sender===currentUser.accountNumber;
-    return`<div class="txn-item"><div class="txn-icon ${sent?'sent':'received'}">${sent?'↑':'↓'}</div><div class="txn-info"><div class="txn-name">${sent?t.recipient:t.sender}</div><div class="txn-date">${new Date(t.timestamp).toLocaleString()}</div></div><div class="txn-amount ${sent?'debit':'credit'}">${sent?'-':'+'}${formatCurrency(t.amount)}</div></div>`;
-  }).join('')||'<p style="color:var(--text-muted);text-align:center;">No transactions</p>';
-}
-
-window.filterTxns = (f,el)=>{txnFilter=f;document.querySelectorAll('#page-history .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadFullHistory();};
-
-// ==================== INBOX ====================
-async function loadInbox(){
-  const snap=await get(ref(db,'mail_emails'));
-  const c=document.getElementById('inboxEmailList');
-  if(!snap.exists()){c.innerHTML='<p style="color:var(--text-muted);text-align:center;">No emails</p>';return;}
-  let emails=Object.entries(snap.val()).reverse().filter(([k,e])=>e.to===currentUser.email&&!e.deleted);
-  if(emailFilter==='otp')emails=emails.filter(([k,e])=>e.emailType==='otp');
-  if(emailFilter==='transaction')emails=emails.filter(([k,e])=>e.emailType==='transaction');
-  if(emailFilter==='notification')emails=emails.filter(([k,e])=>e.emailType==='notification');
-  c.innerHTML=emails.map(([k,e])=>`<div class="email-preview ${!e.read?'unread':''}" onclick="viewEmailDetail('${k}')"><div><strong>${e.subject||'(No subject)'}</strong><br><small>${e.from}</small></div><small>${new Date(e.timestamp).toLocaleDateString()}</small></div>`).join('')||'<p style="color:var(--text-muted);text-align:center;">No emails</p>';
-}
-
-window.emailTab = (f,el)=>{emailFilter=f;document.querySelectorAll('#page-inbox .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadInbox();};
-
-window.viewEmailDetail = async (id)=>{
-  const snap=await get(ref(db,`mail_emails/${id}`));
   if(!snap.exists())return;
-  const e=snap.val();
-  if(!e.read){await update(ref(db,`mail_emails/${id}`),{read:true});}
-  alert(`From: ${e.from}\nSubject: ${e.subject}\n\n${e.body}`);
-};
-
-// ==================== PROFILE ====================
-function loadProfile(){
-  document.getElementById('profileName').textContent=currentUser.name;
-  document.getElementById('profileUsername').textContent=currentUser.username;
-  document.getElementById('profileEmail').textContent=currentUser.email||'N/A';
-  document.getElementById('profileAcc').textContent=currentUser.accountNumber;
-  document.getElementById('profileStatus').innerHTML=`<span class="badge ${currentUser.status==='approved'?'badge-success':'badge-warning'}">${currentUser.status}</span>`;
+  Object.entries(snap.val()).forEach(([k,n])=>{if((n.target==='all'||n.targetUser===currentUser.accountNumber)&&(!n.readBy||!n.readBy[currentUser.uid])){showAnnouncementPopup(n); update(ref(db,`notifications/${k}/readBy`),{[currentUser.uid]:true});}});
 }
 
-window.redeemCoupon = async ()=>{
-  const code=document.getElementById('couponInput').value.trim();
-  const msg=document.getElementById('couponMsg');
-  if(!code){msg.innerHTML='<span style="color:var(--danger)">Enter code</span>';return;}
-  const snap=await get(ref(db,'coupons'));
-  if(!snap.exists()){msg.innerHTML='<span style="color:var(--danger)">No coupons</span>';return;}
-  const entry=Object.entries(snap.val()).find(([k,c])=>c.code===code&&c.active);
-  if(!entry){msg.innerHTML='<span style="color:var(--danger)">Invalid</span>';return;}
-  const [cid,cd]=entry;
-  if((cd.usedBy||{})[currentUser.uid]){msg.innerHTML='<span style="color:var(--danger)">Used</span>';return;}
-  await update(ref(db,`users/${currentUser.uid}`),{balance:currentUser.balance+cd.amount});
-  await update(ref(db,`coupons/${cid}/usedBy`),{[currentUser.uid]:true});
-  msg.innerHTML=`<span style="color:var(--success)">+${formatCurrency(cd.amount)}!</span>`;
-};
-
-// ==================== ADMIN ====================
+// Admin
 window.adminLogin = async ()=>{
-  const u=document.getElementById('adminUser').value.trim();
-  const p=document.getElementById('adminPass').value.trim();
-  document.getElementById('adminError').textContent='';
+  const u=document.getElementById('adminUsername').value.trim(), p=document.getElementById('adminPassword').value.trim();
   const snap=await get(ref(db,'admin/credentials'));
-  const c=snap.val();
-  if(u===c.username&&p===c.password){isAdmin=true;currentUser=null;navigateTo('admin-dashboard');showToast('Admin access','success');}
-  else{document.getElementById('adminError').textContent='Invalid credentials';}
+  if(u===snap.val().username&&p===snap.val().password){isAdmin=true;currentUser=null;navigateTo('admin-dashboard');}
+  else document.getElementById('adminLoginError').textContent='Invalid';
 };
 
 async function loadAdminDashboard(){
-  const aSnap=await get(ref(db,'admin/balance'));
-  document.getElementById('aBalance').textContent=formatCurrency(aSnap.val()||0);
-  const uSnap=await get(ref(db,'users'));
-  const users=uSnap.val()||{};
-  document.getElementById('aUsers').textContent=Object.keys(users).length;
-  document.getElementById('aPending').textContent=Object.values(users).filter(u=>u.status==='pending').length;
-  const tSnap=await get(ref(db,'transactions'));
-  document.getElementById('aTxns').textContent=tSnap.exists()?Object.keys(tSnap.val()).length:0;
+  document.getElementById('adminBalance').textContent=formatCurrency((await get(ref(db,'admin/balance'))).val()||0);
+  const users=(await get(ref(db,'users'))).val()||{};
+  document.getElementById('adminUsers').textContent=Object.keys(users).length;
+  document.getElementById('adminPending').textContent=Object.values(users).filter(u=>u.status==='pending').length;
+  document.getElementById('pendingBadge').textContent=Object.values(users).filter(u=>u.status==='pending').length;
+  document.getElementById('adminTxns').textContent=(await get(ref(db,'transactions'))).exists()?Object.keys((await get(ref(db,'transactions'))).val()).length:0;
   adminTab('users',document.querySelector('#page-admin-dashboard .tab'));
 }
 
 window.adminTab = async (tab,el)=>{
-  document.querySelectorAll('#page-admin-dashboard .tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
+  document.querySelectorAll('#page-admin-dashboard .tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');
   const c=document.getElementById('adminContent');
-  
   if(tab==='users'){
-    const snap=await get(ref(db,'users'));
-    const users=snap.val()||{};
-    c.innerHTML=Object.entries(users).filter(([k,u])=>u.status==='approved').map(([k,u])=>`<div style="background:var(--card-light);padding:10px;border-radius:8px;margin:5px 0;display:flex;justify-content:space-between;align-items:center;"><div><strong>${u.name}</strong> @${u.username}<br><small>${u.accountNumber} | ${u.email||'No email'}</small></div><div><strong>${formatCurrency(u.balance)}</strong><br><button class="btn btn-sm btn-secondary" onclick="editUser('${k}',${u.balance})">Edit</button> <button class="btn btn-sm btn-danger" onclick="banUser('${k}')">Ban</button></div></div>`).join('');
+    const users=(await get(ref(db,'users'))).val()||{};
+    c.innerHTML=Object.entries(users).filter(([k,u])=>u.status==='approved').map(([k,u])=>`<div class="widget"><div style="display:flex;justify-content:space-between;"><div><strong>${u.name}</strong> @${u.username}<br><small>${u.accountNumber} | ${u.email||'No email'}</small></div><div><strong>${formatCurrency(u.balance)}</strong><br><button class="btn btn-sm btn-outline" onclick="editUser('${k}',${u.balance})">Edit</button> <button class="btn btn-sm btn-danger" onclick="banUser('${k}')">Ban</button></div></div></div>`).join('');
   }else if(tab==='pending'){
-    const snap=await get(ref(db,'users'));
-    const users=snap.val()||{};
-    c.innerHTML=Object.entries(users).filter(([k,u])=>u.status==='pending').map(([k,u])=>`<div style="background:var(--card-light);padding:10px;border-radius:8px;margin:5px 0;display:flex;justify-content:space-between;align-items:center;"><div><strong>${u.name}</strong> @${u.username}<br><small>${u.accountNumber} | ${u.email}</small></div><div><button class="btn btn-sm btn-success" onclick="approveUser('${k}')">✅ Approve</button> <button class="btn btn-sm btn-danger" onclick="rejectUser('${k}')">❌ Reject</button></div></div>`).join('')||'<p>No pending users</p>';
+    const users=(await get(ref(db,'users'))).val()||{};
+    c.innerHTML=Object.entries(users).filter(([k,u])=>u.status==='pending').map(([k,u])=>`<div class="widget" style="border:2px solid var(--warning);"><div style="display:flex;justify-content:space-between;"><div><strong>${u.name}</strong> @${u.username}<br><small>${u.accountNumber} | ${u.email}</small></div><div><button class="btn btn-sm btn-success" onclick="approveUser('${k}')">✅</button> <button class="btn btn-sm btn-danger" onclick="rejectUser('${k}')">❌</button></div></div></div>`).join('')||'<p>No pending</p>';
   }else if(tab==='txns'){
-    const snap=await get(ref(db,'transactions'));
-    if(!snap.exists()){c.innerHTML='<p>No transactions</p>';return;}
-    c.innerHTML=Object.entries(snap.val()).reverse().slice(0,20).map(([k,t])=>`<div style="background:var(--card-light);padding:8px;border-radius:8px;margin:4px 0;font-size:0.8rem;"><strong>${formatCurrency(t.amount)}</strong> ${t.sender}→${t.recipient} | Fee:${formatCurrency(t.fee||0)}</div>`).join('');
+    const txns=(await get(ref(db,'transactions'))).val()||{};
+    c.innerHTML=Object.entries(txns).reverse().slice(0,20).map(([k,t])=>`<div style="background:var(--card-light);padding:8px;border-radius:8px;margin:4px 0;font-size:0.8rem;"><strong>${formatCurrency(t.amount)}</strong> ${t.sender}→${t.recipient} | Fee:${formatCurrency(t.fee||0)}</div>`).join('');
   }else if(tab==='coupons'){
-    c.innerHTML=`<div class="form-group"><label class="form-label">Code</label><input type="text" class="form-input" id="newCouponCode"></div><div class="form-group"><label class="form-label">Amount</label><input type="number" class="form-input" id="newCouponAmount" value="10000"></div><button class="btn btn-primary" onclick="createCoupon()">Create Coupon</button><div id="couponList" style="margin-top:10px;"></div>`;
+    c.innerHTML=`<div class="form-group"><label class="form-label">Code</label><input type="text" class="form-input" id="newCouponCode"></div><div class="form-group"><label class="form-label">Amount</label><input type="number" class="form-input" id="newCouponAmount" value="10000"></div><button class="btn btn-primary" onclick="createCoupon()">Create</button><div id="couponList" style="margin-top:10px;"></div>`;
     loadCoupons();
   }else if(tab==='broadcast'){
     c.innerHTML=`<div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="broadcastTitle"></div><div class="form-group"><label class="form-label">Message</label><textarea class="form-input" id="broadcastMsg" rows="3"></textarea></div><button class="btn btn-warning" onclick="broadcast()">📢 Send to All</button>`;
   }
 };
 
-window.approveUser = async (uid)=>{
-  await update(ref(db,`users/${uid}`),{status:'approved'});
-  showToast('Approved!','success');
-  loadAdminDashboard();
-};
+window.approveUser = async(uid)=>{await update(ref(db,`users/${uid}`),{status:'approved'});loadAdminDashboard();showToast('Approved!','success');};
+window.rejectUser = async(uid)=>{await update(ref(db,`users/${uid}`),{status:'rejected'});loadAdminDashboard();};
+window.editUser = async(uid,bal)=>{const nb=prompt('New balance:',bal);if(nb&&!isNaN(parseFloat(nb))){await update(ref(db,`users/${uid}`),{balance:parseFloat(nb)});loadAdminDashboard();}};
+window.banUser = async(uid)=>{await update(ref(db,`users/${uid}`),{status:'banned'});loadAdminDashboard();};
+window.createCoupon = async()=>{const code=document.getElementById('newCouponCode').value.trim(),a=parseFloat(document.getElementById('newCouponAmount').value);if(code&&!isNaN(a)){await set(push(ref(db,'coupons')),{code,amount:a,maxUses:1,active:true,usedBy:{},createdAt:Date.now()});loadCoupons();showToast('Created!','success');}};
+async function loadCoupons(){const snap=await get(ref(db,'coupons'));const c=document.getElementById('couponList');if(snap.exists())c.innerHTML=Object.entries(snap.val()).map(([k,v])=>`<div style="background:var(--card-light);padding:6px 10px;border-radius:6px;margin:3px 0;font-size:0.8rem;">${v.code} - ${formatCurrency(v.amount)} <button class="btn btn-sm btn-danger" style="float:right;" onclick="delCoupon('${k}')">Del</button></div>`).join('');}
+window.delCoupon = async(id)=>{await remove(ref(db,`coupons/${id}`));loadCoupons();};
+window.broadcast = async()=>{const t=document.getElementById('broadcastTitle').value.trim(),m=document.getElementById('broadcastMsg').value.trim();if(!t||!m)return;await set(push(ref(db,'notifications')),{title:t,message:m,target:'all',timestamp:Date.now()});const uSnap=await get(ref(db,'users'));if(uSnap.exists()){for(const[uid,u]of Object.entries(uSnap.val())){if(u.email)await set(push(ref(db,'mail_emails')),{from:'admin@matabank.com',to:u.email,subject:'📢 '+t,body:m,emailType:'notification',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});}}showToast('Broadcast sent!','success');};
 
-window.rejectUser = async (uid)=>{
-  await update(ref(db,`users/${uid}`),{status:'rejected'});
-  showToast('Rejected','error');
-  loadAdminDashboard();
-};
-
-window.editUser = async (uid,bal)=>{
-  const nb=prompt('New balance:',bal);
-  if(nb!==null&&!isNaN(parseFloat(nb))&&parseFloat(nb)>=0){await update(ref(db,`users/${uid}`),{balance:parseFloat(nb)});loadAdminDashboard();showToast('Updated!','success');}
-};
-
-window.banUser = async (uid)=>{
-  await update(ref(db,`users/${uid}`),{status:'banned'});
-  loadAdminDashboard();
-  showToast('Banned','error');
-};
-
-window.createCoupon = async ()=>{
-  const code=document.getElementById('newCouponCode').value.trim();
-  const amount=parseFloat(document.getElementById('newCouponAmount').value);
-  if(!code||isNaN(amount))return;
-  await set(push(ref(db,'coupons')),{code,amount,maxUses:1,active:true,usedBy:{},createdAt:Date.now()});
-  loadCoupons();
-  showToast('Coupon created!','success');
-};
-
-async function loadCoupons(){
-  const snap=await get(ref(db,'coupons'));
-  const c=document.getElementById('couponList');
-  if(!snap.exists()){c.innerHTML='<p>No coupons</p>';return;}
-  c.innerHTML=Object.entries(snap.val()).map(([k,v])=>`<div style="background:var(--card-light);padding:6px 10px;border-radius:6px;margin:3px 0;font-size:0.8rem;">${v.code} - ${formatCurrency(v.amount)} <button class="btn btn-sm btn-danger" style="float:right;" onclick="deleteCoupon('${k}')">Del</button></div>`).join('');
+// Dashboard
+function setupRealtime(){
+  realtimeListeners.forEach(l=>off(l)); realtimeListeners=[];
+  realtimeListeners.push(ref(db,`users/${currentUser.uid}`));
+  onValue(ref(db,`users/${currentUser.uid}`),snap=>{if(snap.exists()){currentUser={uid:currentUser.uid,...snap.val()};if(currentPage==='dashboard')updateDashboardUI();}});
+  onValue(ref(db,'transactions'),()=>{if(currentPage==='dashboard')loadRecentTxns();if(currentPage==='history')loadFullHistory();});
+  onValue(ref(db,'notifications'),()=>{if(currentPage==='dashboard')loadNotifications();});
 }
 
-window.deleteCoupon = async (id)=>{await remove(ref(db,`coupons/${id}`));loadCoupons();};
+async function loadDashboard(){const snap=await get(ref(db,`users/${currentUser.uid}`));if(snap.exists())currentUser={uid:currentUser.uid,...snap.val()};updateDashboardUI();loadRecentTxns();loadNotifications();}
+function updateDashboardUI(){document.getElementById('dashBalance').textContent=formatCurrency(currentUser.balance||0);document.getElementById('dashAccount').textContent='LKR • '+((currentUser.accountNumber||'').slice(-4));}
 
-window.broadcast = async ()=>{
-  const title=document.getElementById('broadcastTitle').value.trim();
-  const msg=document.getElementById('broadcastMsg').value.trim();
-  if(!title||!msg)return;
-  await set(push(ref(db,'notifications')),{title,message:msg,target:'all',timestamp:Date.now()});
-  
-  const uSnap=await get(ref(db,'users'));
-  if(uSnap.exists()){
-    for(const [uid,user] of Object.entries(uSnap.val())){
-      if(user.email){
-        await set(push(ref(db,'mail_emails')),{from:'admin@matabank.com',to:user.email,subject:'📢 '+title,body:msg,emailType:'notification',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
-      }
-    }
-  }
-  showToast('Broadcast sent!','success');
-  document.getElementById('broadcastTitle').value='';
-  document.getElementById('broadcastMsg').value='';
+async function loadRecentTxns(){
+  const snap=await get(ref(db,'transactions')), c=document.getElementById('recentTransactions');
+  if(!snap.exists()){c.innerHTML='<p style="color:var(--text-muted);text-align:center;">No transactions</p>';return;}
+  const txns=Object.entries(snap.val()).reverse().filter(([k,t])=>t.sender===currentUser.accountNumber||t.recipient===currentUser.accountNumber).slice(0,5);
+  c.innerHTML=txns.map(([k,t])=>{const s=t.sender===currentUser.accountNumber;return`<div class="txn-item"><div class="txn-icon ${s?'sent':'received'}">${s?'↑':'↓'}</div><div class="txn-info"><div class="txn-name">${s?'To: '+t.recipient:'From: '+t.sender}</div><div class="txn-date">${new Date(t.timestamp).toLocaleDateString()}</div></div><div class="txn-amount ${s?'debit':'credit'}">${s?'-':'+'}${formatCurrency(t.amount)}</div></div>`;}).join('')||'<p style="color:var(--text-muted);text-align:center;">No transactions</p>';
+}
+
+async function loadNotifications(){
+  const snap=await get(ref(db,'notifications')), c=document.getElementById('dashNotifications');
+  if(!snap.exists()){c.innerHTML='';return;}
+  c.innerHTML=Object.entries(snap.val()).filter(([k,n])=>(n.target==='all'||n.targetUser===currentUser.accountNumber)&&(!n.readBy||!n.readBy[currentUser.uid])).map(([k,n])=>`<div class="widget" style="border-left:3px solid var(--warning);"><strong>📢 ${n.title}</strong><p>${n.message}</p></div>`).join('');
+}
+
+// Send Money
+window.updateFee=()=>{const a=parseFloat(document.getElementById('sendAmount').value)||0,f=a*0.03;document.getElementById('sendFee').textContent=formatCurrency(f);document.getElementById('sendTotal').textContent=formatCurrency(a+f);};
+window.sendMoney=async()=>{
+  const r=document.getElementById('sendRecipient').value.trim().toLowerCase(),a=parseFloat(document.getElementById('sendAmount').value);
+  document.getElementById('sendError').textContent='';document.getElementById('sendSuccess').textContent='';
+  if(!r||isNaN(a)||a<=0){document.getElementById('sendError').textContent='Invalid';return;}
+  const snap=await get(ref(db,'users')),users=snap.val();
+  const rec=Object.entries(users).find(([k,u])=>u.username===r||u.accountNumber===r);
+  if(!rec){document.getElementById('sendError').textContent='Not found';return;}
+  if(rec[1].accountNumber===currentUser.accountNumber){document.getElementById('sendError').textContent='Self';return;}
+  const fee=a*0.03,total=a+fee;
+  if(currentUser.balance<total){document.getElementById('sendError').textContent=`Need ${formatCurrency(total)}`;return;}
+  if(!confirm(`Send ${formatCurrency(a)}?\nFee: ${formatCurrency(fee)}`))return;
+  await update(ref(db,`users/${currentUser.uid}`),{balance:currentUser.balance-total});
+  await update(ref(db,`users/${rec[0]}`),{balance:rec[1].balance+a});
+  await set(ref(db,'admin/balance'),((await get(ref(db,'admin/balance'))).val()||0)+fee);
+  await set(push(ref(db,'transactions')),{sender:currentUser.accountNumber,recipient:rec[1].accountNumber,amount:a,fee,type:'transfer',timestamp:Date.now()});
+  if(rec[1].email)await set(push(ref(db,'mail_emails')),{from:'alerts@matabank.com',to:rec[1].email,subject:'💳 Received '+formatCurrency(a),body:`Received ${formatCurrency(a)} from ${currentUser.name}`,emailType:'transaction',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
+  if(currentUser.email)await set(push(ref(db,'mail_emails')),{from:'alerts@matabank.com',to:currentUser.email,subject:'💳 Sent '+formatCurrency(a),body:`Sent ${formatCurrency(a)} to ${rec[1].name}`,emailType:'transaction',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
+  document.getElementById('sendSuccess').textContent='Sent!'; document.getElementById('sendAmount').value=''; showToast('Done!','success');
 };
 
-// ==================== INIT ====================
+// QR
+function generateMyQR(){setTimeout(()=>{const c=document.getElementById('myQrDisplay');c.innerHTML='';document.getElementById('myQrAccount').textContent=currentUser.accountNumber;if(typeof QRCode!=='undefined')new QRCode(c,{text:JSON.stringify({type:'account',accountNumber:currentUser.accountNumber,name:currentUser.name}),width:200,height:200});},200);}
+window.generateRequestQR=()=>{const a=parseFloat(document.getElementById('requestAmount').value);if(isNaN(a)||a<=0){alert('Enter amount');return;}const c=document.getElementById('requestQrDisplay');c.innerHTML='';setTimeout(()=>{if(typeof QRCode!=='undefined')new QRCode(c,{text:JSON.stringify({type:'payment_request',requesterAccount:currentUser.accountNumber,requesterName:currentUser.name,amount:a}),width:200,height:200});},100);};
+
+async function startCamera(){stopCamera();try{videoStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const c=document.getElementById('cameraContainer');c.innerHTML='<div class="scan-overlay"><div class="scan-line"></div></div>';const v=document.createElement('video');v.autoplay=true;v.playsInline=true;v.srcObject=videoStream;c.prepend(v);v.onloadedmetadata=()=>{v.play();startScanning(v);};}catch(e){}}
+function stopCamera(){if(scanInterval)clearInterval(scanInterval);if(videoStream){videoStream.getTracks().forEach(t=>t.stop());videoStream=null;}}
+function startScanning(v){const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');scanInterval=setInterval(()=>{if(v.readyState<2)return;canvas.width=v.videoWidth;canvas.height=v.videoHeight;if(!canvas.width)return;ctx.drawImage(v,0,0);const code=jsQR(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height);if(code){stopCamera();processQR(code.data);}},100);}
+function processQR(d){try{const p=JSON.parse(d);if(p.type==='account'){document.getElementById('sendRecipient').value=p.accountNumber;navigateTo('send-money');}else if(p.type==='payment_request'){pendingQRData=p;document.getElementById('qrConfirmDetails').innerHTML=`<p><strong>To:</strong> ${p.requesterName}</p><p><strong>Amount:</strong> ${formatCurrency(p.amount)}</p><p><strong>Fee:</strong> ${formatCurrency(p.amount*0.03)}</p><p><strong>Total:</strong> ${formatCurrency(p.amount*1.03)}</p>`;document.getElementById('qrConfirmModal').classList.remove('hidden');}}catch(e){}}
+window.closeQRConfirm=()=>{document.getElementById('qrConfirmModal').classList.add('hidden');pendingQRData=null;};
+window.confirmQRPayment=async()=>{if(!pendingQRData)return;const d=pendingQRData,fee=d.amount*0.03,total=d.amount+fee;if(currentUser.balance<total){document.getElementById('qrConfirmError').textContent='Insufficient';return;}const snap=await get(ref(db,'users'));const rec=Object.entries(snap.val()).find(([k,u])=>u.accountNumber===d.requesterAccount);if(!rec){document.getElementById('qrConfirmError').textContent='Not found';return;}await update(ref(db,`users/${currentUser.uid}`),{balance:currentUser.balance-total});await update(ref(db,`users/${rec[0]}`),{balance:rec[1].balance+d.amount});await set(ref(db,'admin/balance'),((await get(ref(db,'admin/balance'))).val()||0)+fee);await set(push(ref(db,'transactions')),{sender:currentUser.accountNumber,recipient:d.requesterAccount,amount:d.amount,fee,type:'request_pay',timestamp:Date.now()});closeQRConfirm();showToast('Paid!','success');navigateTo('dashboard');};
+
+// Coupons
+window.redeemCoupon=async()=>{const code=document.getElementById('couponInput').value.trim(),msg=document.getElementById('couponMsg');if(!code){msg.innerHTML='<span style="color:var(--danger)">Enter code</span>';return;}const snap=await get(ref(db,'coupons'));if(!snap.exists()){msg.innerHTML='<span style="color:var(--danger)">None</span>';return;}const entry=Object.entries(snap.val()).find(([k,c])=>c.code===code&&c.active);if(!entry){msg.innerHTML='<span style="color:var(--danger)">Invalid</span>';return;}const[cid,cd]=entry;if((cd.usedBy||{})[currentUser.uid]){msg.innerHTML='<span style="color:var(--danger)">Used</span>';return;}await update(ref(db,`users/${currentUser.uid}`),{balance:currentUser.balance+cd.amount});await update(ref(db,`coupons/${cid}/usedBy`),{[currentUser.uid]:true});msg.innerHTML=`<span style="color:var(--success)">+${formatCurrency(cd.amount)}!</span>`;};
+
+// History
+async function loadFullHistory(){const snap=await get(ref(db,'transactions')),c=document.getElementById('fullTransactionList');if(!snap.exists()){c.innerHTML='<p style="color:var(--text-muted);text-align:center;">None</p>';return;}let txns=Object.entries(snap.val()).reverse().filter(([k,t])=>t.sender===currentUser.accountNumber||t.recipient===currentUser.accountNumber);if(txnFilter==='sent')txns=txns.filter(([k,t])=>t.sender===currentUser.accountNumber);if(txnFilter==='received')txns=txns.filter(([k,t])=>t.recipient===currentUser.accountNumber);c.innerHTML=txns.map(([k,t])=>{const s=t.sender===currentUser.accountNumber;return`<div class="txn-item"><div class="txn-icon ${s?'sent':'received'}">${s?'↑':'↓'}</div><div class="txn-info"><div class="txn-name">${s?t.recipient:t.sender}</div><div class="txn-date">${new Date(t.timestamp).toLocaleString()}</div></div><div class="txn-amount ${s?'debit':'credit'}">${s?'-':'+'}${formatCurrency(t.amount)}</div></div>`;}).join('')||'<p style="color:var(--text-muted);text-align:center;">None</p>';}
+window.filterTxns=(f,el)=>{txnFilter=f;document.querySelectorAll('#page-history .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadFullHistory();};
+
+// Init
 async function init(){
-  const aSnap=await get(ref(db,'admin'));
-  if(!aSnap.exists())await set(ref(db,'admin'),{accountNumber:'999999999999',balance:0,credentials:{username:'admin',password:'admin123'}});
-  
-  const uSnap=await get(ref(db,'users'));
-  if(!uSnap.exists()){
-    await set(ref(db,'users'),{
-      user1:{accountNumber:'100000000001',username:'userone',name:'User One',email:'alice@mail.com',password:'pass1001',balance:50000,status:'approved',createdAt:Date.now(),lastActive:Date.now()},
-      user2:{accountNumber:'100000000002',username:'usertwo',name:'User Two',email:'bob@mail.com',password:'pass1002',balance:25000,status:'approved',createdAt:Date.now(),lastActive:Date.now()}
-    });
-  }
-  
-  const mSnap=await get(ref(db,'mail_users'));
-  if(!mSnap.exists()){
-    await set(ref(db,'mail_users'),{
-      m1:{name:'Alice Johnson',email:'alice@mail.com',password:'pass1001',createdAt:Date.now()},
-      m2:{name:'Bob Smith',email:'bob@mail.com',password:'pass1002',createdAt:Date.now()}
-    });
-  }
-  
-  const cSnap=await get(ref(db,'coupons'));
-  if(!cSnap.exists())await set(push(ref(db,'coupons')),{code:'äddon',amount:10000,maxUses:1,active:true,usedBy:{},createdAt:Date.now()});
-  
-  setTimeout(()=>{document.getElementById('splashScreen').classList.add('hidden');document.getElementById('appWrapper').style.display='block';},2000);
+  const aSnap=await get(ref(db,'admin')); if(!aSnap.exists())await set(ref(db,'admin'),{accountNumber:'999999999999',balance:0,credentials:{username:'admin',password:'admin123'}});
+  const uSnap=await get(ref(db,'users')); if(!uSnap.exists())await set(ref(db,'users'),{user1:{accountNumber:'100000000001',username:'userone',name:'User One',email:'alice@mail.com',password:'pass1001',balance:50000,status:'approved',createdAt:Date.now(),lastActive:Date.now()},user2:{accountNumber:'100000000002',username:'usertwo',name:'User Two',email:'bob@mail.com',password:'pass1002',balance:25000,status:'approved',createdAt:Date.now(),lastActive:Date.now()}});
+  const mSnap=await get(ref(db,'mail_users')); if(!mSnap.exists())await set(ref(db,'mail_users'),{m1:{name:'Alice Johnson',email:'alice@mail.com',password:'pass1001',createdAt:Date.now()},m2:{name:'Bob Smith',email:'bob@mail.com',password:'pass1002',createdAt:Date.now()}});
+  const cSnap=await get(ref(db,'coupons')); if(!cSnap.exists())await set(push(ref(db,'coupons')),{code:'äddon',amount:10000,maxUses:1,active:true,usedBy:{},createdAt:Date.now()});
+  setTimeout(()=>{document.getElementById('splashScreen').classList.add('hidden');document.getElementById('appWrapper').style.display='block';navigateTo('login');},2000);
 }
-
 init();
-console.log('✅ Mata Bank Pro Ready');
-console.log('👤 userone/pass1001 | usertwo/pass1002');
-console.log('👑 admin/admin123');
-console.log('📧 Emails: alice@mail.com | bob@mail.com');
+console.log('✅ Mata Bank Pro | Separate System');
+console.log('👤 userone/pass1001 | usertwo/pass1002 | 👑 admin/admin123');
+console.log('📧 Sends OTP & Transaction emails to Mail System');
 </script>
 </body>
 </html>
