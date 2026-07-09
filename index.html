@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Mata Bank Pro | Premium Banking System</title>
+  <title>Mata Bank Pro | Premium Banking System v3.0</title>
   <style>
     :root {
       --primary: #6c5ce7;
@@ -26,11 +26,7 @@
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -40,51 +36,19 @@
       overflow-x: hidden;
     }
 
-    /* Animated Background */
     .bg-animation {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
     }
 
     .bg-circle {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.1;
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.1;
       animation: float 20s infinite ease-in-out;
     }
 
-    .bg-circle:nth-child(1) {
-      width: 400px;
-      height: 400px;
-      background: var(--primary);
-      top: -100px;
-      left: -100px;
-      animation-delay: 0s;
-    }
-
-    .bg-circle:nth-child(2) {
-      width: 300px;
-      height: 300px;
-      background: var(--secondary);
-      bottom: -50px;
-      right: -50px;
-      animation-delay: -7s;
-    }
-
-    .bg-circle:nth-child(3) {
-      width: 250px;
-      height: 250px;
-      background: var(--accent);
-      top: 50%;
-      left: 50%;
-      animation-delay: -14s;
-    }
+    .bg-circle:nth-child(1) { width: 400px; height: 400px; background: var(--primary); top: -100px; left: -100px; animation-delay: 0s; }
+    .bg-circle:nth-child(2) { width: 300px; height: 300px; background: var(--secondary); bottom: -50px; right: -50px; animation-delay: -7s; }
+    .bg-circle:nth-child(3) { width: 250px; height: 250px; background: var(--accent); top: 50%; left: 50%; animation-delay: -14s; }
 
     @keyframes float {
       0%, 100% { transform: translate(0, 0) scale(1); }
@@ -92,53 +56,27 @@
       66% { transform: translate(-30px, 30px) scale(0.9); }
     }
 
-    /* Main App Container */
     .app-wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      background: rgba(12, 12, 29, 0.8);
-      backdrop-filter: blur(20px);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      overflow: hidden;
+      position: relative; z-index: 1; max-width: 480px; margin: 0 auto;
+      min-height: 100vh; background: rgba(12, 12, 29, 0.8);
+      backdrop-filter: blur(20px); border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border); overflow: hidden;
     }
 
-    /* Splash Screen */
     .splash-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--darker);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--darker); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 9999;
       transition: opacity 0.5s, visibility 0.5s;
     }
 
-    .splash-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
+    .splash-screen.hidden { opacity: 0; visibility: hidden; }
 
     .splash-logo {
-      width: 120px;
-      height: 120px;
+      width: 120px; height: 120px;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      color: white;
-      animation: pulse 2s infinite;
-      box-shadow: var(--glow);
+      border-radius: 30px; display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; color: white; animation: pulse 2s infinite; box-shadow: var(--glow);
     }
 
     @keyframes pulse {
@@ -147,31 +85,20 @@
     }
 
     .splash-text {
-      margin-top: 20px;
-      font-size: 1.5rem;
-      font-weight: 700;
+      margin-top: 20px; font-size: 1.5rem; font-weight: 700;
       background: linear-gradient(135deg, var(--primary-light), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
     .loading-bar {
-      width: 200px;
-      height: 4px;
-      background: var(--card);
-      border-radius: 2px;
-      margin-top: 30px;
-      overflow: hidden;
+      width: 200px; height: 4px; background: var(--card); border-radius: 2px;
+      margin-top: 30px; overflow: hidden;
     }
 
     .loading-bar::after {
-      content: '';
-      display: block;
-      width: 50%;
-      height: 100%;
+      content: ''; display: block; width: 50%; height: 100%;
       background: linear-gradient(90deg, var(--primary), var(--secondary));
-      border-radius: 2px;
-      animation: loading 1.5s infinite;
+      border-radius: 2px; animation: loading 1.5s infinite;
     }
 
     @keyframes loading {
@@ -181,392 +108,156 @@
 
     /* Navigation */
     .nav-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 15px 20px;
-      background: rgba(21, 21, 48, 0.9);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 15px 20px; background: rgba(21, 21, 48, 0.9);
+      backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
     }
 
     .nav-title {
-      font-size: 1.2rem;
-      font-weight: 700;
+      font-size: 1.2rem; font-weight: 700;
       background: linear-gradient(135deg, var(--primary-light), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
     .nav-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--card-light);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-      color: var(--text);
-      font-size: 1.2rem;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: var(--card-light); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: var(--transition); color: var(--text); font-size: 1.2rem;
     }
 
-    .nav-icon:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-      box-shadow: var(--glow);
-    }
+    .nav-icon:hover { background: var(--primary); border-color: var(--primary); box-shadow: var(--glow); }
 
-    /* Page Container */
-    .page-container {
-      position: relative;
-      min-height: calc(100vh - 70px);
-    }
+    .page-container { position: relative; min-height: calc(100vh - 70px); }
 
     .page {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 20px;
+      position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
     }
 
-    .page.active {
-      position: relative;
-      transform: translateX(0);
-      opacity: 1;
-    }
-
-    .page.slide-left {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-
-    .page.slide-right {
-      transform: translateX(100%);
-      opacity: 0;
-    }
+    .page.active { position: relative; transform: translateX(0); opacity: 1; }
+    .page.slide-left { transform: translateX(-100%); opacity: 0; }
+    .page.slide-right { transform: translateX(100%); opacity: 0; }
 
     /* Balance Card */
     .balance-card {
       background: linear-gradient(135deg, var(--primary), #4834d4);
-      border-radius: var(--radius);
-      padding: 25px;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--glow);
+      border-radius: var(--radius); padding: 25px; margin-bottom: 20px;
+      position: relative; overflow: hidden; box-shadow: var(--glow);
     }
 
     .balance-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
+      content: ''; position: absolute; top: -50%; right: -50%;
+      width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;
     }
 
-    .balance-card::after {
-      content: '';
-      position: absolute;
-      bottom: -30%;
-      left: -20%;
-      width: 150px;
-      height: 150px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 50%;
-    }
-
-    .balance-label {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.8;
-    }
-
-    .balance-amount {
-      font-size: 2.8rem;
-      font-weight: 800;
-      margin: 5px 0;
-      position: relative;
-      z-index: 1;
-    }
-
-    .balance-account {
-      font-size: 0.9rem;
-      opacity: 0.9;
-      position: relative;
-      z-index: 1;
-    }
+    .balance-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
+    .balance-amount { font-size: 2.8rem; font-weight: 800; margin: 5px 0; position: relative; z-index: 1; }
+    .balance-account { font-size: 0.9rem; opacity: 0.9; position: relative; z-index: 1; }
 
     .balance-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-      position: relative;
-      z-index: 1;
+      display: flex; gap: 10px; margin-top: 15px; position: relative; z-index: 1;
     }
 
     /* Quick Actions */
     .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
     }
 
     .quick-action {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 15px 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: var(--transition);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 15px 10px; text-align: center;
+      cursor: pointer; transition: var(--transition);
     }
 
-    .quick-action:hover {
-      background: var(--card-light);
-      transform: translateY(-3px);
-      box-shadow: var(--glow);
-    }
+    .quick-action:hover { background: var(--card-light); transform: translateY(-3px); box-shadow: var(--glow); }
+    .quick-action-icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .quick-action-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    .quick-action-icon {
-      font-size: 1.8rem;
-      margin-bottom: 8px;
-    }
-
-    .quick-action-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* Widget Cards */
+    /* Widget */
     .widget {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 15px;
-      transition: var(--transition);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; margin-bottom: 15px; transition: var(--transition);
     }
 
-    .widget:hover {
-      border-color: var(--primary);
-      box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
-    }
+    .widget:hover { border-color: var(--primary); box-shadow: 0 0 20px rgba(108, 92, 231, 0.1); }
 
     .widget-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
     }
 
-    .widget-title {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
+    .widget-title { font-weight: 600; font-size: 1rem; }
     .widget-badge {
-      background: rgba(108, 92, 231, 0.2);
-      color: var(--primary-light);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      background: rgba(108, 92, 231, 0.2); color: var(--primary-light);
+      padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer;
     }
 
     /* Transaction Item */
     .txn-item {
-      display: flex;
-      align-items: center;
-      padding: 12px;
-      background: var(--card-light);
-      border-radius: var(--radius-sm);
-      margin-bottom: 8px;
-      transition: var(--transition);
-      cursor: pointer;
+      display: flex; align-items: center; padding: 12px; background: var(--card-light);
+      border-radius: var(--radius-sm); margin-bottom: 8px; transition: var(--transition); cursor: pointer;
     }
 
-    .txn-item:hover {
-      transform: translateX(5px);
-      background: rgba(108, 92, 231, 0.1);
-    }
+    .txn-item:hover { transform: translateX(5px); background: rgba(108, 92, 231, 0.1); }
 
     .txn-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      margin-right: 12px;
-      flex-shrink: 0;
+      width: 45px; height: 45px; border-radius: 12px; display: flex;
+      align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 12px; flex-shrink: 0;
     }
 
     .txn-icon.sent { background: rgba(225, 112, 85, 0.2); color: var(--danger); }
     .txn-icon.received { background: rgba(0, 184, 148, 0.2); color: var(--success); }
-    .txn-icon.request { background: rgba(253, 203, 110, 0.2); color: var(--warning); }
 
-    .txn-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .txn-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .txn-date {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .txn-amount {
-      font-weight: 700;
-      text-align: right;
-    }
-
+    .txn-info { flex: 1; min-width: 0; }
+    .txn-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .txn-date { font-size: 0.75rem; color: var(--text-muted); }
+    .txn-amount { font-weight: 700; text-align: right; }
     .txn-amount.credit { color: var(--success); }
     .txn-amount.debit { color: var(--danger); }
 
-    /* Form Styles */
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+    /* Form */
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
 
     .form-input {
-      width: 100%;
-      padding: 14px 18px;
-      background: var(--card-light);
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-size: 1rem;
-      transition: var(--transition);
-      outline: none;
+      width: 100%; padding: 14px 18px; background: var(--card-light);
+      border: 2px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-size: 1rem; transition: var(--transition); outline: none;
     }
 
-    .form-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
-    }
-
-    .form-input::placeholder {
-      color: var(--text-muted);
-    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1); }
+    .form-input::placeholder { color: var(--text-muted); }
 
     /* Buttons */
     .btn {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: var(--transition);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
+      width: 100%; padding: 15px; border: none; border-radius: var(--radius-sm);
+      font-weight: 600; font-size: 1rem; cursor: pointer; transition: var(--transition);
+      text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden;
     }
 
     .btn::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255,255,255,0.2);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+      content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0;
+      background: rgba(255,255,255,0.2); border-radius: 50%;
+      transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s;
     }
 
-    .btn:active::after {
-      width: 300px;
-      height: 300px;
-    }
+    .btn:active::after { width: 300px; height: 300px; }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #4834d4);
-      color: white;
-      box-shadow: 0 5px 20px rgba(108, 92, 231, 0.3);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(108, 92, 231, 0.5);
-    }
-
-    .btn-secondary {
-      background: var(--card-light);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, var(--success), #00a884);
-      color: white;
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, var(--danger), #c0392b);
-      color: white;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid var(--primary);
-      color: var(--primary-light);
-    }
-
-    .btn-sm {
-      padding: 8px 16px;
-      font-size: 0.8rem;
-      width: auto;
-    }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #4834d4); color: white; box-shadow: 0 5px 20px rgba(108, 92, 231, 0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.5); }
+    .btn-secondary { background: var(--card-light); color: var(--text); border: 1px solid var(--border); }
+    .btn-success { background: linear-gradient(135deg, var(--success), #00a884); color: white; }
+    .btn-danger { background: linear-gradient(135deg, var(--danger), #c0392b); color: white; }
+    .btn-warning { background: linear-gradient(135deg, var(--warning), #f39c12); color: #000; }
+    .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary-light); }
+    .btn-sm { padding: 8px 16px; font-size: 0.8rem; width: auto; }
 
     /* Modal */
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
       animation: fadeIn 0.3s ease;
     }
 
@@ -576,13 +267,9 @@
     }
 
     .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 25px;
-      width: 90%;
-      max-width: 400px;
-      animation: slideUp 0.3s ease;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 25px; width: 90%; max-width: 400px;
+      animation: slideUp 0.3s ease; max-height: 80vh; overflow-y: auto;
     }
 
     @keyframes slideUp {
@@ -590,131 +277,76 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
-    .modal-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 20px;
+    .modal-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+
+    /* Announcement Popup */
+    .announcement-popup {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center; z-index: 3000;
+      animation: fadeIn 0.5s ease;
     }
 
-    /* Notification */
-    .notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 15px 20px;
-      z-index: 2000;
-      animation: slideDown 0.5s ease;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      max-width: 350px;
-      width: 90%;
+    .announcement-card {
+      background: linear-gradient(135deg, var(--card), var(--card-light));
+      border: 2px solid var(--primary);
+      border-radius: var(--radius); padding: 30px;
+      width: 90%; max-width: 420px; text-align: center;
+      box-shadow: 0 0 50px rgba(108, 92, 231, 0.5);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    @keyframes slideDown {
-      from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
-    /* Badge */
+    .announcement-icon { font-size: 4rem; margin-bottom: 15px; }
+    .announcement-title { font-size: 1.5rem; font-weight: 700; color: var(--primary-light); margin-bottom: 10px; }
+    .announcement-message { color: var(--text); margin-bottom: 20px; line-height: 1.6; }
+    .announcement-time { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; }
+
+    /* Status Badge */
     .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      display: inline-block; padding: 4px 10px; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
     }
 
     .badge-success { background: rgba(0,184,148,0.2); color: var(--success); }
     .badge-danger { background: rgba(225,112,85,0.2); color: var(--danger); }
     .badge-warning { background: rgba(253,203,110,0.2); color: var(--warning); }
+    .badge-info { background: rgba(108,92,231,0.2); color: var(--primary-light); }
 
     /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 5px;
-      background: var(--card-light);
-      border-radius: var(--radius-sm);
-      padding: 4px;
-      margin-bottom: 15px;
-    }
-
-    .tab {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: var(--transition);
-      color: var(--text-muted);
-    }
-
-    .tab.active {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
-    }
+    .tabs { display: flex; gap: 5px; background: var(--card-light); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 15px; }
+    .tab { flex: 1; padding: 10px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: var(--transition); color: var(--text-muted); }
+    .tab.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3); }
 
     /* QR Scanner */
-    .camera-container {
-      width: 100%;
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 2px solid var(--border);
-      position: relative;
-    }
-
-    .camera-container video {
-      width: 100%;
-      display: block;
-    }
-
-    .scan-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 200px;
-      height: 200px;
-      border: 3px solid var(--primary);
-      border-radius: 20px;
-      box-shadow: 0 0 0 1000px rgba(0,0,0,0.5);
-    }
-
-    .scan-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: var(--primary);
-      animation: scanLine 2s infinite;
-    }
+    .camera-container { width: 100%; border-radius: var(--radius); overflow: hidden; border: 2px solid var(--border); position: relative; }
+    .camera-container video { width: 100%; display: block; }
+    .scan-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 3px solid var(--primary); border-radius: 20px; box-shadow: 0 0 0 1000px rgba(0,0,0,0.5); }
+    .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--primary); animation: scanLine 2s infinite; }
 
     @keyframes scanLine {
       0%, 100% { top: 0; }
       50% { top: calc(100% - 3px); }
     }
 
+    /* Pending Approval */
+    .pending-card {
+      background: var(--card); border: 2px solid var(--warning);
+      border-radius: var(--radius); padding: 30px; text-align: center;
+    }
+
+    .pending-icon { font-size: 4rem; margin-bottom: 15px; }
+
     /* Toast */
     .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      padding: 12px 25px;
-      z-index: 2000;
-      animation: toastIn 0.5s ease;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 30px; padding: 12px 25px; z-index: 2000;
+      animation: toastIn 0.5s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     @keyframes toastIn {
@@ -723,50 +355,20 @@
     }
 
     /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 4px;
-    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 2px; }
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+    /* Stats */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 15px; text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary-light), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
-    ::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 2px;
-    }
-
-    /* Admin specific */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 15px;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--primary-light), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 5px;
-    }
+    .text-center { text-align: center; }
+    .mt-10 { margin-top: 10px; }
+    .mt-15 { margin-top: 15px; }
+    .mt-20 { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -787,6 +389,9 @@
 
   <!-- Toast Container -->
   <div id="toastContainer"></div>
+
+  <!-- Announcement Popup Container -->
+  <div id="announcementPopup"></div>
 
   <!-- Main App -->
   <div class="app-wrapper" id="appWrapper" style="display:none;">
@@ -815,22 +420,10 @@
         </div>
 
         <div class="quick-actions">
-          <div class="quick-action" onclick="navigateTo('send-money')">
-            <div class="quick-action-icon">💸</div>
-            <div class="quick-action-label">Transfer</div>
-          </div>
-          <div class="quick-action" onclick="navigateTo('qr-scanner')">
-            <div class="quick-action-icon">📷</div>
-            <div class="quick-action-label">Scan QR</div>
-          </div>
-          <div class="quick-action" onclick="navigateTo('my-qr')">
-            <div class="quick-action-icon">📱</div>
-            <div class="quick-action-label">My QR</div>
-          </div>
-          <div class="quick-action" onclick="navigateTo('coupons')">
-            <div class="quick-action-icon">🎟️</div>
-            <div class="quick-action-label">Coupons</div>
-          </div>
+          <div class="quick-action" onclick="navigateTo('send-money')"><div class="quick-action-icon">💸</div><div class="quick-action-label">Transfer</div></div>
+          <div class="quick-action" onclick="navigateTo('qr-scanner')"><div class="quick-action-icon">📷</div><div class="quick-action-label">Scan QR</div></div>
+          <div class="quick-action" onclick="navigateTo('my-qr')"><div class="quick-action-icon">📱</div><div class="quick-action-label">My QR</div></div>
+          <div class="quick-action" onclick="navigateTo('coupons')"><div class="quick-action-icon">🎟️</div><div class="quick-action-label">Coupons</div></div>
         </div>
 
         <div class="widget">
@@ -844,12 +437,28 @@
         <div id="dashNotifications"></div>
       </div>
 
+      <!-- Pending Approval Page -->
+      <div class="page slide-right" id="page-pending">
+        <div class="pending-card">
+          <div class="pending-icon">⏳</div>
+          <h2>Account Pending Approval</h2>
+          <p style="color:var(--text-muted);margin:15px 0;">Your account is currently under review by our admin team. You will be notified once approved.</p>
+          <div style="background:var(--card-light);padding:15px;border-radius:12px;margin:15px 0;">
+            <strong>Account Number:</strong> <span id="pendingAccNum">---</span><br>
+            <strong>Username:</strong> <span id="pendingUsername">---</span><br>
+            <strong>Status:</strong> <span class="badge badge-warning">Pending</span>
+          </div>
+          <button class="btn btn-secondary" onclick="checkApprovalStatus()">🔄 Check Status</button>
+          <button class="btn btn-danger mt-10" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
       <!-- Send Money Page -->
       <div class="page slide-right" id="page-send-money">
         <h2 style="margin-bottom:20px;">💸 Send Money</h2>
         <div class="form-group">
-          <label class="form-label">Recipient Account</label>
-          <input type="text" class="form-input" id="sendRecipient" placeholder="12-digit account number" maxlength="12">
+          <label class="form-label">Recipient Account / Username</label>
+          <input type="text" class="form-input" id="sendRecipient" placeholder="12-digit account or username">
         </div>
         <div class="form-group">
           <label class="form-label">Amount (LKR)</label>
@@ -878,9 +487,7 @@
       <div class="page slide-right" id="page-qr-scanner">
         <h2 style="margin-bottom:20px;">📷 Scan QR Code</h2>
         <div class="camera-container" id="cameraContainer">
-          <div class="scan-overlay">
-            <div class="scan-line"></div>
-          </div>
+          <div class="scan-overlay"><div class="scan-line"></div></div>
         </div>
         <button class="btn btn-danger" id="stopCameraBtn" style="margin-top:15px;">Stop Camera</button>
         <div id="scanResult" style="text-align:center;margin-top:10px;color:var(--success);"></div>
@@ -923,11 +530,11 @@
         <div style="text-align:center;margin-bottom:30px;">
           <div style="font-size:4rem;">🏦</div>
           <h2>Welcome Back</h2>
-          <p style="color:var(--text-muted);">Login to your account</p>
+          <p style="color:var(--text-muted);">Login with your username</p>
         </div>
         <div class="form-group">
-          <label class="form-label">Account Number</label>
-          <input type="text" class="form-input" id="loginAccNum" placeholder="12-digit number" maxlength="12">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="loginUsername" placeholder="Your username">
         </div>
         <div class="form-group">
           <label class="form-label">Password</label>
@@ -953,11 +560,15 @@
         </div>
         <div class="form-group">
           <label class="form-label">Full Name</label>
-          <input type="text" class="form-input" id="regName" placeholder="Your name">
+          <input type="text" class="form-input" id="regName" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="regUsername" placeholder="Choose a username">
         </div>
         <div class="form-group">
           <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="regPassword" placeholder="Create password">
+          <input type="password" class="form-input" id="regPassword" placeholder="Create password (min 4 chars)">
         </div>
         <button class="btn btn-primary" id="registerBtn">Create Account</button>
         <div style="text-align:center;margin-top:15px;">
@@ -990,25 +601,14 @@
       <div class="page slide-right" id="page-admin-dashboard">
         <h2 style="margin-bottom:20px;">👑 Admin Panel</h2>
         <div class="stat-grid">
-          <div class="stat-card">
-            <div class="stat-value" id="adminBalance">0</div>
-            <div class="stat-label">Total Fees</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="adminUsers">0</div>
-            <div class="stat-label">Users</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="adminTxns">0</div>
-            <div class="stat-label">Transactions</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="adminBanned">0</div>
-            <div class="stat-label">Banned</div>
-          </div>
+          <div class="stat-card"><div class="stat-value" id="adminBalance">0</div><div class="stat-label">Total Fees</div></div>
+          <div class="stat-card"><div class="stat-value" id="adminUsers">0</div><div class="stat-label">Users</div></div>
+          <div class="stat-card"><div class="stat-value" id="adminPending">0</div><div class="stat-label">Pending</div></div>
+          <div class="stat-card"><div class="stat-value" id="adminTxns">0</div><div class="stat-label">Transactions</div></div>
         </div>
         <div class="tabs">
           <div class="tab active" onclick="adminTab('users', this)">Users</div>
+          <div class="tab" onclick="adminTab('pending', this)">Pending <span class="badge badge-warning" id="pendingBadge">0</span></div>
           <div class="tab" onclick="adminTab('txns', this)">Transactions</div>
           <div class="tab" onclick="adminTab('coupons-admin', this)">Coupons</div>
           <div class="tab" onclick="adminTab('notifications', this)">Notifications</div>
@@ -1020,22 +620,10 @@
 
     <!-- Bottom Navigation -->
     <div style="display:flex;background:var(--card);border-top:1px solid var(--border);padding:10px;position:sticky;bottom:0;" id="bottomNav">
-      <div style="flex:1;text-align:center;cursor:pointer;color:var(--primary-light);" onclick="navigateTo('dashboard')">
-        <div>🏠</div>
-        <div style="font-size:0.7rem;">Home</div>
-      </div>
-      <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('history')">
-        <div>📋</div>
-        <div style="font-size:0.7rem;">History</div>
-      </div>
-      <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('qr-scanner')">
-        <div>📷</div>
-        <div style="font-size:0.7rem;">Scan</div>
-      </div>
-      <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('coupons')">
-        <div>🎟️</div>
-        <div style="font-size:0.7rem;">Coupons</div>
-      </div>
+      <div style="flex:1;text-align:center;cursor:pointer;color:var(--primary-light);" onclick="navigateTo('dashboard')"><div>🏠</div><div style="font-size:0.7rem;">Home</div></div>
+      <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('history')"><div>📋</div><div style="font-size:0.7rem;">History</div></div>
+      <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('qr-scanner')"><div>📷</div><div style="font-size:0.7rem;">Scan</div></div>
+      <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('coupons')"><div>🎟️</div><div style="font-size:0.7rem;">Coupons</div></div>
     </div>
   </div>
 
@@ -1071,6 +659,14 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // Currency Formatter
+    function formatCurrency(amount) {
+      return Number(amount).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
     // State
     let currentUser = null;
     let isAdmin = false;
@@ -1078,7 +674,7 @@
     let videoStream = null;
     let scanInterval = null;
     let pendingQRData = null;
-    let pageHistory = ['login'];
+    let currentTxnFilter = 'all';
 
     // Initialize
     async function init() {
@@ -1095,8 +691,26 @@
       const usersSnap = await get(ref(db, 'users'));
       if (!usersSnap.exists()) {
         await set(ref(db, 'users'), {
-          'user1': { accountNumber: '100000000001', name: 'User One', password: 'pass1001', balance: 50000, status: 'active', createdAt: Date.now(), lastActive: Date.now() },
-          'user2': { accountNumber: '100000000002', name: 'User Two', password: 'pass1002', balance: 25000, status: 'active', createdAt: Date.now(), lastActive: Date.now() }
+          'user1': { 
+            accountNumber: '100000000001', 
+            username: 'userone',
+            name: 'User One', 
+            password: 'pass1001', 
+            balance: 50000, 
+            status: 'approved',
+            createdAt: Date.now(), 
+            lastActive: Date.now() 
+          },
+          'user2': { 
+            accountNumber: '100000000002', 
+            username: 'usertwo',
+            name: 'User Two', 
+            password: 'pass1002', 
+            balance: 25000, 
+            status: 'approved',
+            createdAt: Date.now(), 
+            lastActive: Date.now() 
+          }
         });
       }
 
@@ -1106,7 +720,6 @@
         await set(cRef, { code: 'äddon', amount: 10000, maxUses: 1, active: true, usedBy: {}, createdAt: Date.now() });
       }
 
-      // Hide splash
       setTimeout(() => {
         document.getElementById('splashScreen').classList.add('hidden');
         document.getElementById('appWrapper').style.display = 'block';
@@ -1118,13 +731,11 @@
     function navigateTo(page) {
       stopCamera();
       
-      // Hide all pages
       document.querySelectorAll('.page').forEach(p => {
         p.classList.remove('active', 'slide-left', 'slide-right');
         p.style.display = 'none';
       });
 
-      // Show target page
       const targetPage = document.getElementById(`page-${page}`);
       if (targetPage) {
         targetPage.style.display = 'block';
@@ -1132,39 +743,31 @@
       }
 
       currentPage = page;
-      pageHistory.push(page);
       
-      // Update nav
       const titles = {
-        'dashboard': 'Dashboard',
-        'send-money': 'Send Money',
-        'request-money': 'Request',
-        'qr-scanner': 'Scan QR',
-        'my-qr': 'My QR',
-        'history': 'History',
-        'coupons': 'Coupons',
-        'login': 'Login',
-        'register': 'Register',
-        'admin-login': 'Admin',
-        'admin-dashboard': 'Admin Panel'
+        'dashboard': 'Dashboard', 'send-money': 'Send Money', 'request-money': 'Request',
+        'qr-scanner': 'Scan QR', 'my-qr': 'My QR', 'history': 'History',
+        'coupons': 'Coupons', 'login': 'Login', 'register': 'Register',
+        'admin-login': 'Admin', 'admin-dashboard': 'Admin Panel', 'pending': 'Pending Approval'
       };
       
       document.getElementById('navTitle').textContent = titles[page] || 'Mata Bank';
       document.getElementById('backBtn').style.visibility = 
-        ['login', 'dashboard', 'admin-dashboard'].includes(page) ? 'hidden' : 'visible';
+        ['login', 'dashboard', 'admin-dashboard', 'pending'].includes(page) ? 'hidden' : 'visible';
 
-      // Show/hide bottom nav
       document.getElementById('bottomNav').style.display = 
         ['dashboard', 'history', 'qr-scanner', 'coupons', 'send-money', 'my-qr', 'request-money'].includes(page) ? 'flex' : 'none';
 
-      // Page specific actions
       if (page === 'dashboard') updateDashboard();
       if (page === 'my-qr') generateMyQR();
       if (page === 'qr-scanner') startCamera();
       if (page === 'admin-dashboard') loadAdminDashboard();
       if (page === 'history') loadFullHistory();
       if (page === 'send-money') setupSendMoney();
+      if (page === 'pending') setupPendingPage();
     }
+
+    window.navigateTo = navigateTo;
 
     document.getElementById('backBtn').addEventListener('click', () => {
       if (currentUser && !isAdmin) navigateTo('dashboard');
@@ -1172,74 +775,197 @@
       else navigateTo('login');
     });
 
-    window.navigateTo = navigateTo;
-
     // Toast
     function showToast(message, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = 'toast';
       toast.textContent = message;
-      toast.style.background = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--card)';
+      const colors = { success: 'var(--success)', error: 'var(--danger)', warning: 'var(--warning)', info: 'var(--card)' };
+      toast.style.background = colors[type] || colors.info;
+      toast.style.color = type === 'warning' ? '#000' : '#fff';
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
 
-    // Login
+    // Announcement Popup
+    function showAnnouncementPopup(notification) {
+      const popup = document.getElementById('announcementPopup');
+      popup.innerHTML = `
+        <div class="announcement-popup" id="activeAnnouncement">
+          <div class="announcement-card">
+            <div class="announcement-icon">📢</div>
+            <div class="announcement-title">${notification.title}</div>
+            <div class="announcement-message">${notification.message}</div>
+            <div class="announcement-time">${new Date(notification.timestamp).toLocaleString()}</div>
+            <button class="btn btn-primary" onclick="document.getElementById('activeAnnouncement').remove()">
+              ✓ Got it
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Login with Username
     document.getElementById('loginBtn').addEventListener('click', async () => {
-      const acc = document.getElementById('loginAccNum').value.trim();
+      const username = document.getElementById('loginUsername').value.trim().toLowerCase();
       const pwd = document.getElementById('loginPassword').value.trim();
       document.getElementById('loginError').textContent = '';
       
-      if (acc.length !== 12) { document.getElementById('loginError').textContent = 'Invalid account number'; return; }
+      if (!username || !pwd) { 
+        document.getElementById('loginError').textContent = 'Please enter username and password'; 
+        return; 
+      }
       
       const usersSnap = await get(ref(db, 'users'));
-      if (!usersSnap.exists()) { document.getElementById('loginError').textContent = 'No accounts found'; return; }
+      if (!usersSnap.exists()) { 
+        document.getElementById('loginError').textContent = 'No accounts found'; 
+        return; 
+      }
       
       const users = usersSnap.val();
-      const entry = Object.entries(users).find(([k, u]) => u.accountNumber === acc && u.password === pwd);
+      const entry = Object.entries(users).find(([k, u]) => 
+        u.username === username && u.password === pwd
+      );
       
-      if (!entry) { document.getElementById('loginError').textContent = 'Invalid credentials'; return; }
+      if (!entry) { 
+        document.getElementById('loginError').textContent = 'Invalid username or password'; 
+        return; 
+      }
       
       const [uid, userData] = entry;
-      if (userData.status === 'banned') { document.getElementById('loginError').textContent = 'Account banned'; return; }
+      
+      if (userData.status === 'pending') {
+        currentUser = { uid, ...userData };
+        isAdmin = false;
+        navigateTo('pending');
+        showToast('Your account is pending approval ⏳', 'warning');
+        return;
+      }
+      
+      if (userData.status === 'rejected') {
+        document.getElementById('loginError').textContent = 'Your account has been rejected. Contact admin.';
+        return;
+      }
+      
+      if (userData.status === 'banned') { 
+        document.getElementById('loginError').textContent = 'Account banned. Contact admin.'; 
+        return; 
+      }
       
       currentUser = { uid, ...userData };
       isAdmin = false;
       await update(ref(db, `users/${uid}`), { lastActive: Date.now() });
       navigateTo('dashboard');
-      showToast('Welcome back! 👋', 'success');
+      showToast(`Welcome back, ${userData.name}! 👋`, 'success');
+      
+      // Check for unread announcements
+      checkUnreadAnnouncements();
     });
 
-    // Register
+    // Register with Username
     document.getElementById('registerBtn').addEventListener('click', async () => {
       const name = document.getElementById('regName').value.trim();
+      const username = document.getElementById('regUsername').value.trim().toLowerCase();
       const pwd = document.getElementById('regPassword').value.trim();
       document.getElementById('regError').textContent = '';
       
-      if (!name || !pwd) { document.getElementById('regError').textContent = 'All fields required'; return; }
-      if (pwd.length < 4) { document.getElementById('regError').textContent = 'Password too short'; return; }
+      if (!name || !username || !pwd) { 
+        document.getElementById('regError').textContent = 'All fields required'; 
+        return; 
+      }
+      if (pwd.length < 4) { 
+        document.getElementById('regError').textContent = 'Password must be at least 4 characters'; 
+        return; 
+      }
+      if (username.length < 3) { 
+        document.getElementById('regError').textContent = 'Username must be at least 3 characters'; 
+        return; 
+      }
+      
+      // Check if username exists
+      const usersSnap = await get(ref(db, 'users'));
+      if (usersSnap.exists()) {
+        const exists = Object.values(usersSnap.val()).some(u => u.username === username);
+        if (exists) {
+          document.getElementById('regError').textContent = 'Username already taken';
+          return;
+        }
+      }
       
       let accNum;
       do {
         accNum = Math.floor(100000000000 + Math.random() * 900000000000).toString();
-      } while (await checkAccountExists(accNum));
+      } while (usersSnap.exists() && Object.values(usersSnap.val()).some(u => u.accountNumber === accNum));
       
       const newRef = push(ref(db, 'users'));
       await set(newRef, {
-        accountNumber: accNum, name, password: pwd, balance: 0,
-        status: 'active', createdAt: Date.now(), lastActive: Date.now()
+        accountNumber: accNum,
+        username: username,
+        name: name,
+        password: pwd,
+        balance: 0,
+        status: 'pending',
+        createdAt: Date.now(),
+        lastActive: Date.now()
       });
       
-      showToast(`Account created! Number: ${accNum}`, 'success');
-      navigateTo('login');
+      currentUser = { uid: newRef.key, accountNumber: accNum, username, name, status: 'pending' };
+      isAdmin = false;
+      
+      showToast('Registration submitted! Waiting for admin approval ⏳', 'warning');
+      navigateTo('pending');
     });
 
-    async function checkAccountExists(acc) {
-      const snap = await get(ref(db, 'users'));
-      if (!snap.exists()) return false;
-      return Object.values(snap.val()).some(u => u.accountNumber === acc);
+    // Pending Page
+    function setupPendingPage() {
+      if (currentUser) {
+        document.getElementById('pendingAccNum').textContent = currentUser.accountNumber;
+        document.getElementById('pendingUsername').textContent = currentUser.username;
+      }
     }
+
+    window.checkApprovalStatus = async () => {
+      if (!currentUser) return;
+      const snap = await get(ref(db, `users/${currentUser.uid}`));
+      if (snap.exists()) {
+        const userData = snap.val();
+        if (userData.status === 'approved') {
+          currentUser = { uid: currentUser.uid, ...userData };
+          showToast('✅ Your account has been approved!', 'success');
+          navigateTo('dashboard');
+        } else if (userData.status === 'rejected') {
+          showToast('❌ Your account has been rejected.', 'error');
+        } else {
+          showToast('Still pending review... ⏳', 'warning');
+        }
+      }
+    };
+
+    // Check unread announcements
+    async function checkUnreadAnnouncements() {
+      if (!currentUser) return;
+      const snap = await get(ref(db, 'notifications'));
+      if (!snap.exists()) return;
+      
+      const notifs = snap.val();
+      Object.entries(notifs).forEach(([key, n]) => {
+        if ((n.target === 'all' || n.targetUser === currentUser.accountNumber) &&
+            (!n.readBy || !n.readBy[currentUser.uid])) {
+          showAnnouncementPopup(n);
+          // Mark as read
+          update(ref(db, `notifications/${key}/readBy`), { [currentUser.uid]: true });
+        }
+      });
+    }
+
+    window.logout = () => {
+      stopCamera();
+      currentUser = null;
+      isAdmin = false;
+      navigateTo('login');
+      document.getElementById('announcementPopup').innerHTML = '';
+    };
 
     // Admin Login
     document.getElementById('adminLoginBtn').addEventListener('click', async () => {
@@ -1265,7 +991,7 @@
       const snap = await get(ref(db, `users/${currentUser.uid}`));
       if (snap.exists()) {
         currentUser = { uid: currentUser.uid, ...snap.val() };
-        document.getElementById('dashBalance').textContent = Number(currentUser.balance).toFixed(2);
+        document.getElementById('dashBalance').textContent = formatCurrency(currentUser.balance);
         document.getElementById('dashAccount').textContent = `LKR • ${currentUser.accountNumber.slice(-4)}`;
       }
       loadRecentTransactions();
@@ -1275,7 +1001,10 @@
     async function loadRecentTransactions() {
       const snap = await get(ref(db, 'transactions'));
       const container = document.getElementById('recentTransactions');
-      if (!snap.exists()) { container.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No transactions</p>'; return; }
+      if (!snap.exists()) { 
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No transactions</p>'; 
+        return; 
+      }
       
       const txns = Object.entries(snap.val()).reverse().filter(([k, t]) => 
         t.sender === currentUser.accountNumber || t.recipient === currentUser.accountNumber
@@ -1289,7 +1018,7 @@
             <div class="txn-name">${isSent ? 'To: ' + t.recipient : 'From: ' + t.sender}</div>
             <div class="txn-date">${new Date(t.timestamp).toLocaleDateString()}</div>
           </div>
-          <div class="txn-amount ${isSent ? 'debit' : 'credit'}">${isSent ? '-' : '+'}${t.amount.toFixed(2)}</div>
+          <div class="txn-amount ${isSent ? 'debit' : 'credit'}">${isSent ? '-' : '+'}${formatCurrency(t.amount)}</div>
         </div>`;
       }).join('') || '<p style="color:var(--text-muted);text-align:center;">No transactions</p>';
     }
@@ -1305,7 +1034,7 @@
       );
       
       container.innerHTML = notifs.map(([k, n]) => `
-        <div class="widget" style="border-left:3px solid var(--warning);">
+        <div class="widget" style="border-left:3px solid var(--warning);cursor:pointer;" onclick="window.showAnnouncementPopup({title:'${n.title}',message:'${n.message}',timestamp:${n.timestamp}}); window.markNotifRead('${k}')">
           <strong>📢 ${n.title}</strong>
           <p style="font-size:0.85rem;margin:5px 0;">${n.message}</p>
           <small style="color:var(--text-muted);">${new Date(n.timestamp).toLocaleString()}</small>
@@ -1313,42 +1042,62 @@
       `).join('');
     }
 
+    window.markNotifRead = async (notifId) => {
+      if (!currentUser) return;
+      await update(ref(db, `notifications/${notifId}/readBy`), { [currentUser.uid]: true });
+    };
+
+    window.showAnnouncementPopup = showAnnouncementPopup;
+
     // Send Money
     function setupSendMoney() {
       document.getElementById('sendAmount').addEventListener('input', () => {
         const amount = parseFloat(document.getElementById('sendAmount').value) || 0;
         const fee = amount * 0.03;
-        document.getElementById('sendFee').textContent = fee.toFixed(2);
-        document.getElementById('sendTotal').textContent = (amount + fee).toFixed(2);
+        document.getElementById('sendFee').textContent = formatCurrency(fee);
+        document.getElementById('sendTotal').textContent = formatCurrency(amount + fee);
       });
     }
 
     document.getElementById('sendMoneyBtn').addEventListener('click', async () => {
-      const recipient = document.getElementById('sendRecipient').value.trim();
+      const recipientInput = document.getElementById('sendRecipient').value.trim().toLowerCase();
       const amount = parseFloat(document.getElementById('sendAmount').value);
       document.getElementById('sendError').textContent = '';
       
-      if (recipient.length !== 12 || isNaN(amount) || amount <= 0) {
+      if (!recipientInput || isNaN(amount) || amount <= 0) {
         document.getElementById('sendError').textContent = 'Invalid details'; return;
       }
-      if (recipient === currentUser.accountNumber) {
-        document.getElementById('sendError').textContent = 'Cannot send to self'; return;
+      
+      // Find recipient by account number or username
+      const usersSnap = await get(ref(db, 'users'));
+      if (!usersSnap.exists()) { 
+        document.getElementById('sendError').textContent = 'No users found'; return; 
       }
       
-      const snap = await get(ref(db, 'users'));
-      const users = snap.val();
-      const recEntry = Object.entries(users).find(([k, u]) => u.accountNumber === recipient);
-      if (!recEntry) { document.getElementById('sendError').textContent = 'Recipient not found'; return; }
+      const users = usersSnap.val();
+      const recEntry = Object.entries(users).find(([k, u]) => 
+        u.accountNumber === recipientInput || u.username === recipientInput
+      );
+      
+      if (!recEntry) { 
+        document.getElementById('sendError').textContent = 'Recipient not found'; return; 
+      }
       
       const [recUid, recData] = recEntry;
+      
+      if (recData.accountNumber === currentUser.accountNumber) {
+        document.getElementById('sendError').textContent = 'Cannot send to yourself'; return;
+      }
+      
       const fee = amount * 0.03;
       const total = amount + fee;
       
       if (currentUser.balance < total) {
-        document.getElementById('sendError').textContent = `Insufficient balance. Need ${total.toFixed(2)}`; return;
+        document.getElementById('sendError').textContent = `Insufficient balance. Need ${formatCurrency(total)}`; 
+        return;
       }
       
-      if (!confirm(`Send ${amount.toFixed(2)} LKR?\nFee: ${fee.toFixed(2)} LKR\nTotal: ${total.toFixed(2)} LKR`)) return;
+      if (!confirm(`Send ${formatCurrency(amount)} to ${recData.name}?\nFee: ${formatCurrency(fee)}\nTotal: ${formatCurrency(total)}`)) return;
       
       await update(ref(db, `users/${currentUser.uid}`), { balance: currentUser.balance - total });
       await update(ref(db, `users/${recUid}`), { balance: recData.balance + amount });
@@ -1357,7 +1106,13 @@
       await set(ref(db, 'admin/balance'), (adminSnap.val() || 0) + fee);
       
       const txnRef = push(ref(db, 'transactions'));
-      await set(txnRef, { sender: currentUser.accountNumber, recipient, amount, fee, type: 'transfer', timestamp: Date.now() });
+      await set(txnRef, { 
+        sender: currentUser.accountNumber, 
+        recipient: recData.accountNumber, 
+        amount, fee, 
+        type: 'transfer', 
+        timestamp: Date.now() 
+      });
       
       showToast('Money sent! ✅', 'success');
       navigateTo('dashboard');
@@ -1387,7 +1142,12 @@
       setTimeout(() => {
         if (typeof QRCode !== 'undefined') {
           new QRCode(container, {
-            text: JSON.stringify({ type: 'payment_request', requesterAccount: currentUser.accountNumber, requesterName: currentUser.name, amount }),
+            text: JSON.stringify({ 
+              type: 'payment_request', 
+              requesterAccount: currentUser.accountNumber, 
+              requesterName: currentUser.name, 
+              amount 
+            }),
             width: 200, height: 200
           });
         }
@@ -1452,9 +1212,9 @@
           const fee = parsed.amount * 0.03;
           document.getElementById('qrConfirmDetails').innerHTML = `
             <p><strong>To:</strong> ${parsed.requesterName} (${parsed.requesterAccount})</p>
-            <p><strong>Amount:</strong> ${parsed.amount.toFixed(2)} LKR</p>
-            <p><strong>Fee:</strong> ${fee.toFixed(2)} LKR</p>
-            <p><strong>Total:</strong> ${(parsed.amount + fee).toFixed(2)} LKR</p>
+            <p><strong>Amount:</strong> ${formatCurrency(parsed.amount)}</p>
+            <p><strong>Fee (3%):</strong> ${formatCurrency(fee)}</p>
+            <p><strong>Total:</strong> ${formatCurrency(parsed.amount + fee)}</p>
           `;
           document.getElementById('qrConfirmModal').style.display = 'flex';
         }
@@ -1481,8 +1241,8 @@
         document.getElementById('qrConfirmError').textContent = 'Insufficient balance'; return;
       }
       
-      const snap = await get(ref(db, 'users'));
-      const users = snap.val();
+      const usersSnap = await get(ref(db, 'users'));
+      const users = usersSnap.val();
       const recEntry = Object.entries(users).find(([k, u]) => u.accountNumber === data.requesterAccount);
       if (!recEntry) { document.getElementById('qrConfirmError').textContent = 'Recipient not found'; return; }
       
@@ -1494,7 +1254,14 @@
       await set(ref(db, 'admin/balance'), (adminSnap.val() || 0) + fee);
       
       const txnRef = push(ref(db, 'transactions'));
-      await set(txnRef, { sender: currentUser.accountNumber, recipient: data.requesterAccount, amount: data.amount, fee, type: 'request_pay', timestamp: Date.now() });
+      await set(txnRef, { 
+        sender: currentUser.accountNumber, 
+        recipient: data.requesterAccount, 
+        amount: data.amount, 
+        fee, 
+        type: 'request_pay', 
+        timestamp: Date.now() 
+      });
       
       document.getElementById('qrConfirmModal').style.display = 'none';
       pendingQRData = null;
@@ -1526,7 +1293,7 @@
       await update(ref(db, `users/${currentUser.uid}`), { balance: currentUser.balance + cdata.amount });
       await update(ref(db, `coupons/${cid}/usedBy`), { [currentUser.uid]: true });
       
-      msg.innerHTML = `<span style="color:var(--success);">✅ ${cdata.amount} LKR added!</span>`;
+      msg.innerHTML = `<span style="color:var(--success);">✅ ${formatCurrency(cdata.amount)} added!</span>`;
       setTimeout(() => navigateTo('dashboard'), 1500);
     });
 
@@ -1534,11 +1301,18 @@
     function loadFullHistory() {
       const container = document.getElementById('fullTransactionList');
       onValue(ref(db, 'transactions'), (snap) => {
-        if (!snap.exists()) { container.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No transactions</p>'; return; }
-        const txns = Object.entries(snap.val()).reverse();
-        container.innerHTML = txns.filter(([k, t]) => 
+        if (!snap.exists()) { 
+          container.innerHTML = '<p style="color:var(--text-muted);text-align:center;">No transactions</p>'; 
+          return; 
+        }
+        let txns = Object.entries(snap.val()).reverse().filter(([k, t]) => 
           t.sender === currentUser.accountNumber || t.recipient === currentUser.accountNumber
-        ).map(([k, t]) => {
+        );
+        
+        if (currentTxnFilter === 'sent') txns = txns.filter(([k, t]) => t.sender === currentUser.accountNumber);
+        if (currentTxnFilter === 'received') txns = txns.filter(([k, t]) => t.recipient === currentUser.accountNumber);
+        
+        container.innerHTML = txns.map(([k, t]) => {
           const isSent = t.sender === currentUser.accountNumber;
           return `<div class="txn-item">
             <div class="txn-icon ${isSent ? 'sent' : 'received'}">${isSent ? '↑' : '↓'}</div>
@@ -1546,27 +1320,31 @@
               <div class="txn-name">${isSent ? t.recipient : t.sender}</div>
               <div class="txn-date">${new Date(t.timestamp).toLocaleString()}</div>
             </div>
-            <div class="txn-amount ${isSent ? 'debit' : 'credit'}">${isSent ? '-' : '+'}${t.amount.toFixed(2)}</div>
+            <div class="txn-amount ${isSent ? 'debit' : 'credit'}">${isSent ? '-' : '+'}${formatCurrency(t.amount)}</div>
           </div>`;
-        }).join('');
+        }).join('') || '<p style="color:var(--text-muted);text-align:center;">No transactions</p>';
       });
     }
 
     window.filterTxns = (type, el) => {
+      currentTxnFilter = type;
       document.querySelectorAll('#page-history .tab').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
-      // Filter logic can be added here
+      loadFullHistory();
     };
 
     // Admin
     async function loadAdminDashboard() {
       const adminSnap = await get(ref(db, 'admin/balance'));
-      document.getElementById('adminBalance').textContent = (adminSnap.val() || 0).toFixed(2);
+      document.getElementById('adminBalance').textContent = formatCurrency(adminSnap.val() || 0);
       
       const usersSnap = await get(ref(db, 'users'));
       const users = usersSnap.val() || {};
-      document.getElementById('adminUsers').textContent = Object.keys(users).length;
-      document.getElementById('adminBanned').textContent = Object.values(users).filter(u => u.status === 'banned').length;
+      const usersList = Object.values(users);
+      
+      document.getElementById('adminUsers').textContent = usersList.length;
+      document.getElementById('adminPending').textContent = usersList.filter(u => u.status === 'pending').length;
+      document.getElementById('pendingBadge').textContent = usersList.filter(u => u.status === 'pending').length;
       
       const txnsSnap = await get(ref(db, 'transactions'));
       document.getElementById('adminTxns').textContent = txnsSnap.exists() ? Object.keys(txnsSnap.val()).length : 0;
@@ -1580,16 +1358,16 @@
       if (!snap.exists()) { container.innerHTML = '<p>No users</p>'; return; }
       
       const users = snap.val();
-      container.innerHTML = Object.entries(users).map(([uid, u]) => `
+      container.innerHTML = Object.entries(users).filter(([uid, u]) => u.status !== 'pending').map(([uid, u]) => `
         <div class="widget">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-              <strong>${u.name}</strong>
+              <strong>${u.name}</strong> <span style="color:var(--text-muted);">@${u.username}</span>
               <div style="font-size:0.8rem;color:var(--text-muted);">${u.accountNumber}</div>
-              <span class="badge ${u.status==='banned'?'badge-danger':'badge-success'}">${u.status}</span>
+              <span class="badge ${u.status==='banned'?'badge-danger':u.status==='approved'?'badge-success':'badge-info'}">${u.status}</span>
             </div>
             <div style="text-align:right;">
-              <div style="font-weight:700;">${Number(u.balance).toFixed(2)} LKR</div>
+              <div style="font-weight:700;">${formatCurrency(u.balance)}</div>
               <div style="margin-top:8px;display:flex;gap:5px;">
                 <button class="btn btn-sm btn-outline" onclick="window.editUserBal('${uid}', ${u.balance})">Edit</button>
                 <button class="btn btn-sm ${u.status==='banned'?'btn-success':'btn-danger'}" onclick="window.toggleUserBan('${uid}', '${u.status}')">${u.status==='banned'?'Unban':'Ban'}</button>
@@ -1600,9 +1378,55 @@
       `).join('');
     }
 
+    async function loadAdminPending() {
+      const snap = await get(ref(db, 'users'));
+      const container = document.getElementById('adminContent');
+      if (!snap.exists()) { container.innerHTML = '<p>No users</p>'; return; }
+      
+      const users = snap.val();
+      const pending = Object.entries(users).filter(([uid, u]) => u.status === 'pending');
+      
+      if (pending.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:var(--text-muted);">No pending approvals</p>';
+        return;
+      }
+      
+      container.innerHTML = pending.map(([uid, u]) => `
+        <div class="widget" style="border:2px solid var(--warning);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <strong>${u.name}</strong> <span style="color:var(--text-muted);">@${u.username}</span>
+              <div style="font-size:0.8rem;color:var(--text-muted);">${u.accountNumber}</div>
+              <span class="badge badge-warning">Pending</span>
+            </div>
+            <div style="display:flex;gap:5px;">
+              <button class="btn btn-sm btn-success" onclick="window.approveUser('${uid}')">✅ Approve</button>
+              <button class="btn btn-sm btn-danger" onclick="window.rejectUser('${uid}')">❌ Reject</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.approveUser = async (uid) => {
+      await update(ref(db, `users/${uid}`), { status: 'approved' });
+      showToast('User approved! ✅', 'success');
+      loadAdminDashboard();
+      adminTab('pending', document.querySelector('#page-admin-dashboard .tab:nth-child(2)'));
+    };
+
+    window.rejectUser = async (uid) => {
+      if (confirm('Reject this user?')) {
+        await update(ref(db, `users/${uid}`), { status: 'rejected' });
+        showToast('User rejected', 'error');
+        loadAdminDashboard();
+        adminTab('pending', document.querySelector('#page-admin-dashboard .tab:nth-child(2)'));
+      }
+    };
+
     window.editUserBal = async (uid, currentBal) => {
       const newBal = prompt('Enter new balance:', currentBal);
-      if (newBal !== null && !isNaN(parseFloat(newBal))) {
+      if (newBal !== null && !isNaN(parseFloat(newBal)) && parseFloat(newBal) >= 0) {
         await update(ref(db, `users/${uid}`), { balance: parseFloat(newBal) });
         loadAdminDashboard();
         showToast('Balance updated', 'success');
@@ -1610,15 +1434,17 @@
     };
 
     window.toggleUserBan = async (uid, status) => {
-      await update(ref(db, `users/${uid}`), { status: status === 'banned' ? 'active' : 'banned' });
+      const newStatus = status === 'banned' ? 'approved' : 'banned';
+      await update(ref(db, `users/${uid}`), { status: newStatus });
       loadAdminDashboard();
-      showToast(`User ${status === 'banned' ? 'unbanned' : 'banned'}`, 'success');
+      showToast(`User ${newStatus === 'banned' ? 'banned' : 'unbanned'}`, 'success');
     };
 
     window.adminTab = (tab, el) => {
       document.querySelectorAll('#page-admin-dashboard .tab').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
       if (tab === 'users') loadAdminUsers();
+      else if (tab === 'pending') loadAdminPending();
       else if (tab === 'txns') loadAdminTransactions();
       else if (tab === 'coupons-admin') loadAdminCoupons();
       else if (tab === 'notifications') loadAdminNotifications();
@@ -1630,9 +1456,9 @@
       if (!snap.exists()) { container.innerHTML = '<p>No transactions</p>'; return; }
       container.innerHTML = Object.entries(snap.val()).reverse().slice(0, 30).map(([k, t]) => `
         <div class="widget">
-          <strong>${t.amount?.toFixed(2)} LKR</strong>
+          <strong>${formatCurrency(t.amount || 0)}</strong>
           <div style="font-size:0.8rem;">${t.sender} → ${t.recipient}</div>
-          <small>Fee: ${t.fee?.toFixed(2)} | ${new Date(t.timestamp).toLocaleString()}</small>
+          <small>Fee: ${formatCurrency(t.fee || 0)} | ${new Date(t.timestamp).toLocaleString()}</small>
         </div>
       `).join('');
     }
@@ -1641,14 +1467,9 @@
       const snap = await get(ref(db, 'coupons'));
       const container = document.getElementById('adminContent');
       container.innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Code</label>
-          <input type="text" class="form-input" id="newCouponCode" placeholder="SUMMER24">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amount</label>
-          <input type="number" class="form-input" id="newCouponAmount" value="10000">
-        </div>
+        <div class="form-group"><label class="form-label">Code</label><input type="text" class="form-input" id="newCouponCode" placeholder="SUMMER24"></div>
+        <div class="form-group"><label class="form-label">Amount (LKR)</label><input type="number" class="form-input" id="newCouponAmount" value="10000"></div>
+        <div class="form-group"><label class="form-label">Max Uses (0=unlimited)</label><input type="number" class="form-input" id="newCouponMaxUses" value="1"></div>
         <button class="btn btn-primary" id="createCouponAdmin">Create Coupon</button>
         <hr style="margin:20px 0;border-color:var(--border);">
       `;
@@ -1656,18 +1477,20 @@
       if (snap.exists()) {
         Object.entries(snap.val()).forEach(([k, c]) => {
           container.innerHTML += `<div class="widget">
-            <strong>${c.code}</strong> - ${c.amount} LKR
+            <strong>${c.code}</strong> - ${formatCurrency(c.amount)}
+            <small>(Used: ${Object.keys(c.usedBy||{}).length}/${c.maxUses||'∞'})</small>
             <button class="btn btn-sm btn-danger" style="float:right;" onclick="window.delCoupon('${k}')">Delete</button>
           </div>`;
         });
       }
       
-      document.getElementById('createCouponAdmin').addEventListener('click', async () => {
+      document.getElementById('createCouponAdmin')?.addEventListener('click', async () => {
         const code = document.getElementById('newCouponCode').value.trim();
         const amount = parseFloat(document.getElementById('newCouponAmount').value);
+        const maxUses = parseInt(document.getElementById('newCouponMaxUses').value);
         if (!code || isNaN(amount)) return;
-        const ref = push(ref(db, 'coupons'));
-        await set(ref, { code, amount, maxUses: 0, active: true, usedBy: {}, createdAt: Date.now() });
+        const couponRef = push(ref(db, 'coupons'));
+        await set(couponRef, { code, amount, maxUses, active: true, usedBy: {}, createdAt: Date.now() });
         loadAdminCoupons();
         showToast('Coupon created!', 'success');
       });
@@ -1682,23 +1505,64 @@
       const container = document.getElementById('adminContent');
       container.innerHTML = `
         <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="notifTitle"></div>
-        <div class="form-group"><label class="form-label">Message</label><textarea class="form-input" id="notifMessage"></textarea></div>
-        <button class="btn btn-primary" id="sendNotifBtn">Send to All Users</button>
+        <div class="form-group"><label class="form-label">Message</label><textarea class="form-input" id="notifMessage" rows="3"></textarea></div>
+        <div class="form-group"><label class="form-label">Target</label>
+          <select class="form-input" id="notifTarget">
+            <option value="all">All Users</option>
+            <option value="specific">Specific User</option>
+          </select>
+        </div>
+        <div class="form-group" id="notifSpecificUserGroup" style="display:none;">
+          <label class="form-label">Account Number</label>
+          <input type="text" class="form-input" id="notifSpecificAcc">
+        </div>
+        <button class="btn btn-warning" id="sendNotifBtn">📢 Send Announcement</button>
         <hr style="margin:20px 0;border-color:var(--border);">
+        <div id="sentNotifications"></div>
       `;
+      
+      document.getElementById('notifTarget').addEventListener('change', function() {
+        document.getElementById('notifSpecificUserGroup').style.display = this.value === 'specific' ? 'block' : 'none';
+      });
       
       document.getElementById('sendNotifBtn').addEventListener('click', async () => {
         const title = document.getElementById('notifTitle').value.trim();
-        const msg = document.getElementById('notifMessage').value.trim();
-        if (!title || !msg) return;
-        const ref = push(ref(db, 'notifications'));
-        await set(ref, { title, message: msg, target: 'all', timestamp: Date.now() });
-        showToast('Announcement sent!', 'success');
+        const message = document.getElementById('notifMessage').value.trim();
+        const target = document.getElementById('notifTarget').value;
+        
+        if (!title || !message) { showToast('Fill all fields', 'error'); return; }
+        
+        const notifData = { title, message, target, timestamp: Date.now() };
+        if (target === 'specific') {
+          notifData.targetUser = document.getElementById('notifSpecificAcc').value.trim();
+        }
+        
+        const notifRef = push(ref(db, 'notifications'));
+        await set(notifRef, notifData);
+        showToast('Announcement sent! 📢', 'success');
+        loadAdminNotifications();
       });
+      
+      // Load sent notifications
+      const snap = await get(ref(db, 'notifications'));
+      const sentContainer = document.getElementById('sentNotifications');
+      if (snap.exists()) {
+        sentContainer.innerHTML = Object.entries(snap.val()).reverse().slice(0, 10).map(([k, n]) => `
+          <div class="widget">
+            <strong>📢 ${n.title}</strong>
+            <p style="font-size:0.85rem;">${n.message}</p>
+            <small>Target: ${n.target === 'all' ? 'All' : n.targetUser} | ${new Date(n.timestamp).toLocaleString()}</small>
+          </div>
+        `).join('');
+      }
     }
 
     // Init
     init();
+    console.log('✅ Mata Bank Pro v3.0 Ready');
+    console.log('👤 Demo: username=userone / pass1001');
+    console.log('👤 Demo: username=usertwo / pass1002');
+    console.log('👑 Admin: username=admin / admin123');
   </script>
 </body>
 </html>
