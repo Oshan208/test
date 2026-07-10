@@ -2,343 +2,952 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Mata Bank Pro | Banking System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MetaBank · Digital Banking with QR</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
     :root {
-      --primary: #6c5ce7; --primary-light: #a29bfe; --secondary: #00cec9;
-      --accent: #fd79a8; --success: #00b894; --warning: #fdcb6e; --danger: #e17055;
-      --dark: #0c0c1d; --darker: #060612; --card: #151530; --card-light: #1e1e3a;
-      --text: #e0e0f0; --text-muted: #8888aa; --border: rgba(108,92,231,0.2);
-      --glow: 0 0 30px rgba(108,92,231,0.3); --radius: 20px; --radius-sm: 12px;
-      --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      --bg: #f0f4f8; --card: #ffffff; --text: #1a202c; --text2: #4a5568;
+      --primary: #2563eb; --accent: #7c3aed; --success: #059669;
+      --danger: #dc2626; --warning: #d97706; --border: #e2e8f0;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1); --radius: 16px;
+      --gradient: linear-gradient(135deg, #2563eb, #7c3aed);
+      --glass: rgba(255,255,255,0.75); --transition: all 0.3s ease;
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--darker); color:var(--text); min-height:100vh; overflow-x:hidden; }
-    .bg-animation { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
-    .bg-circle { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.1; animation:float 20s infinite ease-in-out; }
-    .bg-circle:nth-child(1){width:400px;height:400px;background:var(--primary);top:-100px;left:-100px;animation-delay:0s}
-    .bg-circle:nth-child(2){width:300px;height:300px;background:var(--secondary);bottom:-50px;right:-50px;animation-delay:-7s}
-    .bg-circle:nth-child(3){width:250px;height:250px;background:var(--accent);top:50%;left:50%;animation-delay:-14s}
-    @keyframes float{0%,100%{transform:translate(0,0)scale(1)}33%{transform:translate(50px,-50px)scale(1.1)}66%{transform:translate(-30px,30px)scale(0.9)}}
+    .dark {
+      --bg: #0f172a; --card: #1e293b; --text: #f1f5f9;
+      --text2: #94a3b8; --border: #334155; --shadow: 0 1px 3px rgba(0,0,0,0.4);
+      --glass: rgba(30,41,59,0.85);
+    }
+    .bg-ocean { background: linear-gradient(135deg, #e0f2fe, #dbeafe, #ede9fe); }
+    .bg-sunset { background: linear-gradient(135deg, #fef3c7, #fde68a, #fca5a5); }
+    .bg-forest { background: linear-gradient(135deg, #d1fae5, #a7f3d0, #c7d2fe); }
+    .dark.bg-ocean { background: linear-gradient(135deg, #0c1929, #111827, #1a1030); }
+    .dark.bg-sunset { background: linear-gradient(135deg, #1a120b, #1c1917, #1c1017); }
+    .dark.bg-forest { background: linear-gradient(135deg, #0a1a14, #0f1f1a, #101a30); }
 
-    .app-wrapper { position:relative; z-index:1; max-width:480px; margin:0 auto; min-height:100vh; background:rgba(12,12,29,0.8); backdrop-filter:blur(20px); border-left:1px solid var(--border); border-right:1px solid var(--border); overflow:hidden; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh; transition: var(--transition);
+    }
+    .app { max-width: 850px; margin: 0 auto; padding: 15px; min-height: 100vh; }
 
-    .splash-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--darker); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; transition:opacity 0.5s,visibility 0.5s; }
-    .splash-screen.hidden { opacity:0; visibility:hidden; }
-    .splash-logo { width:120px; height:120px; background:linear-gradient(135deg,var(--primary),var(--secondary)); border-radius:30px; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white; animation:pulse 2s infinite; box-shadow:var(--glow); }
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-    .splash-text { margin-top:20px; font-size:1.5rem; font-weight:700; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .loading-bar { width:200px; height:4px; background:var(--card); border-radius:2px; margin-top:30px; overflow:hidden; }
-    .loading-bar::after { content:''; display:block; width:50%; height:100%; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:2px; animation:loading 1.5s infinite; }
-    @keyframes loading{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 22px; background: var(--glass); backdrop-filter: blur(20px);
+      border-radius: var(--radius); margin-bottom: 15px;
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      position: sticky; top: 10px; z-index: 100;
+    }
+    .logo-text { font-size: 1.5rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .top-actions { display: flex; gap: 8px; align-items: center; position: relative; }
+    .icon-btn {
+      width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--card); cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 1rem; transition: var(--transition); color: var(--text);
+    }
+    .icon-btn:hover { transform: scale(1.1); }
+    .theme-menu {
+      position: absolute; top: 48px; right: 0; background: var(--card);
+      border-radius: 14px; padding: 10px; border: 1px solid var(--border);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25); z-index: 200; display: none; min-width: 180px;
+    }
+    .theme-menu.show { display: block; }
+    .theme-option { padding: 8px 12px; cursor: pointer; border-radius: 8px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+    .theme-option:hover { background: var(--border); }
+    .color-dot { width: 16px; height: 16px; border-radius: 50%; }
 
-    .nav-bar { display:flex; align-items:center; justify-content:space-between; padding:15px 20px; background:rgba(21,21,48,0.9); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
-    .nav-title { font-size:1.2rem; font-weight:700; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .nav-icon { width:40px; height:40px; border-radius:12px; background:var(--card-light); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:var(--transition); color:var(--text); font-size:1.2rem; }
-    .nav-icon:hover { background:var(--primary); border-color:var(--primary); box-shadow:var(--glow); }
+    .card-ui {
+      background: var(--glass); backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 14px; box-shadow: var(--shadow);
+      transition: var(--transition); animation: fadeSlide 0.4s ease;
+    }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    .page-container { position:relative; min-height:calc(100vh - 70px); }
-    .page { position:absolute; top:0; left:0; width:100%; padding:20px; display:none; }
-    .page.active { position:relative; display:block; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; font-weight: 600; margin-bottom: 4px; color: var(--text2); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .input-group input, .input-group select {
+      width: 100%; padding: 12px 14px; border: 2px solid var(--border);
+      border-radius: 10px; font-size: 0.95rem; background: var(--card);
+      color: var(--text); outline: none; transition: var(--transition);
+    }
+    .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-    .balance-card { background:linear-gradient(135deg,var(--primary),#4834d4); border-radius:var(--radius); padding:25px; margin-bottom:20px; position:relative; overflow:hidden; box-shadow:var(--glow); }
-    .balance-card::before { content:''; position:absolute; top:-50%; right:-50%; width:200px; height:200px; background:rgba(255,255,255,0.1); border-radius:50%; }
-    .balance-label { font-size:0.85rem; text-transform:uppercase; letter-spacing:2px; opacity:0.8; }
-    .balance-amount { font-size:2.8rem; font-weight:800; margin:5px 0; position:relative; z-index:1; }
-    .balance-account { font-size:0.9rem; opacity:0.9; position:relative; z-index:1; }
-    .balance-actions { display:flex; gap:10px; margin-top:15px; position:relative; z-index:1; }
+    .btn {
+      padding: 13px 24px; border: none; border-radius: 10px; font-weight: 700;
+      font-size: 0.95rem; cursor: pointer; transition: var(--transition);
+      text-transform: uppercase; letter-spacing: 0.5px; width: 100%;
+    }
+    .btn-primary { background: var(--gradient); color: white; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(37,99,235,0.3); }
+    .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-warning { background: var(--warning); color: white; }
+    .btn-sm { padding: 8px 16px; width: auto; font-size: 0.82rem; }
 
-    .quick-actions { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
-    .quick-action { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:15px 10px; text-align:center; cursor:pointer; transition:var(--transition); }
-    .quick-action:hover { background:var(--card-light); transform:translateY(-3px); box-shadow:var(--glow); }
-    .quick-action-icon { font-size:1.8rem; margin-bottom:8px; }
-    .quick-action-label { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-approved { background: #d1fae5; color: #065f46; }
+    .badge-active { background: #dbeafe; color: #1e40af; }
 
-    .widget { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:15px; }
-    .widget-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
-    .widget-title { font-weight:600; font-size:1rem; }
-    .widget-badge { background:rgba(108,92,231,0.2); color:var(--primary-light); padding:4px 12px; border-radius:20px; font-size:0.75rem; cursor:pointer; }
+    .balance-lg { font-size: 2.8rem; font-weight: 800; letter-spacing: -1px; }
+    .currency { font-size: 1.3rem; font-weight: 600; color: var(--text2); }
 
-    .txn-item { display:flex; align-items:center; padding:12px; background:var(--card-light); border-radius:var(--radius-sm); margin-bottom:8px; }
-    .txn-icon { width:45px; height:45px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; margin-right:12px; flex-shrink:0; }
-    .txn-icon.sent { background:rgba(225,112,85,0.2); color:var(--danger); }
-    .txn-icon.received { background:rgba(0,184,148,0.2); color:var(--success); }
-    .txn-info { flex:1; min-width:0; }
-    .txn-name { font-weight:600; font-size:0.9rem; }
-    .txn-date { font-size:0.75rem; color:var(--text-muted); }
-    .txn-amount { font-weight:700; text-align:right; }
-    .txn-amount.credit { color:var(--success); }
-    .txn-amount.debit { color:var(--danger); }
+    .tab-nav { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 9px 18px; border-radius: 22px; border: 1px solid var(--border);
+      background: transparent; color: var(--text2); cursor: pointer;
+      font-weight: 600; transition: var(--transition); font-size: 0.85rem;
+    }
+    .tab-btn.active { background: var(--gradient); color: white; border-color: transparent; }
 
-    .form-group { margin-bottom:18px; }
-    .form-label { display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; }
-    .form-input { width:100%; padding:14px 18px; background:var(--card-light); border:2px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:1rem; outline:none; transition:var(--transition); }
-    .form-input:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(108,92,231,0.1); }
+    .qr-container { text-align: center; padding: 15px; }
+    .qr-container canvas { border-radius: 14px; border: 3px solid var(--primary); padding: 8px; background: white; }
 
-    .btn { width:100%; padding:15px; border:none; border-radius:var(--radius-sm); font-weight:600; font-size:1rem; cursor:pointer; transition:var(--transition); text-transform:uppercase; letter-spacing:1px; }
-    .btn-primary { background:linear-gradient(135deg,var(--primary),#4834d4); color:white; box-shadow:0 5px 20px rgba(108,92,231,0.3); }
-    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(108,92,231,0.5); }
-    .btn-secondary { background:var(--card-light); color:var(--text); border:1px solid var(--border); }
-    .btn-success { background:linear-gradient(135deg,var(--success),#00a884); color:white; }
-    .btn-danger { background:linear-gradient(135deg,var(--danger),#c0392b); color:white; }
-    .btn-warning { background:linear-gradient(135deg,var(--warning),#f39c12); color:#000; }
-    .btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary-light); }
-    .btn-sm { padding:8px 16px; font-size:0.8rem; width:auto; }
+    /* Virtual Card */
+    .virtual-card {
+      width: 100%; max-width: 420px; height: 250px; border-radius: 18px;
+      padding: 22px; position: relative; overflow: hidden;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.3); margin: 15px auto;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+      color: white;
+    }
+    .card-chip { width: 45px; height: 34px; background: linear-gradient(135deg, #ffd700, #ffb300); border-radius: 7px; margin-bottom: 18px; }
+    .card-number { font-family: 'Courier New', monospace; font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 12px; }
+    .card-details { display: flex; justify-content: space-between; font-size: 0.75rem; text-transform: uppercase; }
+    .card-details .label { color: #94a3b8; font-size: 0.6rem; }
+    .card-brand { position: absolute; bottom: 18px; right: 22px; display: flex; align-items: center; gap: 4px; }
+    .card-brand .circle { width: 26px; height: 26px; border-radius: 50%; }
+    .card-brand .circle.red { background: #eb001b; }
+    .card-brand .circle.yellow { background: #f79e1b; margin-left: -8px; }
+    .card-contactless { position: absolute; top: 22px; right: 22px; font-size: 1.3rem; opacity: 0.8; }
+    .card-status { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 3px 14px; border-radius: 15px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+    .card-active { background: rgba(5,150,105,0.8); }
+    .card-pending { background: rgba(217,119,6,0.8); }
 
-    .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; z-index:1000; }
-    .modal { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:25px; width:90%; max-width:400px; max-height:80vh; overflow-y:auto; }
-    .modal-title { font-size:1.3rem; font-weight:700; margin-bottom:20px; }
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.65); display: flex; align-items: center;
+      justify-content: center; z-index: 1000; backdrop-filter: blur(3px);
+    }
+    .modal-box {
+      background: var(--card); border-radius: 20px; padding: 25px;
+      max-width: 500px; width: 92%; max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    }
 
-    .announcement-popup { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:3000; }
-    .announcement-card { background:linear-gradient(135deg,var(--card),var(--card-light)); border:2px solid var(--primary); border-radius:var(--radius); padding:30px; width:90%; max-width:420px; text-align:center; box-shadow:0 0 50px rgba(108,92,231,0.5); }
-    .announcement-icon { font-size:4rem; margin-bottom:15px; }
-    .announcement-title { font-size:1.5rem; font-weight:700; color:var(--primary-light); margin-bottom:10px; }
-    .announcement-message { color:var(--text); margin-bottom:20px; line-height:1.6; }
+    .notification {
+      position: fixed; top: 15px; right: 15px; padding: 13px 20px;
+      border-radius: 10px; color: white; font-weight: 600; z-index: 2000;
+      animation: slideIn 0.35s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+    @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+    .notif-success { background: var(--success); }
+    .notif-error { background: var(--danger); }
+    .notif-info { background: var(--primary); }
 
-    .badge { display:inline-block; padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:600; text-transform:uppercase; }
-    .badge-success { background:rgba(0,184,148,0.2); color:var(--success); }
-    .badge-danger { background:rgba(225,112,85,0.2); color:var(--danger); }
-    .badge-warning { background:rgba(253,203,110,0.2); color:var(--warning); }
+    .txn-list { max-height: 300px; overflow-y: auto; }
+    .txn-item {
+      display: flex; justify-content: space-between; padding: 10px 14px;
+      border-bottom: 1px solid var(--border); font-size: 0.85rem;
+    }
+    .txn-credit { color: var(--success); font-weight: 700; }
+    .txn-debit { color: var(--danger); font-weight: 700; }
 
-    .tabs { display:flex; gap:5px; background:var(--card-light); border-radius:var(--radius-sm); padding:4px; margin-bottom:15px; }
-    .tab { flex:1; padding:10px; text-align:center; border-radius:10px; cursor:pointer; font-size:0.85rem; font-weight:500; color:var(--text-muted); }
-    .tab.active { background:var(--primary); color:white; }
+    .confirmation-box {
+      background: #f0fdf4; border: 2px solid var(--success); border-radius: 12px;
+      padding: 15px; margin: 12px 0;
+    }
+    .dark .confirmation-box { background: #064e3b20; }
+    .hidden { display: none !important; }
+    .text-center { text-align: center; }
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mt-4 { margin-top: 16px; }
+    .text-sm { font-size: 0.8rem; }
+    #scanner-container { text-align: center; }
+    #scanner-container video { border-radius: 12px; max-width: 100%; border: 2px solid var(--primary); }
 
-    .camera-container { width:100%; border-radius:var(--radius); overflow:hidden; border:2px solid var(--border); position:relative; }
-    .camera-container video { width:100%; display:block; }
-    .scan-overlay { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:200px; height:200px; border:3px solid var(--primary); border-radius:20px; box-shadow:0 0 0 1000px rgba(0,0,0,0.5); }
-    .scan-line { position:absolute; top:0; left:0; width:100%; height:3px; background:var(--primary); animation:scanLine 2s infinite; }
-    @keyframes scanLine{0%,100%{top:0}50%{top:calc(100%-3px)}}
-
-    .pending-card { background:var(--card); border:2px solid var(--warning); border-radius:var(--radius); padding:30px; text-align:center; }
-    .pending-icon { font-size:4rem; margin-bottom:15px; }
-
-    .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--border); border-radius:30px; padding:12px 25px; z-index:2000; animation:toastIn 0.5s ease; }
-    @keyframes toastIn{from{transform:translateX(-50%)translateY(100px);opacity:0}to{transform:translateX(-50%)translateY(0);opacity:1}}
-
-    .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
-    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:15px; text-align:center; }
-    .stat-value { font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--primary-light),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .stat-label { font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-top:5px; }
-
-    ::-webkit-scrollbar { width:4px; } ::-webkit-scrollbar-thumb { background:var(--primary); border-radius:2px; }
-    .hidden { display:none !important; }
-    .text-center { text-align:center; }
-    .mt-10 { margin-top:10px; }
-    .error-message { color:var(--danger); font-size:0.85rem; margin-top:10px; }
-    .success-message { color:var(--success); font-size:0.85rem; margin-top:10px; }
+    @media (max-width: 600px) {
+      .row { grid-template-columns: 1fr; }
+      .balance-lg { font-size: 2rem; }
+    }
   </style>
 </head>
-<body>
+<body class="bg-ocean">
+<div class="app" id="appRoot"></div>
+<div id="notificationArea"></div>
+<div id="modalContainer"></div>
 
-<div class="bg-animation"><div class="bg-circle"></div><div class="bg-circle"></div><div class="bg-circle"></div></div>
-<div class="splash-screen" id="splashScreen"><div class="splash-logo">🏦</div><div class="splash-text">MATA BANK</div><div class="loading-bar"></div></div>
-<div id="toastContainer"></div>
-<div id="announcementPopup"></div>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDLSnWPSjF8Qf2mQ9zc2HfvpTH8dPzIrL8",
+    authDomain: "demobatta-1b673.firebaseapp.com",
+    databaseURL: "https://demobatta-1b673-default-rtdb.firebaseio.com",
+    projectId: "demobatta-1b673",
+    storageBucket: "demobatta-1b673.firebasestorage.app",
+    messagingSenderId: "609366383941",
+    appId: "1:609366383941:web:11f782595e3bd4f855722c"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-<div class="app-wrapper" id="appWrapper" style="display:none;">
-  <div class="nav-bar">
-    <div class="nav-icon" id="backBtn" style="visibility:hidden;">←</div>
-    <div class="nav-title" id="navTitle">Dashboard</div>
-    <div class="nav-icon" onclick="logout()" title="Logout">🚪</div>
-  </div>
+  const OFFICIAL_EMAIL = "alerts@metabank.com";
+  const ADMIN_EMAIL = "admin@metabank.com";
+  const ADMIN_PASSWORD = "admin123";
+  const CURRENCY = "LKR";
 
-  <div class="page-container" id="pageContainer">
+  const state = {
+    user: null, theme: 'light', bg: 'ocean', screen: 'login',
+    pendingOTP: null, pendingEmail: null,
+    transactions: [], cardRequests: [], myCards: [],
+    qrModalOpen: false, qrAction: null, qrData: null,
+    scannerOpen: false, confirmationOpen: false, confirmData: null
+  };
 
-    <!-- Dashboard -->
-    <div class="page active" id="page-dashboard">
-      <div class="balance-card"><div class="balance-label">Total Balance</div><div class="balance-amount" id="dashBalance">0.00</div><div class="balance-account" id="dashAccount">LKR • ****</div><div class="balance-actions"><button class="btn btn-outline btn-sm" onclick="navigateTo('send-money')">📤 Send</button><button class="btn btn-outline btn-sm" onclick="navigateTo('request-money')">📥 Request</button><button class="btn btn-outline btn-sm" onclick="navigateTo('qr-scanner')">📷 Scan</button></div></div>
-      <div class="quick-actions"><div class="quick-action" onclick="navigateTo('send-money')"><div class="quick-action-icon">💸</div><div class="quick-action-label">Transfer</div></div><div class="quick-action" onclick="navigateTo('qr-scanner')"><div class="quick-action-icon">📷</div><div class="quick-action-label">Scan QR</div></div><div class="quick-action" onclick="navigateTo('my-qr')"><div class="quick-action-icon">📱</div><div class="quick-action-label">My QR</div></div><div class="quick-action" onclick="navigateTo('coupons')"><div class="quick-action-icon">🎟️</div><div class="quick-action-label">Coupons</div></div></div>
-      <div class="widget"><div class="widget-header"><div class="widget-title">Recent Transactions</div><span class="widget-badge" onclick="navigateTo('history')">View All</span></div><div id="recentTransactions"></div></div>
-      <div id="dashNotifications"></div>
+  // ==================== UTILS ====================
+  function formatCurrency(a) { return a.toLocaleString('en-US',{minimumFractionDigits:2}); }
+  function formatCardNum(n) { return n ? n.replace(/(\d{4})(?=\d)/g,'$1 ') : '•••• •••• •••• ••••'; }
+  function genOTP() { return String(Math.floor(100000+Math.random()*900000)); }
+  function genAccNum() { return Array.from({length:12},()=>Math.floor(Math.random()*10)).join(''); }
+  function genCardNum() { return '5'+Array.from({length:15},()=>Math.floor(Math.random()*10)).join(''); }
+  function genCVV() { return String(Math.floor(100+Math.random()*900)); }
+  function genExpiry() { const d=new Date(); d.setFullYear(d.getFullYear()+3); return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(-2); }
+  function genId() { return 'id_'+Date.now()+'_'+Math.random().toString(36).substr(2,6); }
+
+  function showNotification(msg, type='info') {
+    const area=document.getElementById('notificationArea');
+    const d=document.createElement('div'); d.className=`notification notif-${type}`; d.textContent=msg;
+    area.appendChild(d); setTimeout(()=>{d.style.opacity='0';d.style.transform='translateX(120%)';setTimeout(()=>d.remove(),300);},3500);
+  }
+
+  async function sendEmail(to, from, subject, body) {
+    const msgId='msg_'+Date.now()+'_'+Math.random().toString(36).substr(2,8);
+    await db.ref('allEmails/'+msgId).set({id:msgId,to:to.toLowerCase().trim(),from:from.trim(),subject:subject.trim(),body:body.trim(),timestamp:Date.now(),read:false});
+    console.log(`📧 Email: ${subject} → ${to}`);
+    return msgId;
+  }
+
+  async function loadTransactions() {
+    if(!state.user) return;
+    const snap=await db.ref('transactions/'+state.user.accountNumber).once('value');
+    state.transactions=[]; snap.forEach(c=>state.transactions.push(c.val()));
+    state.transactions.sort((a,b)=>b.timestamp-a.timestamp);
+  }
+
+  async function loadCards() {
+    if(!state.user) return;
+    const snap=await db.ref('virtualCards').orderByChild('userEmail').equalTo(state.user.email).once('value');
+    state.myCards=[]; snap.forEach(c=>state.myCards.push({id:c.key,...c.val()}));
+  }
+
+  async function loadCardRequests() {
+    const snap=await db.ref('cardRequests').once('value');
+    state.cardRequests=[]; snap.forEach(c=>state.cardRequests.push({id:c.key,...c.val()}));
+  }
+
+  // ==================== THEME ====================
+  function applyTheme() {
+    document.body.className='';
+    if(state.theme==='dark') document.body.classList.add('dark');
+    document.body.classList.add('bg-'+state.bg);
+  }
+  window.setTheme=function(t){state.theme=t;render();};
+  window.setBg=function(b){state.bg=b;render();};
+  window.toggleThemeMenu=function(){document.getElementById('themeMenu')?.classList.toggle('show');};
+
+  // ==================== QR FUNCTIONS ====================
+  window.openQRGenerator = function() {
+    state.qrAction = 'generate';
+    state.qrModalOpen = true;
+    renderQRModal();
+  };
+
+  window.openQRScanner = function() {
+    state.qrAction = 'scan';
+    state.qrModalOpen = true;
+    renderQRModal();
+  };
+
+  function renderQRModal() {
+    const modal = document.getElementById('modalContainer');
+    if (state.qrAction === 'generate') {
+      modal.innerHTML = `
+        <div class="modal-overlay" onclick="if(event.target===this)closeQRModal()">
+          <div class="modal-box text-center">
+            <h3>📱 Generate Payment QR</h3>
+            <p style="color:var(--text2);">Share this QR to receive money</p>
+            <div class="input-group mt-3"><label>Amount (${CURRENCY})</label><input id="qrAmount" type="number" step="0.01" placeholder="1,000.00"></div>
+            <div class="input-group"><label>Note (optional)</label><input id="qrNote" placeholder="Payment for..."></div>
+            <button class="btn btn-primary" onclick="generateQRCode()">Generate QR</button>
+            <div class="qr-container mt-3" id="qrDisplay"></div>
+            <p style="color:var(--text2);font-size:0.75rem;margin-top:8px;">Account: ${state.user.accountNumber} · ${state.user.firstName} ${state.user.lastName}</p>
+            <button class="btn btn-outline mt-2" onclick="closeQRModal()">Close</button>
+          </div>
+        </div>
+      `;
+    } else {
+      modal.innerHTML = `
+        <div class="modal-overlay" onclick="if(event.target===this)closeQRModal()">
+          <div class="modal-box text-center">
+            <h3>📷 Scan QR Code</h3>
+            <p style="color:var(--text2);">Scan a payment QR to pay</p>
+            <div id="scanner-container">
+              <video id="qrVideo" autoplay playsinline style="max-width:100%;border-radius:12px;"></video>
+            </div>
+            <div id="scanResult" style="margin-top:10px;"></div>
+            <p style="color:var(--text2);font-size:0.75rem;">Or enter manually below</p>
+            <div class="input-group"><label>QR Data (JSON)</label><textarea id="manualQRData" rows="3" placeholder='{"account":"123456789012","amount":1000,"note":"Payment"}'></textarea></div>
+            <button class="btn btn-primary" onclick="processManualQR()">Process Manual Entry</button>
+            <button class="btn btn-outline mt-2" onclick="closeQRModal()">Close</button>
+          </div>
+        </div>
+      `;
+      setTimeout(() => startScanner(), 300);
+    }
+  }
+
+  window.generateQRCode = function() {
+    const amount = document.getElementById('qrAmount')?.value;
+    const note = document.getElementById('qrNote')?.value || '';
+    if (!amount || parseFloat(amount) <= 0) { showNotification('Enter valid amount','error'); return; }
+    
+    const qrData = JSON.stringify({
+      type: 'metabank_payment',
+      account: state.user.accountNumber,
+      name: state.user.firstName + ' ' + state.user.lastName,
+      email: state.user.email,
+      amount: parseFloat(amount),
+      note: note,
+      timestamp: Date.now()
+    });
+    
+    const qrEl = document.getElementById('qrDisplay');
+    qrEl.innerHTML = '';
+    new QRCode(qrEl, { text: qrData, width: 200, height: 200, colorDark: '#2563eb', colorLight: '#ffffff' });
+    showNotification('✅ QR generated! Share with payer.','success');
+  };
+
+  function startScanner() {
+    const video = document.getElementById('qrVideo');
+    if (!video) return;
+    
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+        scanLoop(video);
+      })
+      .catch(() => {
+        document.getElementById('scanner-container').innerHTML = '<p style="color:var(--danger);">Camera not available. Use manual entry.</p>';
+      });
+  }
+
+  function scanLoop(video) {
+    if (!state.qrModalOpen) {
+      if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
+      return;
+    }
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    
+    if (canvas.width > 0) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, canvas.width, canvas.height);
+      
+      if (code) {
+        if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
+        document.getElementById('scanResult').innerHTML = '<span style="color:var(--success);">✅ QR Detected!</span>';
+        processQRData(code.data);
+        return;
+      }
+    }
+    
+    setTimeout(() => scanLoop(video), 500);
+  }
+
+  window.processManualQR = function() {
+    const data = document.getElementById('manualQRData')?.value.trim();
+    if (!data) { showNotification('Enter QR data','error'); return; }
+    try { JSON.parse(data); } catch(e) { showNotification('Invalid JSON','error'); return; }
+    processQRData(data);
+  };
+
+  function processQRData(dataStr) {
+    try {
+      const data = JSON.parse(dataStr);
+      if (data.type !== 'metabank_payment') { showNotification('Invalid QR type','error'); return; }
+      if (data.account === state.user.accountNumber) { showNotification('Cannot pay yourself!','error'); return; }
+      
+      state.confirmData = {
+        recipientAccount: data.account,
+        recipientName: data.name,
+        recipientEmail: data.email,
+        amount: data.amount,
+        note: data.note || '',
+        qrTimestamp: data.timestamp
+      };
+      
+      closeQRModal();
+      state.confirmationOpen = true;
+      renderConfirmationModal();
+    } catch(e) {
+      showNotification('Invalid QR data','error');
+    }
+  }
+
+  function renderConfirmationModal() {
+    const modal = document.getElementById('modalContainer');
+    const d = state.confirmData;
+    const total = d.amount + (d.amount * 0); // No fee for QR transfers
+    
+    modal.innerHTML = `
+      <div class="modal-overlay">
+        <div class="modal-box">
+          <h3>💸 Confirm Payment</h3>
+          <div class="confirmation-box">
+            <p><strong>Pay to:</strong> ${d.recipientName}</p>
+            <p><strong>Account:</strong> ${d.recipientAccount}</p>
+            <p><strong>Email:</strong> ${d.recipientEmail}</p>
+            <p><strong>Amount:</strong> ${CURRENCY} ${formatCurrency(d.amount)}</p>
+            ${d.note ? `<p><strong>Note:</strong> ${d.note}</p>` : ''}
+            <p><strong>Your Balance:</strong> ${CURRENCY} ${formatCurrency(state.user.balance)}</p>
+            <p style="font-weight:700;margin-top:8px;"><strong>After Payment:</strong> ${CURRENCY} ${formatCurrency(state.user.balance - d.amount)}</p>
+          </div>
+          ${state.user.balance < d.amount ? '<p style="color:var(--danger);text-align:center;">❌ Insufficient funds!</p>' : ''}
+          <p style="color:var(--text2);font-size:0.8rem;text-align:center;">⚠️ OTP will be sent to your email for verification</p>
+          <div class="row">
+            <button class="btn btn-primary" onclick="requestPaymentOTP()" ${state.user.balance < d.amount ? 'disabled' : ''}>📧 Send OTP to Confirm</button>
+            <button class="btn btn-outline" onclick="cancelConfirmation()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  window.requestPaymentOTP = async function() {
+    const otp = genOTP();
+    state.pendingOTP = { email: state.user.email, otp, expires: Date.now() + 120000, type: 'payment' };
+    
+    await sendEmail(state.user.email, OFFICIAL_EMAIL, '🔐 Payment Confirmation OTP',
+      `Dear ${state.user.firstName},\n\nYou are about to pay:\nAmount: ${CURRENCY} ${formatCurrency(state.confirmData.amount)}\nTo: ${state.confirmData.recipientName} (${state.confirmData.recipientAccount})\n\nYour OTP: ${otp}\n\nExpires in 2 minutes.\n\n- MetaBank Security`);
+    
+    console.log(`🔑 Payment OTP: ${otp}`);
+    showNotification('📧 OTP sent to your email!','success');
+    
+    const modal = document.getElementById('modalContainer');
+    modal.innerHTML = `
+      <div class="modal-overlay">
+        <div class="modal-box text-center">
+          <h3>🔐 Enter OTP</h3>
+          <p style="color:var(--text2);">OTP sent to ${state.user.email}</p>
+          <div class="input-group mt-3"><label>6-digit OTP</label>
+          <input id="paymentOtpInput" maxlength="6" style="text-align:center;font-size:1.6rem;letter-spacing:6px;"></div>
+          <button class="btn btn-primary" onclick="confirmPaymentWithOTP()">✅ Confirm Payment</button>
+          <button class="btn btn-outline mt-2" onclick="cancelConfirmation()">Cancel</button>
+          <div id="otpTimer" style="color:var(--warning);margin-top:8px;"></div>
+        </div>
+      </div>
+    `;
+    startOTPTimer();
+  };
+
+  let otpInterval;
+  function startOTPTimer() {
+    clearInterval(otpInterval); let t=120;
+    const el=document.getElementById('otpTimer');
+    otpInterval=setInterval(()=>{t--;if(el)el.textContent=`⏳ ${t}s`;if(t<=0){clearInterval(otpInterval);state.pendingOTP=null;}},1000);
+  }
+
+  window.confirmPaymentWithOTP = async function() {
+    const inp = document.getElementById('paymentOtpInput')?.value.trim();
+    if (!state.pendingOTP || Date.now() > state.pendingOTP.expires) { showNotification('OTP expired','error'); return; }
+    if (inp !== state.pendingOTP.otp) { showNotification('Invalid OTP','error'); return; }
+    
+    clearInterval(otpInterval);
+    const d = state.confirmData;
+    
+    try {
+      // Get recipient
+      const rKey = d.recipientEmail.replace(/\./g,'_');
+      const rSnap = await db.ref('bankUsers/'+rKey).once('value');
+      const rUser = rSnap.val();
+      if (!rUser) throw new Error('Recipient not found');
+      
+      const sBal = state.user.balance - d.amount;
+      const rBal = rUser.balance + d.amount;
+      
+      // Update balances
+      await db.ref('bankUsers/'+state.user.email.replace(/\./g,'_')+'/balance').set(sBal);
+      await db.ref('bankUsers/'+rKey+'/balance').set(rBal);
+      
+      // Save transactions
+      const txnId = genId();
+      await db.ref('transactions/'+state.user.accountNumber+'/'+txnId).set({
+        id:txnId, type:'qr_payment_out', amount:d.amount, balance:sBal,
+        description:`QR Payment to ${d.recipientName}`, recipient:d.recipientAccount, timestamp:Date.now()
+      });
+      await db.ref('transactions/'+d.recipientAccount+'/'+txnId).set({
+        id:txnId, type:'qr_payment_in', amount:d.amount, balance:rBal,
+        description:`QR Payment from ${state.user.firstName} ${state.user.lastName}`, sender:state.user.accountNumber, timestamp:Date.now()
+      });
+      
+      // Send emails
+      await sendEmail(state.user.email, OFFICIAL_EMAIL, '💸 Payment Sent via QR',
+        `Dear ${state.user.firstName},\n\nYou paid ${CURRENCY} ${formatCurrency(d.amount)} to ${d.recipientName} (${d.recipientAccount}).\nNote: ${d.note||'N/A'}\nNew Balance: ${CURRENCY} ${formatCurrency(sBal)}\n\n- MetaBank`);
+      
+      await sendEmail(d.recipientEmail, OFFICIAL_EMAIL, '💸 Payment Received via QR',
+        `Dear ${rUser.firstName},\n\nYou received ${CURRENCY} ${formatCurrency(d.amount)} from ${state.user.firstName} ${state.user.lastName} (${state.user.accountNumber}).\nNote: ${d.note||'N/A'}\nNew Balance: ${CURRENCY} ${formatCurrency(rBal)}\n\n- MetaBank`);
+      
+      state.user.balance = sBal;
+      state.pendingOTP = null;
+      state.confirmData = null;
+      state.confirmationOpen = false;
+      document.getElementById('modalContainer').innerHTML = '';
+      await loadTransactions();
+      
+      showNotification('✅ Payment successful! Both parties notified.','success');
+      render();
+    } catch(err) {
+      showNotification('❌ '+err.message,'error');
+    }
+  };
+
+  window.cancelConfirmation = function() {
+    clearInterval(otpInterval);
+    state.pendingOTP = null;
+    state.confirmData = null;
+    state.confirmationOpen = false;
+    document.getElementById('modalContainer').innerHTML = '';
+  };
+
+  window.closeQRModal = function() {
+    state.qrModalOpen = false;
+    state.qrAction = null;
+    const video = document.getElementById('qrVideo');
+    if (video && video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
+    document.getElementById('modalContainer').innerHTML = '';
+  };
+
+  // ==================== RENDER ====================
+  function render() {
+    applyTheme();
+    const root = document.getElementById('appRoot');
+    if (!state.user) {
+      switch(state.screen) {
+        case 'register': root.innerHTML = renderRegister(); break;
+        case 'forgot': root.innerHTML = renderForgot(); break;
+        case 'reset': root.innerHTML = renderReset(); break;
+        case 'otp': root.innerHTML = renderOTP(); break;
+        default: root.innerHTML = renderLogin();
+      }
+    } else {
+      root.innerHTML = state.user.isAdmin ? renderAdminDashboard() : renderDashboard();
+    }
+    attachEvents();
+  }
+
+  function renderTopBar(title) {
+    return `<div class="top-bar">
+      <div style="display:flex;align-items:center;gap:8px;"><span class="logo-text">🏦 MetaBank</span></div>
+      <div style="font-weight:600;color:var(--text2);">${title}</div>
+      <div class="top-actions">
+        <button class="icon-btn" onclick="toggleThemeMenu()">🎨</button>
+        ${state.user?`<button class="icon-btn" onclick="logout()">🚪</button>`:''}
+      </div>
+      <div class="theme-menu" id="themeMenu">
+        <div class="theme-option" onclick="setTheme('light')"><span class="color-dot" style="background:#f0f4f8;"></span>☀️ Light</div>
+        <div class="theme-option" onclick="setTheme('dark')"><span class="color-dot" style="background:#0f172a;"></span>🌙 Dark</div>
+        <hr style="margin:5px 0;border-color:var(--border);">
+        <div class="theme-option" onclick="setBg('ocean')"><span class="color-dot" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);"></span>🌊 Ocean</div>
+        <div class="theme-option" onclick="setBg('sunset')"><span class="color-dot" style="background:linear-gradient(135deg,#f59e0b,#ef4444);"></span>🌅 Sunset</div>
+        <div class="theme-option" onclick="setBg('forest')"><span class="color-dot" style="background:linear-gradient(135deg,#10b981,#6366f1);"></span>🌿 Forest</div>
+      </div>
+    </div>`;
+  }
+
+  function renderLogin() {
+    return `${renderTopBar('Login')}
+    <div class="card-ui" style="max-width:420px;margin:35px auto;">
+      <h2 style="text-align:center;">👋 Welcome</h2>
+      <div class="input-group"><label>Email</label><input id="loginEmail"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="loginPassword"></div>
+      <button class="btn btn-primary" onclick="handleLogin()">🔐 Send OTP</button>
+      <div class="text-center mt-2"><a style="color:var(--primary);cursor:pointer;" onclick="state.screen='forgot';render();">Forgot Password?</a></div>
+      <div class="text-center mt-3"><a style="color:var(--primary);cursor:pointer;" onclick="state.screen='register';render();">Create Account</a></div>
+      <div class="error mt-2 text-center" id="loginErr"></div>
+      <p style="text-align:center;font-size:0.7rem;color:var(--text2);margin-top:10px;">Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}</p>
+    </div>`;
+  }
+
+  function renderRegister() {
+    return `${renderTopBar('Register')}
+    <div class="card-ui" style="max-width:480px;margin:25px auto;">
+      <h2 style="text-align:center;">📝 Create Account</h2>
+      <div class="row"><div class="input-group"><label>First Name</label><input id="regFirst"></div>
+      <div class="input-group"><label>Last Name</label><input id="regLast"></div></div>
+      <div class="input-group"><label>Birthday</label><input type="date" id="regBday"></div>
+      <div class="input-group"><label>Email</label><input id="regEmail"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="regPass"></div>
+      <button class="btn btn-primary" onclick="handleRegister()">Create</button>
+      <div class="error mt-2 text-center" id="regErr"></div>
+    </div>`;
+  }
+
+  function renderForgot() {
+    return `${renderTopBar('Forgot Password')}
+    <div class="card-ui" style="max-width:420px;margin:35px auto;">
+      <h2 style="text-align:center;">🔑 Forgot</h2>
+      <div class="input-group"><label>Email</label><input id="forgotEmail"></div>
+      <button class="btn btn-primary" onclick="handleForgot()">Send Reset</button>
+      <div class="success mt-2 text-center" id="forgotMsg"></div>
+    </div>`;
+  }
+
+  function renderReset() {
+    return `${renderTopBar('Reset Password')}
+    <div class="card-ui" style="max-width:420px;margin:35px auto;">
+      <h2 style="text-align:center;">🔒 Reset</h2>
+      <div class="input-group"><label>Token</label><input id="resetToken"></div>
+      <div class="input-group"><label>New Password</label><input type="password" id="newPass"></div>
+      <button class="btn btn-primary" onclick="handleReset()">Reset</button>
+    </div>`;
+  }
+
+  function renderOTP() {
+    return `${renderTopBar('OTP')}
+    <div class="card-ui" style="max-width:420px;margin:35px auto;text-align:center;">
+      <h2>🔐 Verify OTP</h2>
+      <p style="color:var(--text2);">Sent to ${state.pendingEmail}</p>
+      <div class="input-group mt-3"><label>OTP</label><input id="otpInput" maxlength="6" style="text-align:center;font-size:1.6rem;letter-spacing:6px;"></div>
+      <button class="btn btn-primary" onclick="verifyOTP()">Verify & Login</button>
+      <button class="btn btn-outline mt-2" onclick="resendOTP()">Resend</button>
+      <div id="otpTimer" style="color:var(--warning);margin-top:8px;"></div>
+    </div>`;
+  }
+
+  function renderDashboard() {
+    const u = state.user;
+    return `${renderTopBar(`Welcome, ${u.firstName}`)}
+    <div class="card-ui text-center">
+      <div style="font-size:0.8rem;color:var(--text2);">Balance</div>
+      <div class="balance-lg"><span class="currency">${CURRENCY}</span> ${formatCurrency(u.balance)}</div>
+      <div style="color:var(--text2);">A/C: ${u.accountNumber}</div>
     </div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('deposit',this)">💵</button>
+      <button class="tab-btn" onclick="showTab('withdraw',this)">🏧</button>
+      <button class="tab-btn" onclick="showTab('transfer',this)">💸</button>
+      <button class="tab-btn" onclick="showTab('qr',this)">📱 QR</button>
+      <button class="tab-btn" onclick="showTab('cards',this)">💳 Cards</button>
+      <button class="tab-btn" onclick="showTab('history',this)">📜</button>
+    </div>
+    <div id="tabContent"></div>`;
+  }
 
-    <!-- Pending -->
-    <div class="page" id="page-pending"><div class="pending-card"><div class="pending-icon">⏳</div><h2>Pending Approval</h2><p style="color:var(--text-muted);margin:15px 0;">Admin review in progress</p><div style="background:var(--card-light);padding:15px;border-radius:12px;margin:15px 0;"><strong>Account:</strong> <span id="pendingAccNum">---</span><br><strong>Username:</strong> <span id="pendingUsername">---</span></div><button class="btn btn-secondary" onclick="checkApprovalStatus()">🔄 Check</button><button class="btn btn-danger mt-10" onclick="logout()">Logout</button></div></div>
+  function renderAdminDashboard() {
+    return `${renderTopBar('Admin Panel')}
+    <div class="card-ui"><h3>🛡️ Card Requests</h3><div id="adminCards"></div></div>`;
+  }
 
-    <!-- OTP -->
-    <div class="page" id="page-otp"><div style="text-align:center;padding:30px 0;"><div style="font-size:3rem;">🔐</div><h3>Email Verification</h3><p style="color:var(--text-muted);">OTP sent to: <strong id="otpEmail">---</strong></p></div><div class="form-group"><label class="form-label">OTP Code</label><input type="text" class="form-input" id="otpInput" maxlength="6"></div><button class="btn btn-primary" onclick="verifyOTP()">✅ Verify</button><button class="btn btn-secondary mt-10" onclick="resendOTP()">📧 Resend</button><div class="error-message" id="otpError"></div></div>
+  function showTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    const tc=document.getElementById('tabContent');
+    switch(tab){
+      case 'deposit': tc.innerHTML=formDeposit(); break;
+      case 'withdraw': tc.innerHTML=formWithdraw(); break;
+      case 'transfer': tc.innerHTML=formTransfer(); break;
+      case 'qr': tc.innerHTML=formQR(); break;
+      case 'cards': tc.innerHTML=formCards(); break;
+      case 'history': tc.innerHTML=formHistory(); break;
+    }
+    attachTabEvents(tab);
+  }
 
-    <!-- Send Money -->
-    <div class="page" id="page-send-money"><h2 style="margin-bottom:20px;">💸 Send Money</h2><div class="form-group"><label class="form-label">Recipient (Username/Account)</label><input type="text" class="form-input" id="sendRecipient"></div><div class="form-group"><label class="form-label">Amount (LKR)</label><input type="number" class="form-input" id="sendAmount" step="0.01" oninput="updateFee()"></div><div style="background:var(--card-light);padding:12px;border-radius:12px;margin-bottom:15px;font-size:0.85rem;">Fee (3%): <span id="sendFee">0.00</span> | Total: <strong id="sendTotal">0.00</strong></div><button class="btn btn-primary" onclick="sendMoney()">Send</button><div class="error-message" id="sendError"></div><div class="success-message" id="sendSuccess"></div></div>
+  function formDeposit(){return`<div class="card-ui"><h3>💵 Deposit</h3><div class="input-group"><label>Amount</label><input id="depAmt" type="number" step="0.01"></div><button class="btn btn-primary" id="depBtn">Deposit</button><div class="success mt-2" id="depMsg"></div></div>`;}
+  function formWithdraw(){return`<div class="card-ui"><h3>🏧 Withdraw</h3><div class="input-group"><label>Amount</label><input id="witAmt" type="number" step="0.01"></div><button class="btn btn-danger" id="witBtn">Withdraw</button><div class="success mt-2" id="witMsg"></div></div>`;}
+  function formTransfer(){return`<div class="card-ui"><h3>💸 Transfer</h3><div class="input-group"><label>Account</label><input id="transAcc" maxlength="12"></div><div class="input-group"><label>Amount</label><input id="transAmt" type="number" step="0.01"></div><button class="btn btn-primary" id="transBtn">Transfer</button><div class="success mt-2" id="transMsg"></div></div>`;}
+  
+  function formQR() {
+    return `<div class="card-ui text-center"><h3>📱 QR Transactions</h3>
+      <p style="color:var(--text2);margin-bottom:15px;">Generate QR to receive · Scan QR to pay</p>
+      <div class="row">
+        <button class="btn btn-primary" onclick="openQRGenerator()">📱 Generate QR<br><small style="font-size:0.7rem;">Request Payment</small></button>
+        <button class="btn btn-success" onclick="openQRScanner()">📷 Scan QR<br><small style="font-size:0.7rem;">Pay Someone</small></button>
+      </div>
+      <div class="qr-container mt-3" id="qrCodeDisplay"></div>
+      <p style="color:var(--text2);font-size:0.75rem;">Account: ${state.user.accountNumber}</p>
+    </div>`;
+  }
 
-    <!-- Request Money -->
-    <div class="page" id="page-request-money"><h2 style="margin-bottom:20px;">📥 Request Money</h2><div class="form-group"><label class="form-label">Amount (LKR)</label><input type="number" class="form-input" id="requestAmount" step="0.01"></div><button class="btn btn-primary" onclick="generateRequestQR()">Generate QR</button><div id="requestQrDisplay" style="text-align:center;margin-top:20px;"></div></div>
+  function formCards() {
+    const cards = state.myCards.filter(c=>c.status==='active');
+    return `<div class="card-ui"><h3>💳 My Cards</h3>
+      ${cards.length ? cards.map(c=>renderVirtualCard(c)).join('') : '<p style="color:var(--text2);text-align:center;">No cards</p>'}
+      <button class="btn btn-primary mt-3" onclick="requestCard()">➕ Request Card</button>
+      <div id="cardForm"></div></div>`;
+  }
 
-    <!-- QR Scanner -->
-    <div class="page" id="page-qr-scanner"><h2 style="margin-bottom:10px;">📷 Scan QR</h2><div class="camera-container" id="cameraContainer"><div class="scan-overlay"><div class="scan-line"></div></div></div><button class="btn btn-danger btn-sm mt-10" onclick="stopCamera()">Stop</button></div>
+  function renderVirtualCard(card) {
+    return `<div class="virtual-card">
+      <div class="card-status card-active">${card.status}</div>
+      <div class="card-contactless">📶</div>
+      <div class="card-chip"></div>
+      <div class="card-number">${formatCardNum(card.cardNumber)}</div>
+      <div class="card-details">
+        <div><div class="label">Holder</div><div>${(card.cardName||card.userName||'').toUpperCase()}</div></div>
+        <div><div class="label">Expires</div><div>${card.expiry}</div></div>
+        <div><div class="label">CVV</div><div>${card.cvv}</div></div>
+      </div>
+      <div class="card-brand"><div class="circle red"></div><div class="circle yellow"></div><span style="font-weight:700;font-size:0.7rem;">Mastercard</span></div>
+    </div>`;
+  }
 
-    <!-- My QR -->
-    <div class="page" id="page-my-qr"><h2 style="margin-bottom:10px;">📱 My QR</h2><div style="text-align:center;"><div id="myQrDisplay"></div><p style="margin-top:10px;" id="myQrAccount"></p></div></div>
+  function formHistory() {
+    return `<div class="card-ui"><h3>📜 Transactions</h3>
+      <div class="txn-list">${state.transactions.length?state.transactions.map(t=>`
+        <div class="txn-item">
+          <div><strong>${t.description}</strong><br><small>${new Date(t.timestamp).toLocaleString()}</small></div>
+          <div class="${t.type.includes('in')||t.type==='deposit'?'txn-credit':'txn-debit'}">
+            ${t.type.includes('in')||t.type==='deposit'?'+':'-'}${CURRENCY} ${formatCurrency(t.amount)}
+          </div>
+        </div>`).join(''):'<p style="color:var(--text2);text-align:center;">No transactions</p>'}</div></div>`;
+  }
 
-    <!-- History -->
-    <div class="page" id="page-history"><h2 style="margin-bottom:15px;">📋 History</h2><div class="tabs"><div class="tab active" onclick="filterTxns('all',this)">All</div><div class="tab" onclick="filterTxns('sent',this)">Sent</div><div class="tab" onclick="filterTxns('received',this)">Received</div></div><div id="fullTransactionList"></div></div>
+  window.requestCard = function() {
+    document.getElementById('cardForm').innerHTML = `
+      <div class="card-ui mt-3"><h4>📝 Request Card</h4>
+      <div class="input-group"><label>Name on Card</label><input id="cardName" value="${state.user.firstName} ${state.user.lastName}"></div>
+      <div class="input-group"><label>Address</label><input id="cardAddr"></div>
+      <div class="input-group"><label>Phone</label><input id="cardPhone"></div>
+      <button class="btn btn-primary" onclick="submitCardReq()">Submit</button></div>`;
+  };
 
-    <!-- Coupons -->
-    <div class="page" id="page-coupons"><h2 style="margin-bottom:15px;">🎟️ Coupons</h2><div class="form-group"><label class="form-label">Code</label><input type="text" class="form-input" id="couponInput"></div><button class="btn btn-primary" onclick="redeemCoupon()">Redeem</button><div id="couponMsg" style="margin-top:8px;"></div></div>
+  window.submitCardReq = async function() {
+    const name=document.getElementById('cardName')?.value.trim();
+    const addr=document.getElementById('cardAddr')?.value.trim();
+    const phone=document.getElementById('cardPhone')?.value.trim();
+    if(!name||!addr||!phone){showNotification('All fields required','error');return;}
+    const reqId='cardreq_'+Date.now();
+    await db.ref('cardRequests/'+reqId).set({
+      id:reqId,userEmail:state.user.email,userName:state.user.firstName+' '+state.user.lastName,
+      accountNumber:state.user.accountNumber,requestedName:name,billingAddress:addr,
+      phoneNumber:phone,cardType:'META MASTER CARD',status:'pending',requestedAt:Date.now()
+    });
+    await sendEmail(ADMIN_EMAIL,OFFICIAL_EMAIL,'🆕 Card Request',`${name} requested a card.`);
+    showNotification('✅ Request submitted!','success');
+    document.getElementById('cardForm').innerHTML='';
+  };
 
-    <!-- Login -->
-    <div class="page" id="page-login"><div style="text-align:center;padding:30px 0;"><div style="font-size:4rem;">🏦</div><h2>Welcome</h2></div><div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="loginUsername"></div><div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword"></div><button class="btn btn-primary" onclick="login()">🔐 Login</button><div style="text-align:center;margin-top:15px;"><span style="color:var(--text-muted);">No account?</span> <span style="color:var(--primary-light);cursor:pointer;" onclick="navigateTo('register')">Register</span> | <span style="color:var(--text-muted);font-size:0.8rem;cursor:pointer;" onclick="navigateTo('admin-login')">Admin</span></div><div class="error-message text-center" id="loginError"></div></div>
+  // ==================== AUTH HANDLERS ====================
+  window.handleLogin = async function() {
+    const email=document.getElementById('loginEmail')?.value.trim().toLowerCase();
+    const pass=document.getElementById('loginPassword')?.value.trim();
+    if(!email||!pass) return;
+    if(email===ADMIN_EMAIL&&pass===ADMIN_PASSWORD){
+      state.user={firstName:'Admin',lastName:'',email:ADMIN_EMAIL,accountNumber:'ADMIN',balance:0,isAdmin:true};
+      await loadCardRequests(); render(); return;
+    }
+    const key=email.replace(/\./g,'_');
+    const snap=await db.ref('bankUsers/'+key).once('value');
+    const u=snap.val();
+    if(!u){document.getElementById('loginErr').textContent='Not found';return;}
+    if(u.password!==pass){document.getElementById('loginErr').textContent='Wrong password';return;}
+    const otp=genOTP();
+    state.pendingOTP={email,otp,expires:Date.now()+120000,type:'login'};
+    state.pendingEmail=email;
+    await sendEmail(email,OFFICIAL_EMAIL,'🔐 OTP',`Your OTP: ${otp}`);
+    console.log(`🔑 OTP: ${otp}`);
+    state.screen='otp';render();
+  };
 
-    <!-- Register -->
-    <div class="page" id="page-register"><div style="text-align:center;padding:20px 0;"><div style="font-size:3rem;">✨</div><h3>Create Account</h3></div><div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="regName"></div><div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="regUsername"></div><div class="form-group"><label class="form-label">Email (for OTP verification)</label><input type="email" class="form-input" id="regEmail" placeholder="Open Email System to view OTP"></div><div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="regPassword"></div><button class="btn btn-primary" onclick="register()">✨ Register</button><div style="text-align:center;margin-top:10px;"><span style="color:var(--text-muted);">Have account?</span> <span style="color:var(--primary-light);cursor:pointer;" onclick="navigateTo('login')">Login</span></div><div class="error-message text-center" id="regError"></div></div>
+  window.handleRegister = async function() {
+    const first=document.getElementById('regFirst')?.value.trim();
+    const last=document.getElementById('regLast')?.value.trim();
+    const bday=document.getElementById('regBday')?.value;
+    const email=document.getElementById('regEmail')?.value.trim().toLowerCase();
+    const pass=document.getElementById('regPass')?.value.trim();
+    if(!first||!last||!bday||!email||!pass||pass.length<6) return;
+    const key=email.replace(/\./g,'_');
+    if((await db.ref('bankUsers/'+key).once('value')).exists()){document.getElementById('regErr').textContent='Email exists';return;}
+    let acc; do{acc=genAccNum();}while((await db.ref('bankAccounts/'+acc).once('value')).exists());
+    await db.ref('bankUsers/'+key).set({firstName:first,lastName:last,birthday:bday,email,password:pass,accountNumber:acc,balance:5000,createdAt:Date.now()});
+    await db.ref('bankAccounts/'+acc).set({email,name:first+' '+last});
+    await sendEmail(email,OFFICIAL_EMAIL,'🎉 Welcome!',`Account: ${acc}\nBalance: ${CURRENCY} 5,000.00`);
+    showNotification('✅ Created!','success');
+    state.screen='login';render();
+  };
 
-    <!-- Admin Login -->
-    <div class="page" id="page-admin-login"><div style="text-align:center;padding:30px 0;"><div style="font-size:3rem;">👑</div><h3>Admin</h3></div><div class="form-group"><label class="form-label">Username</label><input type="text" class="form-input" id="adminUsername" value="admin"></div><div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="adminPassword" placeholder="admin123"></div><button class="btn btn-primary" onclick="adminLogin()">Access</button><div class="error-message text-center" id="adminLoginError"></div></div>
+  window.handleForgot = async function() {
+    const email=document.getElementById('forgotEmail')?.value.trim().toLowerCase();
+    if(!email) return;
+    const key=email.replace(/\./g,'_');
+    if(!(await db.ref('bankUsers/'+key).once('value')).exists()){showNotification('Not found','error');return;}
+    const token='reset_'+Date.now();
+    await db.ref('resetTokens/'+token).set({email,expires:Date.now()+600000});
+    await sendEmail(email,OFFICIAL_EMAIL,'🔑 Reset',`Token: ${token}`);
+    document.getElementById('forgotMsg').textContent='✅ Check email!';
+  };
 
-    <!-- Admin Dashboard -->
-    <div class="page" id="page-admin-dashboard"><h2 style="margin-bottom:15px;">👑 Admin</h2><div class="stat-grid"><div class="stat-card"><div class="stat-value" id="adminBalance">0</div><div class="stat-label">Fees</div></div><div class="stat-card"><div class="stat-value" id="adminUsers">0</div><div class="stat-label">Users</div></div><div class="stat-card"><div class="stat-value" id="adminPending">0</div><div class="stat-label">Pending</div></div><div class="stat-card"><div class="stat-value" id="adminTxns">0</div><div class="stat-label">Txns</div></div></div><div class="tabs"><div class="tab active" onclick="adminTab('users',this)">Users</div><div class="tab" onclick="adminTab('pending',this)">Pending <span class="badge badge-warning" id="pendingBadge">0</span></div><div class="tab" onclick="adminTab('txns',this)">Txns</div><div class="tab" onclick="adminTab('coupons',this)">Coupons</div><div class="tab" onclick="adminTab('broadcast',this)">📢</div></div><div id="adminContent"></div></div>
+  window.handleReset = async function() {
+    const token=document.getElementById('resetToken')?.value.trim();
+    const pass=document.getElementById('newPass')?.value.trim();
+    if(!token||!pass||pass.length<6) return;
+    const snap=await db.ref('resetTokens/'+token).once('value');
+    if(!snap.exists()||Date.now()>snap.val().expires){showNotification('Invalid','error');return;}
+    await db.ref('bankUsers/'+snap.val().email.replace(/\./g,'_')+'/password').set(pass);
+    await db.ref('resetTokens/'+token).remove();
+    showNotification('✅ Reset!','success');
+    state.screen='login';render();
+  };
 
-  </div>
+  window.verifyOTP = async function() {
+    const inp=document.getElementById('otpInput')?.value.trim();
+    if(!state.pendingOTP||Date.now()>state.pendingOTP.expires) return;
+    if(inp===state.pendingOTP.otp){
+      clearInterval(otpInterval);
+      const key=state.pendingOTP.email.replace(/\./g,'_');
+      const snap=await db.ref('bankUsers/'+key).once('value');
+      const u=snap.val();
+      state.user={firstName:u.firstName,lastName:u.lastName,email:u.email,accountNumber:u.accountNumber,balance:u.balance,birthday:u.birthday,isAdmin:false};
+      state.pendingOTP=null;state.pendingEmail=null;
+      await loadTransactions();await loadCards();
+      state.screen='dashboard';render();
+      showNotification(`Welcome, ${u.firstName}!`,'success');
+    }
+  };
 
-  <div style="display:flex;background:var(--card);border-top:1px solid var(--border);padding:10px;position:sticky;bottom:0;" id="bottomNav">
-    <div style="flex:1;text-align:center;cursor:pointer;color:var(--primary-light);" onclick="navigateTo('dashboard')">🏠</div>
-    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('history')">📋</div>
-    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('qr-scanner')">📷</div>
-    <div style="flex:1;text-align:center;cursor:pointer;" onclick="navigateTo('coupons')">🎟️</div>
-  </div>
-</div>
+  window.resendOTP = async function() {
+    if(!state.pendingEmail) return;
+    const otp=genOTP();
+    state.pendingOTP={email:state.pendingEmail,otp,expires:Date.now()+120000,type:'login'};
+    await sendEmail(state.pendingEmail,OFFICIAL_EMAIL,'🔐 OTP Resent',`New OTP: ${otp}`);
+    showNotification('OTP resent!','info');
+  };
 
-<div class="modal-overlay hidden" id="qrConfirmModal"><div class="modal"><div class="modal-title">Confirm Payment</div><div id="qrConfirmDetails"></div><button class="btn btn-success mt-10" onclick="confirmQRPayment()">✅ Confirm</button><button class="btn btn-secondary mt-10" onclick="closeQRConfirm()">Cancel</button><div class="error-message" id="qrConfirmError"></div></div></div>
+  window.logout = function(){clearInterval(otpInterval);state.user=null;state.screen='login';render();};
 
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  // ==================== TAB EVENTS ====================
+  function attachTabEvents(tab) {
+    if(tab==='deposit'){
+      document.getElementById('depBtn').onclick=async()=>{
+        const amt=parseFloat(document.getElementById('depAmt')?.value);
+        if(!amt||amt<=0)return;
+        const nb=state.user.balance+amt;
+        await db.ref('bankUsers/'+state.user.email.replace(/\./g,'_')+'/balance').set(nb);
+        await sendEmail(state.user.email,OFFICIAL_EMAIL,'💵 Deposit',`${CURRENCY} ${formatCurrency(amt)} deposited. Balance: ${CURRENCY} ${formatCurrency(nb)}`);
+        state.user.balance=nb;document.getElementById('depMsg').textContent='✅ Done!';render();
+      };
+    }
+    if(tab==='withdraw'){
+      document.getElementById('witBtn').onclick=async()=>{
+        const amt=parseFloat(document.getElementById('witAmt')?.value);
+        if(!amt||amt<=0||amt>state.user.balance)return;
+        const nb=state.user.balance-amt;
+        await db.ref('bankUsers/'+state.user.email.replace(/\./g,'_')+'/balance').set(nb);
+        await sendEmail(state.user.email,OFFICIAL_EMAIL,'🏧 Withdrawal',`${CURRENCY} ${formatCurrency(amt)} withdrawn.`);
+        state.user.balance=nb;document.getElementById('witMsg').textContent='✅ Done!';render();
+      };
+    }
+    if(tab==='transfer'){
+      document.getElementById('transBtn').onclick=async()=>{
+        const acc=document.getElementById('transAcc')?.value.trim();
+        const amt=parseFloat(document.getElementById('transAmt')?.value);
+        if(!acc||acc.length!==12||!amt||amt<=0||amt>state.user.balance)return;
+        const snap=await db.ref('bankAccounts/'+acc).once('value');
+        if(!snap.exists()){showNotification('Not found','error');return;}
+        const r=snap.val();const rk=r.email.replace(/\./g,'_');
+        const rs=await db.ref('bankUsers/'+rk).once('value');const ru=rs.val();
+        const sb=state.user.balance-amt;const rb=ru.balance+amt;
+        await db.ref('bankUsers/'+state.user.email.replace(/\./g,'_')+'/balance').set(sb);
+        await db.ref('bankUsers/'+rk+'/balance').set(rb);
+        await sendEmail(state.user.email,OFFICIAL_EMAIL,'💸 Sent',`${CURRENCY} ${formatCurrency(amt)} to ${acc}`);
+        await sendEmail(r.email,OFFICIAL_EMAIL,'💸 Received',`${CURRENCY} ${formatCurrency(amt)} from ${state.user.accountNumber}`);
+        state.user.balance=sb;document.getElementById('transMsg').textContent='✅ Done!';render();
+        showNotification('Transfer complete!','success');
+      };
+    }
+    if(tab==='cards'){
+      document.getElementById('cardForm').innerHTML='';
+    }
+  }
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, update, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  function attachEvents() {
+    if(state.screen==='otp' && state.pendingOTP) startOTPTimer();
+    if(state.screen==='dashboard'&&state.user){
+      if(state.user.isAdmin) loadAdminCards();
+      else showTab('deposit',document.querySelector('.tab-btn'));
+    }
+    document.addEventListener('click',(e)=>{
+      const m=document.getElementById('themeMenu');
+      if(m&&!e.target.closest('.icon-btn')) m.classList.remove('show');
+    });
+  }
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDLSnWPSjF8Qf2mQ9zc2HfvpTH8dPzIrL8",
-  authDomain: "demobatta-1b673.firebaseapp.com",
-  databaseURL: "https://demobatta-1b673-default-rtdb.firebaseio.com",
-  projectId: "demobatta-1b673",
-  storageBucket: "demobatta-1b673.firebasestorage.app",
-  messagingSenderId: "609366383941",
-  appId: "1:609366383941:web:11f782595e3bd4f855722c"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+  async function loadAdminCards() {
+    await loadCardRequests();
+    const el=document.getElementById('adminCards');
+    if(!el) return;
+    const pending=state.cardRequests.filter(r=>r.status==='pending');
+    el.innerHTML=pending.length?pending.map(r=>`
+      <div class="card-ui" style="padding:14px;"><strong>${r.userName}</strong> · ${r.cardType}
+      <br><small>${r.userEmail} · ${new Date(r.requestedAt).toLocaleString()}</small>
+      <div style="margin-top:8px;display:flex;gap:6px;">
+        <button class="btn btn-success btn-sm" onclick="approveCard('${r.id}')">✅ Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="rejectCard('${r.id}')">❌ Reject</button>
+      </div></div>
+    `).join(''):'<p style="color:var(--text2);">No pending requests</p>';
+  }
 
-function F(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function G(){return Math.floor(100000000000+Math.random()*900000000000).toString();}
-function OTP(){return Math.floor(100000+Math.random()*900000).toString();}
+  window.approveCard = async function(reqId) {
+    const snap=await db.ref('cardRequests/'+reqId).once('value');
+    const req=snap.val();
+    const cardNum=genCardNum();
+    const cardData={
+      id:'card_'+Date.now(),userEmail:req.userEmail,userName:req.userName,
+      cardName:req.requestedName,cardType:req.cardType,cardNumber:cardNum,
+      cvv:genCVV(),expiry:genExpiry(),status:'active',createdAt:Date.now(),requestId:reqId
+    };
+    await db.ref('virtualCards/'+cardData.id).set(cardData);
+    await db.ref('cardRequests/'+reqId).update({status:'approved',approvedAt:Date.now()});
+    await sendEmail(req.userEmail,OFFICIAL_EMAIL,'✅ Card Approved!',
+      `Your ${req.cardType} is ready!\nCard: ${formatCardNum(cardNum)}\nExpiry: ${cardData.expiry}\nCVV: ${cardData.cvv}`);
+    showNotification('Card approved!','success');
+    await loadCardRequests();
+    if(state.user.isAdmin) loadAdminCards();
+  };
 
-let U=null,A=false,P='login',V=null,I=null,Q=null,Ft='all',L=[];
+  window.rejectCard = async function(reqId) {
+    const reason=prompt('Reason:')||'No reason';
+    await db.ref('cardRequests/'+reqId).update({status:'rejected',rejectedAt:Date.now(),adminNote:reason});
+    const snap=await db.ref('cardRequests/'+reqId).once('value');
+    await sendEmail(snap.val().userEmail,OFFICIAL_EMAIL,'❌ Card Declined',`Reason: ${reason}`);
+    showNotification('Rejected','error');
+    await loadCardRequests();
+    if(state.user.isAdmin) loadAdminCards();
+  };
 
-function T(m,t='info'){const c=document.getElementById('toastContainer'),d=document.createElement('div');d.className='toast';d.textContent=m;d.style.background={success:'var(--success)',error:'var(--danger)',warning:'var(--warning)'}[t]||'var(--card)';d.style.color=t==='warning'?'#000':'#fff';c.appendChild(d);setTimeout(()=>d.remove(),3000);}
-function AP(n){document.getElementById('announcementPopup').innerHTML=`<div class="announcement-popup" id="aa"><div class="announcement-card"><div class="announcement-icon">📢</div><div class="announcement-title">${n.title}</div><div class="announcement-message">${n.message}</div><button class="btn btn-primary" onclick="document.getElementById('aa').remove()">✓ Got it</button></div></div>`;}
+  // Real-time balance sync
+  if(state.user&&!state.user.isAdmin){
+    db.ref('bankUsers/'+state.user.email.replace(/\./g,'_')).on('value',(snap)=>{
+      if(snap.exists()&&state.user) state.user.balance=snap.val().balance;
+    });
+  }
 
-window.navigateTo=function(p){
-  stopCamera();document.querySelectorAll('.page').forEach(x=>{x.classList.remove('active');x.style.display='none';});
-  const t=document.getElementById('page-'+p);if(t){t.style.display='block';t.classList.add('active');}P=p;
-  const ti={dashboard:'Dashboard','send-money':'Send','request-money':'Request','qr-scanner':'Scan','my-qr':'My QR',history:'History',coupons:'Coupons',login:'Login',register:'Register','admin-login':'Admin','admin-dashboard':'Admin',pending:'Pending',otp:'OTP'};
-  document.getElementById('navTitle').textContent=ti[p]||'Mata Bank';
-  document.getElementById('backBtn').style.visibility=['login','dashboard','admin-dashboard','pending','otp'].includes(p)?'hidden':'visible';
-  document.getElementById('bottomNav').style.display=['dashboard','history','qr-scanner','coupons'].includes(p)?'flex':'none';
-  if(p==='dashboard')LD();
-  if(p==='my-qr')GQ();
-  if(p==='qr-scanner')SC();
-  if(p==='admin-dashboard')LA();
-  if(p==='history')LH();
-  if(p==='pending')SP();
-  if(p==='otp')document.getElementById('otpError').textContent='';
-};
-document.getElementById('backBtn').onclick=()=>{if(U&&!A)navigateTo('dashboard');else if(A)navigateTo('admin-dashboard');else navigateTo('login');};
-
-// ---- AUTH ----
-window.login=async()=>{
-  const u=document.getElementById('loginUsername').value.trim().toLowerCase(),p=document.getElementById('loginPassword').value.trim();
-  document.getElementById('loginError').textContent='';
-  if(!u||!p){document.getElementById('loginError').textContent='Fill fields';return;}
-  const s=await get(ref(db,'users'));if(!s.exists()){document.getElementById('loginError').textContent='No accounts';return;}
-  const e=Object.entries(s.val()).find(([k,v])=>v.username===u&&v.password===p);
-  if(!e){document.getElementById('loginError').textContent='Invalid';return;}
-  const[uid,ud]=e;
-  if(ud.status==='otp_pending'){U={uid,...ud};navigateTo('otp');document.getElementById('otpEmail').textContent=ud.email;return;}
-  if(ud.status==='pending'){U={uid,...ud};navigateTo('pending');return;}
-  if(ud.status==='banned'){document.getElementById('loginError').textContent='Banned';return;}
-  U={uid,...ud};A=false;await update(ref(db,`users/${uid}`),{lastActive:Date.now()});SR();navigateTo('dashboard');T(`Welcome, ${ud.name}!`,'success');CA();
-};
-
-window.register=async()=>{
-  const n=document.getElementById('regName').value.trim(),u=document.getElementById('regUsername').value.trim().toLowerCase(),e=document.getElementById('regEmail').value.trim().toLowerCase(),p=document.getElementById('regPassword').value.trim();
-  document.getElementById('regError').textContent='';
-  if(!n||!u||!e||!p){document.getElementById('regError').textContent='All fields';return;}
-  if(p.length<4){document.getElementById('regError').textContent='Password short';return;}
-  const s=await get(ref(db,'users'));if(s.exists()&&Object.values(s.val()).some(x=>x.username===u)){document.getElementById('regError').textContent='Username taken';return;}
-  const ms=await get(ref(db,'mail_users'));if(!ms.exists()||!Object.values(ms.val()).some(x=>x.email===e)){await set(push(ref(db,'mail_users')),{name:n,email:e,password:p,createdAt:Date.now()});}
-  const an=G(),otp=OTP(),nr=push(ref(db,'users'));
-  await set(nr,{accountNumber:an,username:u,name:n,email:e,password:p,balance:0,status:'otp_pending',otpCode:otp,createdAt:Date.now(),lastActive:Date.now()});
-  await set(push(ref(db,'mail_emails')),{from:'system@matabank.com',to:e,subject:'🔐 Bank OTP',body:`OTP: ${otp}\n\n- Mata Bank`,emailType:'otp',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});
-  U={uid:nr.key,accountNumber:an,username:u,name:n,email:e,status:'otp_pending',otpCode:otp};
-  navigateTo('otp');document.getElementById('otpEmail').textContent=e;T('OTP sent to email! Open Email System to view','success');
-};
-
-window.verifyOTP=async()=>{if(document.getElementById('otpInput').value.trim()!==U.otpCode){document.getElementById('otpError').textContent='Invalid';return;}await update(ref(db,`users/${U.uid}`),{status:'pending',otpCode:null});U.status='pending';navigateTo('pending');T('Verified! Waiting approval','success');};
-window.resendOTP=async()=>{const o=OTP();await update(ref(db,`users/${U.uid}`),{otpCode:o});await set(push(ref(db,'mail_emails')),{from:'system@matabank.com',to:U.email,subject:'🔐 New OTP',body:`OTP: ${o}`,emailType:'otp',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});U.otpCode=o;T('New OTP sent!','success');};
-window.checkApprovalStatus=async()=>{const s=await get(ref(db,`users/${U.uid}`));if(s.val().status==='approved'){U={uid:U.uid,...s.val()};SR();navigateTo('dashboard');T('Approved!','success');}else T('Still pending','warning');};
-function SP(){document.getElementById('pendingAccNum').textContent=U.accountNumber;document.getElementById('pendingUsername').textContent=U.username;}
-window.logout=()=>{stopCamera();L.forEach(l=>off(l));L=[];U=null;A=false;navigateTo('login');document.getElementById('announcementPopup').innerHTML='';};
-async function CA(){const s=await get(ref(db,'notifications'));if(!s.exists())return;Object.entries(s.val()).forEach(([k,n])=>{if((n.target==='all'||n.targetUser===U.accountNumber)&&(!n.readBy||!n.readBy[U.uid])){AP(n);update(ref(db,`notifications/${k}/readBy`),{[U.uid]:true});}});}
-
-// ---- ADMIN ----
-window.adminLogin=async()=>{const u=document.getElementById('adminUsername').value.trim(),p=document.getElementById('adminPass').value.trim();const s=await get(ref(db,'admin/credentials'));if(u===s.val().username&&p===s.val().password){A=true;U=null;navigateTo('admin-dashboard');}else document.getElementById('adminLoginError').textContent='Invalid';};
-async function LA(){document.getElementById('adminBalance').textContent=F((await get(ref(db,'admin/balance'))).val()||0);const us=(await get(ref(db,'users'))).val()||{};document.getElementById('adminUsers').textContent=Object.keys(us).length;document.getElementById('adminPending').textContent=Object.values(us).filter(u=>u.status==='pending').length;document.getElementById('pendingBadge').textContent=Object.values(us).filter(u=>u.status==='pending').length;document.getElementById('adminTxns').textContent=(await get(ref(db,'transactions'))).exists()?Object.keys((await get(ref(db,'transactions'))).val()).length:0;AT('users',document.querySelector('#page-admin-dashboard .tab'));}
-window.AT=async(tab,el)=>{document.querySelectorAll('#page-admin-dashboard .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');const c=document.getElementById('adminContent');
-  if(tab==='users'){const us=(await get(ref(db,'users'))).val()||{};c.innerHTML=Object.entries(us).filter(([k,u])=>u.status==='approved').map(([k,u])=>`<div class="widget"><div style="display:flex;justify-content:space-between;"><div><strong>${u.name}</strong> @${u.username}<br><small>${u.accountNumber} | ${u.email||'No email'}</small></div><div><strong>${F(u.balance)}</strong><br><button class="btn btn-sm btn-outline" onclick="EU('${k}',${u.balance})">Edit</button> <button class="btn btn-sm btn-danger" onclick="BU('${k}')">Ban</button></div></div></div>`).join('');}
-  else if(tab==='pending'){const us=(await get(ref(db,'users'))).val()||{};c.innerHTML=Object.entries(us).filter(([k,u])=>u.status==='pending').map(([k,u])=>`<div class="widget" style="border:2px solid var(--warning);"><div style="display:flex;justify-content:space-between;"><div><strong>${u.name}</strong> @${u.username}<br><small>${u.accountNumber} | ${u.email}</small></div><div><button class="btn btn-sm btn-success" onclick="APU('${k}')">✅</button> <button class="btn btn-sm btn-danger" onclick="RJU('${k}')">❌</button></div></div></div>`).join('')||'<p>No pending</p>';}
-  else if(tab==='txns'){const tx=(await get(ref(db,'transactions'))).val()||{};c.innerHTML=Object.entries(tx).reverse().slice(0,20).map(([k,t])=>`<div style="background:var(--card-light);padding:8px;border-radius:8px;margin:4px 0;font-size:0.8rem;"><strong>${F(t.amount)}</strong> ${t.sender}→${t.recipient} | Fee:${F(t.fee||0)}</div>`).join('');}
-  else if(tab==='coupons'){c.innerHTML=`<div class="form-group"><label class="form-label">Code</label><input type="text" class="form-input" id="newCouponCode"></div><div class="form-group"><label class="form-label">Amount</label><input type="number" class="form-input" id="newCouponAmount" value="10000"></div><button class="btn btn-primary" onclick="CC()">Create</button><div id="couponList" style="margin-top:10px;"></div>`;LCP();}
-  else if(tab==='broadcast'){c.innerHTML=`<div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="bt"></div><div class="form-group"><label class="form-label">Message</label><textarea class="form-input" id="bm" rows="3"></textarea></div><button class="btn btn-warning" onclick="BC()">📢 Send to All</button>`;}
-};
-window.APU=async(uid)=>{await update(ref(db,`users/${uid}`),{status:'approved'});LA();T('Approved!','success');};
-window.RJU=async(uid)=>{await update(ref(db,`users/${uid}`),{status:'rejected'});LA();};
-window.EU=async(uid,b)=>{const nb=prompt('New balance:',b);if(nb&&!isNaN(parseFloat(nb))){await update(ref(db,`users/${uid}`),{balance:parseFloat(nb)});LA();}};
-window.BU=async(uid)=>{await update(ref(db,`users/${uid}`),{status:'banned'});LA();};
-window.CC=async()=>{const cd=document.getElementById('newCouponCode').value.trim(),a=parseFloat(document.getElementById('newCouponAmount').value);if(cd&&!isNaN(a)){await set(push(ref(db,'coupons')),{code:cd,amount:a,maxUses:1,active:true,usedBy:{},createdAt:Date.now()});LCP();T('Created!','success');}};
-async function LCP(){const s=await get(ref(db,'coupons'));const c=document.getElementById('couponList');if(s.exists())c.innerHTML=Object.entries(s.val()).map(([k,v])=>`<div style="background:var(--card-light);padding:6px 10px;border-radius:6px;margin:3px 0;font-size:0.8rem;">${v.code} - ${F(v.amount)} <button class="btn btn-sm btn-danger" style="float:right;" onclick="DC('${k}')">Del</button></div>`).join('');}
-window.DC=async(id)=>{await remove(ref(db,`coupons/${id}`));LCP();};
-window.BC=async()=>{const t=document.getElementById('bt').value.trim(),m=document.getElementById('bm').value.trim();if(!t||!m)return;await set(push(ref(db,'notifications')),{title:t,message:m,target:'all',timestamp:Date.now()});const us=await get(ref(db,'users'));if(us.exists()){for(const[uid,u]of Object.entries(us.val())){if(u.email)await set(push(ref(db,'mail_emails')),{from:'admin@matabank.com',to:u.email,subject:'📢 '+t,body:m,emailType:'notification',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});}}T('Broadcast sent!','success');};
-
-// ---- DASHBOARD ----
-function SR(){L.forEach(l=>off(l));L=[];L.push(ref(db,`users/${U.uid}`));onValue(ref(db,`users/${U.uid}`),s=>{if(s.exists()){U={uid:U.uid,...s.val()};if(P==='dashboard')UD();}});onValue(ref(db,'transactions'),()=>{if(P==='dashboard')LRT();if(P==='history')LH();});onValue(ref(db,'notifications'),()=>{if(P==='dashboard')LNT();});}
-async function LD(){const s=await get(ref(db,`users/${U.uid}`));if(s.exists())U={uid:U.uid,...s.val()};UD();LRT();LNT();}
-function UD(){document.getElementById('dashBalance').textContent=F(U.balance||0);document.getElementById('dashAccount').textContent='LKR • '+((U.accountNumber||'').slice(-4));}
-async function LRT(){const s=await get(ref(db,'transactions')),c=document.getElementById('recentTransactions');if(!s.exists()){c.innerHTML='<p style="color:var(--text-muted);text-align:center;">No transactions</p>';return;}const tx=Object.entries(s.val()).reverse().filter(([k,t])=>t.sender===U.accountNumber||t.recipient===U.accountNumber).slice(0,5);c.innerHTML=tx.map(([k,t])=>{const x=t.sender===U.accountNumber;return`<div class="txn-item"><div class="txn-icon ${x?'sent':'received'}">${x?'↑':'↓'}</div><div class="txn-info"><div class="txn-name">${x?'To: '+t.recipient:'From: '+t.sender}</div><div class="txn-date">${new Date(t.timestamp).toLocaleDateString()}</div></div><div class="txn-amount ${x?'debit':'credit'}">${x?'-':'+'}${F(t.amount)}</div></div>`;}).join('')||'<p style="color:var(--text-muted);text-align:center;">No transactions</p>';}
-async function LNT(){const s=await get(ref(db,'notifications')),c=document.getElementById('dashNotifications');if(!s.exists()){c.innerHTML='';return;}c.innerHTML=Object.entries(s.val()).filter(([k,n])=>(n.target==='all'||n.targetUser===U.accountNumber)&&(!n.readBy||!n.readBy[U.uid])).map(([k,n])=>`<div class="widget" style="border-left:3px solid var(--warning);"><strong>📢 ${n.title}</strong><p>${n.message}</p></div>`).join('');}
-
-// ---- SEND MONEY ----
-window.updateFee=()=>{const a=parseFloat(document.getElementById('sendAmount').value)||0,f=a*0.03;document.getElementById('sendFee').textContent=F(f);document.getElementById('sendTotal').textContent=F(a+f);};
-window.sendMoney=async()=>{const r=document.getElementById('sendRecipient').value.trim().toLowerCase(),a=parseFloat(document.getElementById('sendAmount').value);document.getElementById('sendError').textContent='';document.getElementById('sendSuccess').textContent='';if(!r||isNaN(a)||a<=0){document.getElementById('sendError').textContent='Invalid';return;}const s=await get(ref(db,'users')),us=s.val();const re=Object.entries(us).find(([k,u])=>u.username===r||u.accountNumber===r);if(!re){document.getElementById('sendError').textContent='Not found';return;}if(re[1].accountNumber===U.accountNumber){document.getElementById('sendError').textContent='Self';return;}const fee=a*0.03,total=a+fee;if(U.balance<total){document.getElementById('sendError').textContent=`Need ${F(total)}`;return;}if(!confirm(`Send ${F(a)}?\nFee: ${F(fee)}`))return;await update(ref(db,`users/${U.uid}`),{balance:U.balance-total});await update(ref(db,`users/${re[0]}`),{balance:re[1].balance+a});await set(ref(db,'admin/balance'),((await get(ref(db,'admin/balance'))).val()||0)+fee);await set(push(ref(db,'transactions')),{sender:U.accountNumber,recipient:re[1].accountNumber,amount:a,fee,type:'transfer',timestamp:Date.now()});if(re[1].email)await set(push(ref(db,'mail_emails')),{from:'alerts@matabank.com',to:re[1].email,subject:'💳 Received '+F(a),body:`Received ${F(a)} from ${U.name}`,emailType:'transaction',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});if(U.email)await set(push(ref(db,'mail_emails')),{from:'alerts@matabank.com',to:U.email,subject:'💳 Sent '+F(a),body:`Sent ${F(a)} to ${re[1].name}`,emailType:'transaction',timestamp:Date.now(),read:false,starred:false,draft:false,deleted:false});document.getElementById('sendSuccess').textContent='Sent!';document.getElementById('sendAmount').value='';T('Done!','success');};
-
-// ---- QR ----
-function GQ(){setTimeout(()=>{const c=document.getElementById('myQrDisplay');c.innerHTML='';document.getElementById('myQrAccount').textContent=U.accountNumber;if(typeof QRCode!=='undefined')new QRCode(c,{text:JSON.stringify({type:'account',accountNumber:U.accountNumber,name:U.name}),width:200,height:200});},200);}
-window.generateRequestQR=()=>{const a=parseFloat(document.getElementById('requestAmount').value);if(isNaN(a)||a<=0){alert('Enter amount');return;}const c=document.getElementById('requestQrDisplay');c.innerHTML='';setTimeout(()=>{if(typeof QRCode!=='undefined')new QRCode(c,{text:JSON.stringify({type:'payment_request',requesterAccount:U.accountNumber,requesterName:U.name,amount:a}),width:200,height:200});},100);};
-async function SC(){stopCamera();try{V=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const c=document.getElementById('cameraContainer');c.innerHTML='<div class="scan-overlay"><div class="scan-line"></div></div>';const v=document.createElement('video');v.autoplay=true;v.playsInline=true;v.srcObject=V;c.prepend(v);v.onloadedmetadata=()=>{v.play();SS(v);};}catch(e){}}
-function stopCamera(){if(I)clearInterval(I);if(V){V.getTracks().forEach(t=>t.stop());V=null;}}
-function SS(v){const cv=document.createElement('canvas'),ctx=cv.getContext('2d');I=setInterval(()=>{if(v.readyState<2)return;cv.width=v.videoWidth;cv.height=v.videoHeight;if(!cv.width)return;ctx.drawImage(v,0,0);const code=jsQR(ctx.getImageData(0,0,cv.width,cv.height).data,cv.width,cv.height);if(code){stopCamera();PQ(code.data);}},100);}
-function PQ(d){try{const p=JSON.parse(d);if(p.type==='account'){document.getElementById('sendRecipient').value=p.accountNumber;navigateTo('send-money');}else if(p.type==='payment_request'){Q=p;document.getElementById('qrConfirmDetails').innerHTML=`<p><strong>To:</strong> ${p.requesterName}</p><p><strong>Amount:</strong> ${F(p.amount)}</p><p><strong>Fee:</strong> ${F(p.amount*0.03)}</p><p><strong>Total:</strong> ${F(p.amount*1.03)}</p>`;document.getElementById('qrConfirmModal').classList.remove('hidden');}}catch(e){}}
-window.closeQRConfirm=()=>{document.getElementById('qrConfirmModal').classList.add('hidden');Q=null;};
-window.confirmQRPayment=async()=>{if(!Q)return;const d=Q,fee=d.amount*0.03,total=d.amount+fee;if(U.balance<total){document.getElementById('qrConfirmError').textContent='Insufficient';return;}const s=await get(ref(db,'users'));const re=Object.entries(s.val()).find(([k,u])=>u.accountNumber===d.requesterAccount);if(!re){document.getElementById('qrConfirmError').textContent='Not found';return;}await update(ref(db,`users/${U.uid}`),{balance:U.balance-total});await update(ref(db,`users/${re[0]}`),{balance:re[1].balance+d.amount});await set(ref(db,'admin/balance'),((await get(ref(db,'admin/balance'))).val()||0)+fee);await set(push(ref(db,'transactions')),{sender:U.accountNumber,recipient:d.requesterAccount,amount:d.amount,fee,type:'request_pay',timestamp:Date.now()});closeQRConfirm();T('Paid!','success');navigateTo('dashboard');};
-
-// ---- COUPONS ----
-window.redeemCoupon=async()=>{const cd=document.getElementById('couponInput').value.trim(),m=document.getElementById('couponMsg');if(!cd){m.innerHTML='<span style="color:var(--danger)">Enter code</span>';return;}const s=await get(ref(db,'coupons'));if(!s.exists()){m.innerHTML='<span style="color:var(--danger)">None</span>';return;}const e=Object.entries(s.val()).find(([k,c])=>c.code===cd&&c.active);if(!e){m.innerHTML='<span style="color:var(--danger)">Invalid</span>';return;}const[cid,cdt]=e;if((cdt.usedBy||{})[U.uid]){m.innerHTML='<span style="color:var(--danger)">Used</span>';return;}await update(ref(db,`users/${U.uid}`),{balance:U.balance+cdt.amount});await update(ref(db,`coupons/${cid}/usedBy`),{[U.uid]:true});m.innerHTML=`<span style="color:var(--success)">+${F(cdt.amount)}!</span>`;};
-
-// ---- HISTORY ----
-async function LH(){const s=await get(ref(db,'transactions')),c=document.getElementById('fullTransactionList');if(!s.exists()){c.innerHTML='<p style="color:var(--text-muted);text-align:center;">None</p>';return;}let tx=Object.entries(s.val()).reverse().filter(([k,t])=>t.sender===U.accountNumber||t.recipient===U.accountNumber);if(Ft==='sent')tx=tx.filter(([k,t])=>t.sender===U.accountNumber);if(Ft==='received')tx=tx.filter(([k,t])=>t.recipient===U.accountNumber);c.innerHTML=tx.map(([k,t])=>{const x=t.sender===U.accountNumber;return`<div class="txn-item"><div class="txn-icon ${x?'sent':'received'}">${x?'↑':'↓'}</div><div class="txn-info"><div class="txn-name">${x?t.recipient:t.sender}</div><div class="txn-date">${new Date(t.timestamp).toLocaleString()}</div></div><div class="txn-amount ${x?'debit':'credit'}">${x?'-':'+'}${F(t.amount)}</div></div>`;}).join('')||'<p style="color:var(--text-muted);text-align:center;">None</p>';}
-window.filterTxns=(f,el)=>{Ft=f;document.querySelectorAll('#page-history .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');LH();};
-
-// ---- INIT ----
-async function init(){
-  if(!(await get(ref(db,'admin'))).exists())await set(ref(db,'admin'),{accountNumber:'999999999999',balance:0,credentials:{username:'admin',password:'admin123'}});
-  if(!(await get(ref(db,'users'))).exists())await set(ref(db,'users'),{user1:{accountNumber:'100000000001',username:'userone',name:'User One',email:'alice@mail.com',password:'pass1001',balance:50000,status:'approved',createdAt:Date.now(),lastActive:Date.now()},user2:{accountNumber:'100000000002',username:'usertwo',name:'User Two',email:'bob@mail.com',password:'pass1002',balance:25000,status:'approved',createdAt:Date.now(),lastActive:Date.now()}});
-  if(!(await get(ref(db,'mail_users'))).exists())await set(ref(db,'mail_users'),{m1:{name:'Alice Johnson',email:'alice@mail.com',password:'pass1001',createdAt:Date.now()},m2:{name:'Bob Smith',email:'bob@mail.com',password:'pass1002',createdAt:Date.now()}});
-  if(!(await get(ref(db,'coupons'))).exists())await set(push(ref(db,'coupons')),{code:'äddon',amount:10000,maxUses:1,active:true,usedBy:{},createdAt:Date.now()});
-  setTimeout(()=>{document.getElementById('splashScreen').classList.add('hidden');document.getElementById('appWrapper').style.display='block';navigateTo('login');},2000);
-}
-init();
+  render();
+  console.log('🏦 MetaBank Ready · QR Generate & Scan · OTP Confirmation');
 </script>
 </body>
 </html>
